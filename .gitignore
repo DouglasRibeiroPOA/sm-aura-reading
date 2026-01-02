@@ -1,0 +1,43 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Playwright
+/test-results/
+/playwright-report/
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
+
+# WordPress (plugin repo best practices)
+wp-config.php
+wp-config-*.php
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+wp-content/backup-*/
+wp-content/backups/
+wp-content/blogs.dir/
+
+# Local tooling
+/.claude/
+/.gemini-session-home/
+
+# Misc
+*.zip
+*.tar.gz

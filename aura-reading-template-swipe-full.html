@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name='robots' content='max-image-preview:large' />
+  <title>Aura Reading – SoulMirror</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{PLUGIN_URL}}assets/css/swipe-template.css">
+</head>
+<body>
+
+<!-- Swipeable Card Template Container (PAID/FULL VERSION) -->
+<div class="sm-swipe-template" id="aura-reading-result" data-sm-id-placeholder data-sm-lead-id-placeholder data-sm-url-placeholder data-sm-status-placeholder data-sm-unlock-placeholder data-modal-love-placeholder data-modal-career-placeholder data-modal-alignment-placeholder aria-live="polite">
+
+  <!-- Progress indicator -->
+  <div class="progress-indicator">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <!-- Swipe instruction overlay -->
+  <div class="swipe-instruction" id="swipeInstruction">
+    <div class="swipe-icon">
+      <i class="fas fa-arrow-left"></i>
+      <i class="fas fa-hand-point-up"></i>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+    <h2 class="swipe-text">Swipe to Navigate</h2>
+    <p class="swipe-detail">Swipe left or right to move between reading cards</p>
+    <button class="start-btn" id="startBtn">Begin Reading</button>
+  </div>
+
+  <!-- Main app container -->
+  <div class="app-container" id="appContainer">
+    <!-- Cards container -->
+    <div class="cards-container" id="cardsContainer">
+
+      
+      <div class="reading-card active" id="card1">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-sun"></i>
+            </div>
+            <h1 class="card-title">Your Aura as a Mirror</h1>
+            <p class="card-subtitle">A glimpse into your aura's story</p>
+            <!-- OPENING_CONTENT_START -->
+            <p class="card-text">
+              Welcome to your personalized aura reading. Your energy field is a unique map revealing insights about your life's journey.
+            </p>
+            <p class="extra-text">
+              This teaser offers a taste of what a full aura reading can uncover, guiding you through life's intricate paths with insight and clarity.
+            </p>
+            <!-- OPENING_CONTENT_END -->
+
+          </div>
+
+          <div class="nav-hint" aria-hidden="true">
+            <div class="nav-icons">
+              <i class="fas fa-arrow-left"></i>
+              <i class="fas fa-arrow-right"></i>
+            </div>
+            <span>Swipe to navigate</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PALM_SUMMARY_CARD_START -->
+      <div class="reading-card" id="card2">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-sun"></i>
+            </div>
+            <h1 class="card-title">Aura Snapshot</h1>
+            <p class="card-subtitle">Key aura features detected</p>
+            <!-- PALM_SUMMARY_CONTENT_START -->
+            <ul class="palm-summary-list">
+              <li><strong>Dominant tone:</strong> Calm, steady, luminous</li>
+              <li>
+                <strong>Core layers:</strong>
+                <ul class="palm-summary-lines">
+                  <li><span class="palm-summary-arrow">&gt;</span> <strong>Emotional layer:</strong> Open, reflective</li>
+                  <li><span class="palm-summary-arrow">&gt;</span> <strong>Mental layer:</strong> Focused, clear</li>
+                  <li><span class="palm-summary-arrow">&gt;</span> <strong>Relational layer:</strong> Warm, discerning</li>
+                  <li><span class="palm-summary-arrow">&gt;</span> <strong>Spiritual layer:</strong> Quiet but steady</li>
+                </ul>
+              </li>
+              <li><strong>Flow pattern:</strong> Grounded, growth-oriented</li>
+              <li><strong>Overall energy:</strong> Soft, resilient, attentive</li>
+            </ul>
+            <!-- PALM_SUMMARY_CONTENT_END -->
+          </div>
+        </div>
+      </div>
+      <!-- PALM_SUMMARY_CARD_END -->
+
+      
+      <div class="reading-card" id="card3">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-road"></i>
+            </div>
+            <h1 class="card-title">Emotional State &amp; Inner Climate</h1>
+            <p class="card-subtitle">Tone, stability, and emotional rhythm</p>
+            <!-- LIFE_FOUNDATIONS_CONTENT_START -->
+            <p class="card-text">
+              Your aura reads as steady with a soft emotional core, shaped by experience rather than shortcuts.
+            </p>
+            <p class="extra-text">
+              Your life line shows depth and continuity, indicating a strong life force and ability to recover from challenges.
+            </p>
+            <p class="extra-text">
+              Core Theme: Your life foundation is built on strength, emotional depth, and grounded resilience.
+            </p>
+            <!-- LIFE_FOUNDATIONS_CONTENT_END -->
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card" id="card4">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-heart"></i>
+            </div>
+            <h1 class="card-title">Love, Relationships &amp; Emotional Connection</h1>
+            <p class="card-subtitle">Patterns of connection</p>
+            <!-- LOVE_CONTENT_START -->
+            <p class="card-text">
+              Your heart line reveals emotional depth paired with discernment. You may love intensely, but only when trust feels earned and safe.
+            </p>
+            <!-- LOVE_CONTENT_END -->
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card" id="card5">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-brain"></i>
+            </div>
+            <h1 class="card-title">Energy Level &amp; Flow</h1>
+            <p class="card-subtitle">Vitality, rhythm, and recovery</p>
+            <!-- PERSONALITY_CONTENT_START -->
+            <p class="card-text">
+              Your aura shows a steady current with bursts of creative intensity.
+            </p>
+            <!-- PERSONALITY_CONTENT_END -->
+
+            <!-- TRAITS_START -->
+            <div class="trait-visual">
+              <div class="trait-row">
+                <div class="trait-name">Intuition</div>
+                <div class="trait-bar">
+                  <div class="trait-fill" data-width="85"></div>
+                </div>
+              </div>
+              <div class="trait-row">
+                <div class="trait-name">Creativity</div>
+                <div class="trait-bar">
+                  <div class="trait-fill" data-width="78"></div>
+                </div>
+              </div>
+              <div class="trait-row">
+                <div class="trait-name">Resilience</div>
+                <div class="trait-bar">
+                  <div class="trait-fill" data-width="92"></div>
+                </div>
+              </div>
+            </div>
+            <!-- TRAITS_END -->
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card" id="card6">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-briefcase"></i>
+            </div>
+            <h1 class="card-title">Life Direction, Success &amp; Material Flow</h1>
+            <p class="card-subtitle">Alignment, ambition, and prosperity</p>
+            <!-- CAREER_CONTENT_START -->
+            <p class="card-text">
+              Your aura suggests that success grows best through alignment rather than pressure. You do your strongest work when it reflects who you are.
+            </p>
+            <p class="extra-text">
+              The fate line shows several interesting patterns that reveal your relationship with career and purpose.
+            </p>
+            <!-- CAREER_CONTENT_END -->
+
+            <div class="symbol-grid">
+              <button class="symbol-item symbol-btn" type="button" data-modal="lovePatterns" aria-label="Open Love Patterns insight">
+                <span class="symbol">💖</span>
+                <span class="symbol-label">Love Patterns</span>
+                <span class="symbol-micro">What you crave & avoid</span>
+              </button>
+
+              <button class="symbol-item symbol-btn" type="button" data-modal="careerDirection" aria-label="Open Career Direction insight">
+                <span class="symbol">💼</span>
+                <span class="symbol-label">Career Direction</span>
+                <span class="symbol-micro">Where you thrive</span>
+              </button>
+
+              <button class="symbol-item symbol-btn" type="button" data-modal="lifeAlignment" aria-label="Open Life Alignment insight">
+                <span class="symbol">🧭</span>
+                <span class="symbol-label">Life Alignment</span>
+                <span class="symbol-micro">Balance signal</span>
+              </button>
+            </div>
+            <p class="core-theme"><em>Tip: Tap the icons for quick insights (your “mini-reading”).</em></p>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card" id="card7">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-mountain"></i>
+            </div>
+            <h1 class="card-title">Spiritual Memory &amp; Deeper Patterns</h1>
+            <p class="card-subtitle">Where focus brings change</p>
+            <!-- CHALLENGES_CONTENT_START -->
+            <p class="card-text">
+              Your aura reveals tensions between comfort and growth. Several layers show patterns that indicate important developmental challenges.
+            </p>
+            <p class="extra-text">
+              These aren't obstacles but doorways that only open when you're ready.
+            </p>
+            <!-- CHALLENGES_CONTENT_END -->
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card" id="card8">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-hourglass-half"></i>
+            </div>
+            <h1 class="card-title">Intentions, Healing &amp; Growth</h1>
+            <p class="card-subtitle">The chapter unfolding</p>
+            <!-- LIFE_PHASE_CONTENT_START -->
+            <p class="card-text">
+              You are in a transition phase where your focus and values are re-aligning.
+            </p>
+            <!-- LIFE_PHASE_CONTENT_END -->
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card" id="card9">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-heartbeat"></i>
+            </div>
+            <h1 class="card-title">Deep Relationship Analysis</h1>
+            <p class="card-subtitle">Deeper connection insights</p>
+            <!-- DEEP_LOVE_CONTENT_START -->
+            <p class="card-text">
+              Your relationship patterns reveal a complex interplay between vulnerability and protection...
+            </p>
+            <!-- DEEP_LOVE_CONTENT_END -->
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card" id="card10">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h1 class="card-title">Your Timeline: The Next 6 Months</h1>
+            <p class="card-subtitle">What unfolds soon</p>
+            <!-- TIMELINE_CONTENT_START -->
+            <p class="card-text">
+              The timing markers in your aura suggest several significant periods in the next six months...
+            </p>
+            <!-- TIMELINE_CONTENT_END -->
+          </div>
+        </div>
+      </div>
+
+      <div class="reading-card" id="card11">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-calendar-check"></i>
+            </div>
+            <h1 class="card-title">Your Timeline: The Next 12 Months</h1>
+            <p class="card-subtitle">Longer arc and milestones</p>
+            <!-- EXTENDED_TIMELINE_CONTENT_START -->
+            <p class="card-text">
+              The next year holds a sequence of shifts and openings that build on the momentum you are creating now...
+            </p>
+            <!-- EXTENDED_TIMELINE_CONTENT_END -->
+          </div>
+        </div>
+      </div>
+
+      <div class="reading-card" id="card12">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-compass"></i>
+            </div>
+            <h1 class="card-title">Life Purpose & Soul Mission</h1>
+            <p class="card-subtitle">Your deeper calling</p>
+            <!-- PURPOSE_CONTENT_START -->
+            <p class="card-text">
+              Your aura reveals patterns that point toward a deeper sense of purpose and mission...
+            </p>
+            <!-- PURPOSE_CONTENT_END -->
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card" id="card13">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-moon"></i>
+            </div>
+            <h1 class="card-title">Shadow Work & Transformation</h1>
+            <p class="card-subtitle">Hidden aspects</p>
+            <!-- SHADOW_CONTENT_START -->
+            <p class="card-text">
+              The hidden aspects of your aura reveal patterns in the shadows - aspects of yourself that seek integration...
+            </p>
+            <!-- SHADOW_CONTENT_END -->
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card" id="card14">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-list-check"></i>
+            </div>
+            <h1 class="card-title">Practical Guidance & Action Plan</h1>
+            <p class="card-subtitle">Next steps</p>
+            <!-- GUIDANCE_CONTENT_START -->
+            <p class="card-text">
+              Based on your aura reading, here are practical steps you can take to align with your path...
+            </p>
+            <!-- GUIDANCE_CONTENT_END -->
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card" id="card15">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-eye"></i>
+            </div>
+            <h1 class="card-title">Reading Complete</h1>
+            <p class="card-subtitle">Your complete journey</p>
+            <p class="card-text">
+              You've now explored your complete aura reading. Remember, these insights offer reflections, not fixed destinies.
+            </p>
+            <p class="extra-text">
+              Your aura shows patterns and potentials, but your choices shape how these unfold in your life.
+            </p>
+          </div>
+
+          <div class="action-buttons">
+            <button class="action-btn secondary" id="backToDashboardBtn" data-dashboard-url="data-sm-home-url-placeholder">
+              <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Quick Insight Modal -->
+<div class="sm-modal" id="sm-modal">
+  <div class="sm-modal__backdrop" data-modal-close></div>
+  <div class="sm-modal__panel" role="dialog" aria-modal="true">
+    <button class="sm-modal__close" type="button" data-modal-close aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="sm-modal__badge" id="sm-modal-badge">Quick Insight</div>
+    <h3 class="sm-modal__title"></h3>
+    <p class="sm-modal__body"></p>
+  </div>
+</div>
+
+<script src="{{PLUGIN_URL}}assets/js/swipe-template.js"></script>
+</body>
+</html>

@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palm Reading | SoulMirror</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #111111;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Subtle background gradient */
+        .background-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+            z-index: -1;
+        }
+        
+        /* Subtle floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(124, 58, 237, 0.1);
+            border-radius: 50%;
+        }
+        
+        /* Main container */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            max-height: 800px;
+            position: relative;
+            overflow: hidden;
+            touch-action: pan-y;
+            user-select: none;
+        }
+        
+        /* Progress indicator - minimalist */
+        .progress-bar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 100;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 14.28%; /* 1/7 */
+            background: linear-gradient(90deg, #7c3aed, #8b5cf6);
+            border-radius: 10px;
+            transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Reading cards container */
+        .cards-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Individual reading card */
+        .reading-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 60px 30px 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: none;
+            pointer-events: none;
+        }
+        
+        .reading-card.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+        
+        .reading-card.previous {
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+        
+        .reading-card.next {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+        
+        /* Card content */
+        .card-content {
+            width: 100%;
+            max-width: 380px;
+            background: white;
+            border-radius: 28px;
+            padding: 40px 30px;
+            box-shadow: 
+                0 20px 60px rgba(124, 58, 237, 0.1),
+                0 8px 30px rgba(0, 0, 0, 0.05),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #7c3aed, #8b5cf6);
+        }
+        
+        /* Card icon */
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: white;
+            font-size: 34px;
+            box-shadow: 0 12px 30px rgba(124, 58, 237, 0.25);
+        }
+        
+        /* Card title */
+        .card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            color: #111111;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+        
+        /* Card subtitle */
+        .card-subtitle {
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            letter-spacing: 0.3px;
+        }
+        
+        /* Card text */
+        .card-text {
+            font-size: 18px;
+            line-height: 1.7;
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        /* Special elements */
+        .trait-visual {
+            width: 100%;
+            margin: 25px 0;
+        }
+        
+        .trait-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .trait-name {
+            font-weight: 600;
+            color: #111;
+            width: 100px;
+            flex-shrink: 0;
+        }
+        
+        .trait-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .trait-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7c3aed, #8b5cf6);
+            border-radius: 10px;
+            width: 0;
+            transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Quote styling */
+        .insight-quote {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.03), rgba(139, 92, 246, 0.03));
+            border-radius: 18px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 4px solid #7c3aed;
+        }
+        
+        .quote-text {
+            font-size: 18px;
+            font-style: italic;
+            line-height: 1.6;
+            color: #444;
+            margin-bottom: 10px;
+        }
+        
+        .quote-author {
+            font-weight: 600;
+            color: #7c3aed;
+            text-align: right;
+        }
+        
+        /* Navigation hints */
+        .nav-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: #888;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-hint.hidden {
+            opacity: 0;
+        }
+        
+        .nav-icons {
+            display: flex;
+            gap: 15px;
+            font-size: 18px;
+        }
+        
+        .nav-icons i {
+            animation: pulse 2s infinite;
+        }
+        
+        .nav-icons i:nth-child(1) {
+            animation-delay: 0s;
+        }
+        
+        .nav-icons i:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(5px); }
+        }
+        
+        /* Page indicator */
+        .page-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            z-index: 100;
+        }
+        
+        .page-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .page-dot.active {
+            background: #7c3aed;
+            transform: scale(1.2);
+        }
+        
+        /* Action buttons (on last slide) */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .action-btn {
+            padding: 16px 28px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+            color: white;
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.25);
+        }
+        
+        .action-btn.secondary {
+            background: white;
+            color: #7c3aed;
+            border: 2px solid rgba(124, 58, 237, 0.2);
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(124, 58, 237, 0.2);
+        }
+        
+        /* Swipe instructions */
+        .swipe-instruction {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        
+        .swipe-instruction.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .swipe-icon {
+            font-size: 60px;
+            margin-bottom: 30px;
+            color: #7c3aed;
+            animation: swipeInstruction 2s infinite ease-in-out;
+        }
+        
+        @keyframes swipeInstruction {
+            0%, 100% { transform: translateX(0); }
+            33% { transform: translateX(-20px); }
+            66% { transform: translateX(20px); }
+        }
+        
+        .swipe-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #111;
+            margin-bottom: 15px;
+        }
+        
+        .swipe-detail {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            max-width: 300px;
+        }
+        
+        .start-btn {
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.4);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .app-container {
+                max-height: 100vh;
+            }
+            
+            .reading-card {
+                padding: 50px 20px 20px;
+            }
+            
+            .card-content {
+                padding: 35px 25px;
+                border-radius: 24px;
+            }
+            
+            .card-title {
+                font-size: 28px;
+            }
+            
+            .card-text {
+                font-size: 17px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        /* Animation for card entrance */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-in {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background elements -->
+    <div class="background-gradient"></div>
+    <div class="particles" id="particles"></div>
+    
+    <!-- Swipe instruction overlay -->
+    <div class="swipe-instruction" id="swipeInstruction">
+        <div class="swipe-icon">
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-hand-point-up"></i>
+            <i class="fas fa-arrow-right"></i>
+        </div>
+        <h2 class="swipe-text">Swipe to Navigate</h2>
+        <p class="swipe-detail">Swipe left or right to move between reading cards. The card will follow your finger.</p>
+        <button class="start-btn" id="startBtn">Begin Reading</button>
+    </div>
+    
+    <!-- Main app container -->
+    <div class="app-container" id="appContainer">
+        <!-- Progress bar -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <!-- Reading cards container -->
+        <div class="cards-container" id="cardsContainer">
+            <!-- Card 1: Introduction -->
+            <div class="reading-card active" id="card1">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <i class="fas fa-hand-paper"></i>
+                    </div>
+                    <h1 class="card-title">Your SoulMirror Reading</h1>
+                    <p class="card-subtitle">A journey through your palm's story</p>
+                    <p class="card-text">
+                        Welcome to your personalized palm reading. Your hand is a unique map revealing insights about your life's journey. 
+                        <br><br>
+                        Swipe right to begin exploring what your palm reveals.
+                    </p>
+                </div>
+                <div class="nav-hint">
+                    <div class="nav-icons">
+                        <i class="fas fa-arrow-left"></i>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <span>Swipe to navigate</span>
+                </div>
+            </div>
+            
+            <!-- Card 2: Life Path -->
+            <div class="reading-card" id="card2">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <i class="fas fa-road"></i>
+                    </div>
+                    <h1 class="card-title">Your Life Path</h1>
+                    <p class="card-subtitle">Resilience through experience</p>
+                    <p class="card-text">
+                        The primary lines in your palm suggest a life path characterized by <strong>resilience and growth through contrast</strong>. 
+                        <br><br>
+                        You tend to learn the most when life challenges your comfort zone.
+                    </p>
+                    <div class="insight-quote">
+                        <p class="quote-text">"The lines of your palm show a journey of becoming, not just being. Each challenge has carved depth into your character."</p>
+                        <div class="quote-author">— SoulMirror Reading</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 3: Personality -->
+            <div class="reading-card" id="card3">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h1 class="card-title">Personality & Intuition</h1>
+                    <p class="card-subtitle">How you think and decide</p>
+                    <p class="card-text">
+                        Your hand shape reveals a fascinating blend of <strong>intuition paired with practical thinking</strong>. You sense undercurrents quickly but are careful about what you act upon.
+                    </p>
+                    
+                    <div class="trait-visual">
+                        <div class="trait-row">
+                            <div class="trait-name">Intuition</div>
+                            <div class="trait-bar">
+                                <div class="trait-fill" data-width="85"></div>
+                            </div>
+                        </div>
+                        <div class="trait-row">
+                            <div class="trait-name">Creativity</div>
+                            <div class="trait-bar">
+                                <div class="trait-fill" data-width="78"></div>
+                            </div>
+                        </div>
+                        <div class="trait-row">
+                            <div class="trait-name">Resilience</div>
+                            <div class="trait-bar">
+                                <div class="trait-fill" data-width="92"></div>
+                            </div>
+                        </div>
+                        <div class="trait-row">
+                            <div class="trait-name">Practicality</div>
+                            <div class="trait-bar">
+                                <div class="trait-fill" data-width="76"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 4: Love & Relationships -->
+            <div class="reading-card" id="card4">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h1 class="card-title">Love & Relationships</h1>
+                    <p class="card-subtitle">Patterns of connection</p>
+                    <p class="card-text">
+                        Your heart line reveals <strong>emotional depth paired with discernment</strong>. You may love intensely, but only when trust feels earned and safe.
+                        <br><br>
+                        This creates a beautiful tension between your capacity for deep connection and your need for emotional security.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Card 5: Career & Success -->
+            <div class="reading-card" id="card5">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h1 class="card-title">Career & Success</h1>
+                    <p class="card-subtitle">Your path to fulfillment</p>
+                    <p class="card-text">
+                        Your palm suggests that success grows best through <strong>alignment rather than pressure</strong>.
+                        <br><br>
+                        You do your strongest work when it reflects who you are — not who you're expected to be.
+                    </p>
+                    <div class="insight-quote">
+                        <p class="quote-text">"Your success is measured by the alignment between your work and your authentic self, not by external validation."</p>
+                        <div class="quote-author">— SoulMirror Reading</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Card 6: Challenges -->
+            <div class="reading-card" id="card6">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                    <h1 class="card-title">Challenges & Growth</h1>
+                    <p class="card-subtitle">Where you're being stretched</p>
+                    <p class="card-text">
+                        Your palm reveals tensions between <strong>comfort and growth</strong>. These aren't obstacles but doorways that only open when you're ready.
+                        <br><br>
+                        What feels like resistance is often redirection toward something better aligned with your true path.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Card 7: Conclusion -->
+            <div class="reading-card" id="card7">
+                <div class="card-content">
+                    <div class="card-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h1 class="card-title">Complete</h1>
+                    <p class="card-subtitle">Your reading in full</p>
+                    <p class="card-text">
+                        You've now explored the key insights revealed by your palm. Remember, these readings offer <strong>reflections, not fixed destinies</strong>.
+                        <br><br>
+                        Your hand shows patterns and potentials, but your choices shape how these unfold in your life.
+                    </p>
+                    
+                    <div class="action-buttons">
+                        <button class="action-btn secondary" id="restartBtn">
+                            <i class="fas fa-redo"></i> Restart
+                        </button>
+                        <button class="action-btn primary" id="shareBtn">
+                            <i class="fas fa-share-alt"></i> Share
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Page indicator dots -->
+        <div class="page-indicator" id="pageIndicator">
+            <!-- Dots will be added by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const appContainer = document.getElementById('appContainer');
+        const cardsContainer = document.getElementById('cardsContainer');
+        const cards = document.querySelectorAll('.reading-card');
+        const progressFill = document.getElementById('progressFill');
+        const pageIndicator = document.getElementById('pageIndicator');
+        const swipeInstruction = document.getElementById('swipeInstruction');
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        const particles = document.getElementById('particles');
+        
+        // State
+        let currentCardIndex = 0;
+        let totalCards = cards.length;
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let currentTranslateX = 0;
+        let isAnimating = false;
+        
+        // Initialize the app
+        function initApp() {
+            createParticles();
+            createPageIndicators();
+            updateUI();
+            
+            // Hide swipe instruction after 5 seconds if user doesn't interact
+            setTimeout(() => {
+                if (!localStorage.getItem('hasSeenInstruction')) {
+                    swipeInstruction.classList.remove('hidden');
+                }
+            }, 1000);
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Animate trait bars on card 3
+            setTimeout(() => {
+                animateTraitBars();
+            }, 500);
+        }
+        
+        // Create floating particles
+        function createParticles() {
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                particle.style.animation = `float ${3 + Math.random() * 5}s infinite ease-in-out`;
+                particles.appendChild(particle);
+            }
+        }
+        
+        // Create page indicator dots
+        function createPageIndicators() {
+            pageIndicator.innerHTML = '';
+            
+            for (let i = 0; i < totalCards; i++) {
+                const dot = document.createElement('div');
+                dot.className = `page-dot ${i === 0 ? 'active' : ''}`;
+                dot.dataset.index = i;
+                dot.addEventListener('click', () => goToCard(i));
+                pageIndicator.appendChild(dot);
+            }
+        }
+        
+        // Update UI based on current card
+        function updateUI() {
+            // Update progress bar
+            const progressPercentage = ((currentCardIndex + 1) / totalCards) * 100;
+            progressFill.style.width = `${progressPercentage}%`;
+            
+            // Update cards visibility
+            cards.forEach((card, index) => {
+                card.classList.remove('active', 'previous', 'next');
+                
+                if (index === currentCardIndex) {
+                    card.classList.add('active');
+                } else if (index < currentCardIndex) {
+                    card.classList.add('previous');
+                } else {
+                    card.classList.add('next');
+                }
+                
+                // Reset card position
+                card.style.transform = 'translateX(0)';
+            });
+            
+            // Update page indicators
+            document.querySelectorAll('.page-dot').forEach((dot, index) => {
+                if (index === currentCardIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+            
+            // Show/hide nav hint based on card
+            const navHint = document.querySelector('.nav-hint');
+            if (navHint) {
+                if (currentCardIndex === 0) {
+                    navHint.classList.remove('hidden');
+                } else {
+                    navHint.classList.add('hidden');
+                }
+            }
+            
+            // Animate in the active card
+            const activeCard = cards[currentCardIndex];
+            activeCard.classList.add('animate-in');
+            
+            // Animate trait bars if on card 3
+            if (currentCardIndex === 2) {
+                setTimeout(animateTraitBars, 300);
+            }
+        }
+        
+        // Animate the trait bars
+        function animateTraitBars() {
+            const traitFills = document.querySelectorAll('.trait-fill');
+            traitFills.forEach(fill => {
+                const width = fill.dataset.width;
+                fill.style.width = `${width}%`;
+            });
+        }
+        
+        // Go to specific card
+        function goToCard(index) {
+            if (isAnimating || index < 0 || index >= totalCards) return;
+            
+            isAnimating = true;
+            currentCardIndex = index;
+            
+            updateUI();
+            
+            // Reset animation flag
+            setTimeout(() => {
+                isAnimating = false;
+            }, 400);
+        }
+        
+        // Next card
+        function nextCard() {
+            if (currentCardIndex < totalCards - 1) {
+                goToCard(currentCardIndex + 1);
+            }
+        }
+        
+        // Previous card
+        function prevCard() {
+            if (currentCardIndex > 0) {
+                goToCard(currentCardIndex - 1);
+            }
+        }
+        
+        // Handle drag/swipe
+        function handleDragStart(e) {
+            if (isAnimating) return;
+            
+            isDragging = true;
+            
+            // Get starting position
+            if (e.type.includes('touch')) {
+                dragStartX = e.touches[0].clientX;
+                dragStartY = e.touches[0].clientY;
+            } else {
+                dragStartX = e.clientX;
+                dragStartY = e.clientY;
+                e.preventDefault(); // Prevent text selection
+            }
+            
+            // Get current card
+            const currentCard = cards[currentCardIndex];
+            currentCard.style.transition = 'none';
+            currentTranslateX = 0;
+        }
+        
+        function handleDragMove(e) {
+            if (!isDragging || isAnimating) return;
+            
+            let clientX;
+            
+            if (e.type.includes('touch')) {
+                clientX = e.touches[0].clientX;
+            } else {
+                clientX = e.clientX;
+                e.preventDefault();
+            }
+            
+            // Calculate drag distance
+            const dragDistance = clientX - dragStartX;
+            currentTranslateX = dragDistance;
+            
+            // Apply the drag to the current card
+            const currentCard = cards[currentCardIndex];
+            currentCard.style.transform = `translateX(${currentTranslateX}px)`;
+            
+            // Also move the next/previous cards slightly for a layered effect
+            if (currentCardIndex > 0 && dragDistance > 0) {
+                const prevCard = cards[currentCardIndex - 1];
+                const opacity = Math.min(dragDistance / 100, 0.3);
+                prevCard.style.opacity = opacity.toString();
+                prevCard.style.transform = `translateX(${dragDistance * 0.3 - 100}px)`;
+            }
+            
+            if (currentCardIndex < totalCards - 1 && dragDistance < 0) {
+                const nextCard = cards[currentCardIndex + 1];
+                const opacity = Math.min(-dragDistance / 100, 0.3);
+                nextCard.style.opacity = opacity.toString();
+                nextCard.style.transform = `translateX(${dragDistance * 0.3 + 100}px)`;
+            }
+        }
+        
+        function handleDragEnd(e) {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            
+            let clientX;
+            
+            if (e.type.includes('touch')) {
+                clientX = e.changedTouches[0].clientX;
+            } else {
+                clientX = e.clientX;
+            }
+            
+            // Calculate final drag distance
+            const dragDistance = clientX - dragStartX;
+            
+            // Determine if it's a valid swipe
+            const isSwipe = Math.abs(dragDistance) > 50;
+            
+            // Get current card and reset its transition
+            const currentCard = cards[currentCardIndex];
+            currentCard.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease';
+            
+            // Reset other cards
+            cards.forEach(card => {
+                if (card !== currentCard) {
+                    card.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = card.classList.contains('previous') 
+                        ? 'translateX(-100%)' 
+                        : 'translateX(100%)';
+                }
+            });
+            
+            // Handle the swipe
+            if (isSwipe) {
+                if (dragDistance > 0 && currentCardIndex > 0) {
+                    // Swipe right - go to previous card
+                    prevCard();
+                } else if (dragDistance < 0 && currentCardIndex < totalCards - 1) {
+                    // Swipe left - go to next card
+                    nextCard();
+                } else {
+                    // Not enough swipe or at boundary - snap back
+                    currentCard.style.transform = 'translateX(0)';
+                }
+            } else {
+                // Not a swipe - snap back
+                currentCard.style.transform = 'translateX(0)';
+            }
+            
+            // Reset all cards after animation
+            setTimeout(() => {
+                cards.forEach(card => {
+                    card.style.transition = '';
+                    card.style.opacity = '';
+                });
+            }, 400);
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Touch events for mobile
+            appContainer.addEventListener('touchstart', handleDragStart);
+            appContainer.addEventListener('touchmove', handleDragMove);
+            appContainer.addEventListener('touchend', handleDragEnd);
+            
+            // Mouse events for desktop
+            appContainer.addEventListener('mousedown', handleDragStart);
+            appContainer.addEventListener('mousemove', handleDragMove);
+            appContainer.addEventListener('mouseup', handleDragEnd);
+            appContainer.addEventListener('mouseleave', handleDragEnd);
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    nextCard();
+                } else if (e.key === 'ArrowLeft') {
+                    prevCard();
+                }
+            });
+            
+            // Start button
+            startBtn.addEventListener('click', () => {
+                swipeInstruction.classList.add('hidden');
+                localStorage.setItem('hasSeenInstruction', 'true');
+            });
+            
+            // Restart button
+            if (restartBtn) {
+                restartBtn.addEventListener('click', () => {
+                    goToCard(0);
+                });
+            }
+            
+            // Share button
+            if (shareBtn) {
+                shareBtn.addEventListener('click', () => {
+                    // In a real app, this would share the reading
+                    alert('Sharing feature would be implemented here. For now, you can screenshot your reading!');
+                });
+            }
+            
+            // Also allow clicking on sides of the screen to navigate
+            appContainer.addEventListener('click', (e) => {
+                if (isDragging) return; // Don't trigger if we just dragged
+                
+                const clickX = e.clientX;
+                const screenWidth = window.innerWidth;
+                
+                // Click on right third of screen
+                if (clickX > screenWidth * 0.66) {
+                    nextCard();
+                }
+                // Click on left third of screen
+                else if (clickX < screenWidth * 0.33) {
+                    prevCard();
+                }
+            });
+        }
+        
+        // Initialize the app when page loads
+        window.addEventListener('DOMContentLoaded', initApp);
+        
+        // Add CSS for floating animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0%, 100% { transform: translateY(0) translateX(0); }
+                50% { transform: translateY(-10px) translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

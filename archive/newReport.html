@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoulMirror Palm Reading</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for Clean Reading Theme */
+        :root {
+            /* Color Palette - Clean Black/White Theme */
+            --color-bg-main: #ffffff;
+            --color-bg-secondary: #f9f9f9;
+            --color-bg-card: #ffffff;
+            --color-primary: #7c3aed;
+            --color-primary-light: #8b5cf6;
+            --color-accent: #06b6d4;
+            --color-accent-light: #67e8f9;
+            --color-text: #111111;
+            --color-text-secondary: #444444;
+            --color-text-muted: #666666;
+            --color-border: #e8e8e8;
+            --color-shadow: rgba(0, 0, 0, 0.05);
+            
+            /* Spacing */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2.5rem;
+            --spacing-xl: 3.5rem;
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-full: 999px;
+            
+            /* Shadows */
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.1);
+            
+            /* Transitions */
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+        }
+        
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg-main);
+            color: var(--color-text);
+            overflow-x: hidden;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md);
+        }
+        
+        .reading-container {
+            width: 100%;
+            max-width: 1000px;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-heavy);
+            border-radius: var(--radius-xl);
+            background-color: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+        }
+        
+        /* Reading Header */
+        .reading-header {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--color-bg-secondary);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+        
+        .header-content h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 0.25rem;
+        }
+        
+        .header-content p {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            font-weight: 500;
+        }
+        
+        .reading-progress {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .progress-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            white-space: nowrap;
+        }
+        
+        .progress-bar {
+            width: 120px;
+            height: 4px;
+            background-color: rgba(0, 0, 0, 0.08);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 20%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            border-radius: var(--radius-full);
+            transition: width var(--transition-slow) cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        /* Reading Content - Swipe Container */
+        .reading-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            touch-action: pan-y;
+        }
+        
+        .slides-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            transition: transform var(--transition-normal) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .reading-slide {
+            width: 100%;
+            height: 100%;
+            flex-shrink: 0;
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Slide Content */
+        .slide-header {
+            margin-bottom: var(--spacing-md);
+            text-align: center;
+        }
+        
+        .slide-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-sm);
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.2);
+        }
+        
+        .slide-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: var(--spacing-sm);
+            line-height: 1.2;
+        }
+        
+        .slide-subtitle {
+            font-size: 1.1rem;
+            color: var(--color-text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .slide-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: var(--spacing-sm) 0;
+        }
+        
+        .slide-text {
+            font-size: 1.125rem;
+            color: var(--color-text);
+            line-height: 1.7;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        /* Special slide content styles */
+        .trait-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        
+        .trait-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .trait-name {
+            font-weight: 600;
+            color: var(--color-text);
+            width: 120px;
+            flex-shrink: 0;
+        }
+        
+        .trait-bar {
+            flex: 1;
+            height: 8px;
+            background-color: rgba(0, 0, 0, 0.08);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+        
+        .trait-fill {
+            height: 100%;
+            border-radius: var(--radius-full);
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            transition: width 1.5s ease-out;
+        }
+        
+        .insight-list {
+            list-style: none;
+            margin-top: var(--spacing-md);
+        }
+        
+        .insight-list li {
+            margin-bottom: var(--spacing-sm);
+            padding-left: var(--spacing-md);
+            position: relative;
+        }
+        
+        .insight-list li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: var(--color-primary);
+            font-size: 0.9rem;
+        }
+        
+        .symbol-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .symbol-item {
+            text-align: center;
+            padding: var(--spacing-md);
+            background-color: var(--color-bg-secondary);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition-normal);
+        }
+        
+        .symbol-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .symbol {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .symbol-label {
+            font-weight: 600;
+            color: var(--color-text);
+            display: block;
+        }
+        
+        .symbol-micro {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            display: block;
+            margin-top: 0.25rem;
+        }
+        
+        /* Quote styling */
+        .quote-card {
+            background-color: var(--color-bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+            border-left: 4px solid var(--color-primary);
+        }
+        
+        .quote-text {
+            font-style: italic;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .quote-author {
+            font-weight: 600;
+            color: var(--color-text);
+        }
+        
+        /* Reading Footer */
+        .reading-footer {
+            padding: var(--spacing-md);
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--color-bg-secondary);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+        
+        .btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-width: 110px;
+        }
+        
+        .btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.25);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background-color: var(--color-bg-secondary);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary);
+        }
+        
+        .btn-outline:hover:not(:disabled) {
+            background-color: rgba(124, 58, 237, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        /* Swipe indicators */
+        .swipe-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            margin-top: var(--spacing-md);
+        }
+        
+        .swipe-icon {
+            animation: swipe 2s infinite ease-in-out;
+        }
+        
+        @keyframes swipe {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(8px); }
+        }
+        
+        /* Page indicators */
+        .page-indicators {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: var(--spacing-md);
+        }
+        
+        .page-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--color-border);
+            transition: all var(--transition-normal);
+        }
+        
+        .page-indicator.active {
+            background-color: var(--color-primary);
+            width: 24px;
+            border-radius: var(--radius-full);
+        }
+        
+        /* Result slide */
+        .result-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-lg);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: var(--spacing-xs);
+            }
+            
+            .reading-container {
+                height: 90vh;
+                border-radius: var(--radius-lg);
+            }
+            
+            .reading-slide {
+                padding: var(--spacing-md);
+            }
+            
+            .slide-title {
+                font-size: 1.75rem;
+            }
+            
+            .slide-subtitle {
+                font-size: 1rem;
+            }
+            
+            .slide-text {
+                font-size: 1.05rem;
+            }
+            
+            .result-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .symbol-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header-content h1 {
+                font-size: 1.25rem;
+            }
+            
+            .progress-bar {
+                width: 80px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .symbol-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .slide-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .slide-title {
+                font-size: 1.5rem;
+            }
+            
+            .trait-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-xs);
+            }
+            
+            .trait-name {
+                width: 100%;
+            }
+            
+            .reading-footer {
+                flex-direction: column-reverse;
+                gap: var(--spacing-sm);
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+        
+        /* Animation for slide transitions */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .reading-slide.active {
+            animation: fadeInUp var(--transition-normal) forwards;
+        }
+        
+        /* Loading animation */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: opacity var(--transition-normal);
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(124, 58, 237, 0.1);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+        
+        /* Hide loading overlay */
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Preparing your reading...</div>
+    </div>
+    
+    <!-- Main reading container -->
+    <div class="reading-container">
+        <!-- Reading Header -->
+        <div class="reading-header">
+            <div class="header-content">
+                <h1>SoulMirror Palm Reading</h1>
+                <p>Your personalized insights revealed</p>
+            </div>
+            <div class="reading-progress">
+                <div class="progress-text">Page <span id="currentPage">1</span> of <span id="totalPages">7</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Reading Content - Swipe Container -->
+        <div class="reading-content" id="readingContent">
+            <div class="slides-container" id="slidesContainer">
+                <!-- Slide 1: Introduction -->
+                <div class="reading-slide active" data-slide="1">
+                    <div class="slide-header">
+                        <div class="slide-icon">
+                            <i class="fas fa-hand-paper"></i>
+                        </div>
+                        <h1 class="slide-title">Your SoulMirror Reading</h1>
+                        <p class="slide-subtitle">A journey through the lines, shapes, and energies of your palm</p>
+                    </div>
+                    <div class="slide-body">
+                        <div class="slide-text">
+                            <p>Welcome to your personalized palm reading. Your hand is a unique map of your life's journey, revealing insights about your personality, relationships, and potential.</p>
+                            <p>This reading is divided into <strong>7 key areas</strong>, each offering a glimpse into different aspects of your life and character.</p>
+                            <p>Swipe right or click "Next" to begin exploring what your palm reveals.</p>
+                        </div>
+                        
+                        <div class="swipe-indicator">
+                            <i class="fas fa-arrow-right swipe-icon"></i>
+                            <span>Swipe to continue</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 2: Life Path -->
+                <div class="reading-slide" data-slide="2">
+                    <div class="slide-header">
+                        <div class="slide-icon">
+                            <i class="fas fa-road"></i>
+                        </div>
+                        <h1 class="slide-title">Your Life Path</h1>
+                        <p class="slide-subtitle">Resilience shaped through experience</p>
+                    </div>
+                    <div class="slide-body">
+                        <div class="slide-text">
+                            <p>The primary lines in your palm suggest a life path characterized by <strong>resilience and growth through contrast</strong>. You tend to learn the most when life challenges your comfort zone.</p>
+                            <p>Your emotional nature runs deep, but you don't grant access instantly. When you commit to a path or a person, it's with <strong>intentionality and discernment</strong>.</p>
+                            <p>This pattern indicates that your most significant growth occurs through lived experience rather than shortcuts or easy paths.</p>
+                        </div>
+                        
+                        <div class="quote-card">
+                            <p class="quote-text">"The lines of your palm show a journey of becoming, not just being. Each challenge has carved depth into your character."</p>
+                            <div class="quote-author">— SoulMirror Reading</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 3: Personality Traits -->
+                <div class="reading-slide" data-slide="3">
+                    <div class="slide-header">
+                        <div class="slide-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h1 class="slide-title">Personality & Intuition</h1>
+                        <p class="slide-subtitle">How you think, feel, and decide</p>
+                    </div>
+                    <div class="slide-body">
+                        <div class="slide-text">
+                            <p>Your hand shape and finger alignment reveal a fascinating blend of <strong>intuition paired with practical thinking</strong>. You sense undercurrents quickly but are careful about what you act upon.</p>
+                            <p>This balance allows you to navigate complex situations with both insight and grounded decision-making.</p>
+                        </div>
+                        
+                        <div class="trait-list">
+                            <div class="trait-item">
+                                <div class="trait-name">Intuition</div>
+                                <div class="trait-bar">
+                                    <div class="trait-fill" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <div class="trait-item">
+                                <div class="trait-name">Creativity</div>
+                                <div class="trait-bar">
+                                    <div class="trait-fill" style="width: 78%"></div>
+                                </div>
+                            </div>
+                            <div class="trait-item">
+                                <div class="trait-name">Resilience</div>
+                                <div class="trait-bar">
+                                    <div class="trait-fill" style="width: 92%"></div>
+                                </div>
+                            </div>
+                            <div class="trait-item">
+                                <div class="trait-name">Practicality</div>
+                                <div class="trait-bar">
+                                    <div class="trait-fill" style="width: 76%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 4: Love & Relationships -->
+                <div class="reading-slide" data-slide="4">
+                    <div class="slide-header">
+                        <div class="slide-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h1 class="slide-title">Love & Relationships</h1>
+                        <p class="slide-subtitle">Patterns of connection and emotional depth</p>
+                    </div>
+                    <div class="slide-body">
+                        <div class="slide-text">
+                            <p>Your heart line reveals a pattern of <strong>emotional depth paired with discernment</strong>. You may love intensely, but only when trust feels earned and safe.</p>
+                            <p>This creates a beautiful tension between your capacity for deep connection and your need for emotional security.</p>
+                        </div>
+                        
+                        <div class="symbol-grid">
+                            <div class="symbol-item">
+                                <span class="symbol">💖</span>
+                                <span class="symbol-label">Love Patterns</span>
+                                <span class="symbol-micro">What you crave & avoid</span>
+                            </div>
+                            <div class="symbol-item">
+                                <span class="symbol">🤝</span>
+                                <span class="symbol-label">Trust Building</span>
+                                <span class="symbol-micro">Your approach to trust</span>
+                            </div>
+                            <div class="symbol-item">
+                                <span class="symbol">⚖️</span>
+                                <span class="symbol-label">Emotional Balance</span>
+                                <span class="symbol-micro">Heart & mind alignment</span>
+                            </div>
+                        </div>
+                        
+                        <div class="insight-list">
+                            <li>Your love pattern shows a preference for depth over breadth in relationships</li>
+                            <li>You have a natural ability to sense compatibility early in connections</li>
+                            <li>Past experiences have shaped but not hardened your approach to love</li>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 5: Career & Success -->
+                <div class="reading-slide" data-slide="5">
+                    <div class="slide-header">
+                        <div class="slide-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <h1 class="slide-title">Career & Success</h1>
+                        <p class="slide-subtitle">Your relationship with achievement and purpose</p>
+                    </div>
+                    <div class="slide-body">
+                        <div class="slide-text">
+                            <p>Your palm suggests that success grows best through <strong>alignment rather than pressure</strong>. You do your strongest work when it reflects who you are — not who you're expected to be.</p>
+                            <p>This indicates a career path that may not follow traditional timelines but leads to more authentic fulfillment.</p>
+                        </div>
+                        
+                        <div class="symbol-grid">
+                            <div class="symbol-item">
+                                <span class="symbol">💼</span>
+                                <span class="symbol-label">Career Direction</span>
+                                <span class="symbol-micro">Where you thrive</span>
+                            </div>
+                            <div class="symbol-item">
+                                <span class="symbol">🚀</span>
+                                <span class="symbol-label">Growth Potential</span>
+                                <span class="symbol-micro">Your upward trajectory</span>
+                            </div>
+                            <div class="symbol-item">
+                                <span class="symbol">🧭</span>
+                                <span class="symbol-label">Life Alignment</span>
+                                <span class="symbol-micro">Balance signal</span>
+                            </div>
+                        </div>
+                        
+                        <div class="quote-card">
+                            <p class="quote-text">"Your success is not measured by external validation but by the alignment between your work and your authentic self."</p>
+                            <div class="quote-author">— SoulMirror Reading</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 6: Challenges & Opportunities -->
+                <div class="reading-slide" data-slide="6">
+                    <div class="slide-header">
+                        <div class="slide-icon">
+                            <i class="fas fa-mountain"></i>
+                        </div>
+                        <h1 class="slide-title">Challenges & Opportunities</h1>
+                        <p class="slide-subtitle">Growth areas and hidden potential</p>
+                    </div>
+                    <div class="slide-body">
+                        <div class="slide-text">
+                            <p>Your palm reveals interesting tensions between <strong>comfort and growth</strong>. These aren't obstacles but doorways that only open when you're ready.</p>
+                            <p>What feels like resistance is often redirection toward something better aligned with your true path.</p>
+                        </div>
+                        
+                        <div class="insight-list">
+                            <li>The line patterns suggest a current phase of internal recalibration</li>
+                            <li>Your greatest challenges often become your most valuable teachers</li>
+                            <li>There's hidden potential in areas you may currently perceive as weaknesses</li>
+                            <li>Timing plays a significant role in how challenges unfold</li>
+                        </div>
+                        
+                        <div class="slide-text" style="margin-top: var(--spacing-md);">
+                            <p><strong>Key Insight:</strong> Your current challenges are not blockages but invitations to grow in specific directions that will serve your long-term development.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 7: Conclusion -->
+                <div class="reading-slide" data-slide="7">
+                    <div class="slide-header">
+                        <div class="slide-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h1 class="slide-title">Your Reading Complete</h1>
+                        <p class="slide-subtitle">Integration and next steps</p>
+                    </div>
+                    <div class="slide-body">
+                        <div class="slide-text">
+                            <p>You've now explored the key insights revealed by your palm. Remember that these readings offer <strong>reflections, not fixed destinies</strong>.</p>
+                            <p>Your hand shows patterns and potentials, but your choices shape how these unfold in your life.</p>
+                            <p>The most powerful application of this reading is as a tool for self-awareness and intentional living.</p>
+                        </div>
+                        
+                        <div class="result-actions">
+                            <button class="btn btn-outline" id="restartBtn">
+                                <i class="fas fa-redo"></i> Restart Reading
+                            </button>
+                            <button class="btn btn-primary" id="shareBtn">
+                                <i class="fas fa-share-alt"></i> Share Reading
+                            </button>
+                        </div>
+                        
+                        <div class="quote-card" style="margin-top: var(--spacing-lg);">
+                            <p class="quote-text">"Your palm is a map, but you are the navigator. These insights are tools for your journey, not the destination itself."</p>
+                            <div class="quote-author">— SoulMirror Reading</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Reading Footer -->
+        <div class="reading-footer">
+            <button class="btn btn-secondary" id="prevBtn" disabled>
+                <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            
+            <div class="page-indicators" id="pageIndicators">
+                <!-- Indicators will be added by JavaScript -->
+            </div>
+            
+            <button class="btn btn-primary" id="nextBtn">
+                Next <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const slidesContainer = document.getElementById('slidesContainer');
+        const slides = document.querySelectorAll('.reading-slide');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        const currentPageSpan = document.getElementById('currentPage');
+        const totalPagesSpan = document.getElementById('totalPages');
+        const progressFill = document.getElementById('progressFill');
+        const pageIndicators = document.getElementById('pageIndicators');
+        const readingContent = document.getElementById('readingContent');
+        
+        // State variables
+        let currentSlide = 0;
+        let totalSlides = slides.length;
+        let isAnimating = false;
+        let startX = 0;
+        let endX = 0;
+        const swipeThreshold = 50; // Minimum distance for a swipe
+        
+        // Initialize the reading
+        function initReading() {
+            // Set total pages
+            totalPagesSpan.textContent = totalSlides;
+            
+            // Create page indicators
+            createPageIndicators();
+            
+            // Update the UI
+            updateUI();
+            
+            // Hide loading overlay after a short delay
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden');
+            }, 800);
+            
+            // Setup event listeners
+            setupEventListeners();
+        }
+        
+        // Create page indicators
+        function createPageIndicators() {
+            pageIndicators.innerHTML = '';
+            
+            for (let i = 0; i < totalSlides; i++) {
+                const indicator = document.createElement('div');
+                indicator.className = `page-indicator ${i === 0 ? 'active' : ''}`;
+                indicator.dataset.index = i;
+                indicator.addEventListener('click', () => goToSlide(i));
+                pageIndicators.appendChild(indicator);
+            }
+        }
+        
+        // Update the UI based on current slide
+        function updateUI() {
+            // Update current page
+            currentPageSpan.textContent = currentSlide + 1;
+            
+            // Update progress bar
+            const progressPercentage = ((currentSlide + 1) / totalSlides) * 100;
+            progressFill.style.width = `${progressPercentage}%`;
+            
+            // Update button states
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.textContent = currentSlide === totalSlides - 1 ? 'Finish' : 'Next';
+            nextBtn.innerHTML = currentSlide === totalSlides - 1 ? 
+                'Finish <i class="fas fa-check"></i>' : 
+                'Next <i class="fas fa-chevron-right"></i>';
+            
+            // Update page indicators
+            document.querySelectorAll('.page-indicator').forEach((indicator, index) => {
+                if (index === currentSlide) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
+            
+            // Move slides container
+            slidesContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            // Update active slide class
+            slides.forEach((slide, index) => {
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+        }
+        
+        // Navigate to a specific slide
+        function goToSlide(slideIndex) {
+            if (isAnimating || slideIndex < 0 || slideIndex >= totalSlides) return;
+            
+            isAnimating = true;
+            currentSlide = slideIndex;
+            
+            updateUI();
+            
+            // Reset animation flag after transition
+            setTimeout(() => {
+                isAnimating = false;
+            }, 300);
+        }
+        
+        // Go to next slide
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                goToSlide(currentSlide + 1);
+            }
+        }
+        
+        // Go to previous slide
+        function prevSlide() {
+            if (currentSlide > 0) {
+                goToSlide(currentSlide - 1);
+            }
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Button events
+            prevBtn.addEventListener('click', prevSlide);
+            nextBtn.addEventListener('click', nextSlide);
+            
+            if (restartBtn) {
+                restartBtn.addEventListener('click', () => goToSlide(0));
+            }
+            
+            if (shareBtn) {
+                shareBtn.addEventListener('click', () => {
+                    alert('Sharing feature would be implemented here. For now, you can screenshot your reading!');
+                });
+            }
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            });
+            
+            // Touch events for swiping
+            readingContent.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+            });
+            
+            readingContent.addEventListener('touchmove', (e) => {
+                endX = e.touches[0].clientX;
+            });
+            
+            readingContent.addEventListener('touchend', () => {
+                const distance = startX - endX;
+                
+                if (Math.abs(distance) > swipeThreshold) {
+                    if (distance > 0) {
+                        // Swipe left - next slide
+                        nextSlide();
+                    } else {
+                        // Swipe right - previous slide
+                        prevSlide();
+                    }
+                }
+            });
+            
+            // Mouse events for desktop swiping (optional)
+            let mouseDownX = 0;
+            let mouseUpX = 0;
+            
+            readingContent.addEventListener('mousedown', (e) => {
+                mouseDownX = e.clientX;
+            });
+            
+            readingContent.addEventListener('mouseup', (e) => {
+                mouseUpX = e.clientX;
+                const distance = mouseDownX - mouseUpX;
+                
+                if (Math.abs(distance) > swipeThreshold) {
+                    if (distance > 0) {
+                        // Swipe left - next slide
+                        nextSlide();
+                    } else {
+                        // Swipe right - previous slide
+                        prevSlide();
+                    }
+                }
+            });
+        }
+        
+        // Animate trait bars on slide 3 when it becomes active
+        function observeSlideChanges() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.target.dataset.slide === '3') {
+                        // Animate the trait bars
+                        const traitFills = entry.target.querySelectorAll('.trait-fill');
+                        traitFills.forEach(fill => {
+                            // Reset and animate
+                            const width = fill.style.width;
+                            fill.style.width = '0';
+                            setTimeout(() => {
+                                fill.style.width = width;
+                            }, 100);
+                        });
+                    }
+                });
+            }, {
+                threshold: 0.5
+            });
+            
+            slides.forEach(slide => {
+                observer.observe(slide);
+            });
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            initReading();
+            observeSlideChanges();
+        });
+    </script>
+</body>
+</html>

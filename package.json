@@ -1,0 +1,20 @@
+{
+  "name": "sm-aura-reading-tests",
+  "version": "1.0.0",
+  "description": "Automated E2E tests for Aura Reading plugin",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report",
+    "test:e2e": "playwright test e2e-full-flow.spec.js",
+    "test:e2e:headed": "playwright test e2e-full-flow.spec.js --headed",
+    "test:e2e:ui": "playwright test e2e-full-flow.spec.js --ui",
+    "test:unit": "playwright test palm-reading-flow.spec.js",
+    "generate:test-emails": "node scripts/generate-test-emails.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}

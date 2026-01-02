@@ -1,0 +1,1831 @@
+// Mystic Palm Reading Configuration
+const palmReadingConfig = {
+    // Theme configuration
+    theme: {
+        name: 'Mystic Palm Reading',
+        primaryColor: '#7c3aed',
+        accentColor: '#06b6d4',
+        textColor: '#ffffff'
+    },
+
+    // Steps configuration
+    steps: [
+        {
+            id: 'welcome',
+            type: 'welcome',
+            title: 'Unlock Your Destiny',
+            subtitle: 'Discover what your palm reveals about your life path, relationships, and hidden potential.',
+            backgroundStyle: 'mystic'
+        },
+        {
+            id: 'leadCapture',
+            type: 'leadCapture',
+            title: 'Begin Your Journey',
+            subtitle: 'Share a few details to personalize your reading',
+            fields: {
+                name: {
+                    label: 'What should we call you?',
+                    placeholder: 'Enter your name',
+                    required: true,
+                    icon: 'fas fa-user'
+                },
+                email: {
+                    label: 'What is your best email?',
+                    placeholder: 'your.email@example.com',
+                    required: true,
+                    type: 'email',
+                    icon: 'fas fa-envelope'
+                },
+                identity: {
+                    label: 'How do you identify?',
+                    type: 'radio',
+                    required: true,
+                    options: [
+                        { id: '', label: 'Select an option...' }, // placeholder
+                        { id: 'woman', label: 'Woman' },
+                        { id: 'man', label: 'Man' },
+                        { id: 'prefer-not', label: 'Prefer not to say – I want to keep it mysterious' }
+                    ]
+                },
+                gdpr: {
+                    label: 'I agree to receive my palm reading and related emails, and I accept the <a href="#">Privacy Policy</a> and <a href="#">Terms</a>.',
+                    required: true
+                }
+            },
+            backgroundStyle: 'gradient-1'
+        },
+        {
+            id: 'emailLoading',
+            type: 'emailLoading',
+            title: 'Tuning Into Your Energy',
+            messages: [
+                'Connecting with cosmic vibrations...',
+                'Analyzing your unique energy signature...',
+                'Preparing your personalized reading...'
+            ],
+            duration: 5000, // 5 seconds
+            backgroundStyle: 'gradient-2'
+        },
+        {
+            id: 'emailVerification',
+            type: 'emailVerification',
+            title: 'Verify Your Connection',
+            subtitle: 'We\'ve sent a 6-digit verification code to your email',
+            codeLength: 6,
+            backgroundStyle: 'gradient-3'
+        },
+        {
+            id: 'palmPhoto',
+            type: 'palmPhoto',
+            title: 'Show Me Your Palm',
+            subtitle: 'Place your dominant hand in front of the camera, palm facing you, in good light.',
+            instructions: [
+                'Use your dominant hand (the one you write with)',
+                'Make sure your palm is facing up',
+                'Good lighting helps us see the lines clearly',
+                'Try to keep your fingers relaxed and slightly apart'
+            ],
+            backgroundStyle: 'gradient-1'
+        },
+        {
+            id: 'quiz1',
+            type: 'quizQuestion',
+            title: 'Question 1 of 5',
+            question: 'How would you describe your energy lately?',
+            questionType: 'singleChoice',
+            options: [
+                { id: 'energetic', label: 'Energetic and active', icon: 'fas fa-bolt' },
+                { id: 'balanced', label: 'Balanced and calm', icon: 'fas fa-scale-balanced' },
+                { id: 'creative', label: 'Creative and inspired', icon: 'fas fa-palette' },
+                { id: 'reflective', label: 'Reflective and introspective', icon: 'fas fa-brain' }
+            ],
+            required: true,
+            backgroundStyle: 'gradient-2'
+        },
+        {
+            id: 'quiz2',
+            type: 'quizQuestion',
+            title: 'Question 2 of 5',
+            question: 'What is your biggest focus right now?',
+            questionType: 'singleChoice',
+            options: [
+                { id: 'career', label: 'Career and ambitions', icon: 'fas fa-briefcase' },
+                { id: 'relationships', label: 'Relationships and connections', icon: 'fas fa-heart' },
+                { id: 'personal', label: 'Personal growth and learning', icon: 'fas fa-seedling' },
+                { id: 'health', label: 'Health and wellbeing', icon: 'fas fa-heartbeat' }
+            ],
+            required: true,
+            backgroundStyle: 'gradient-3'
+        },
+        {
+            id: 'quiz3',
+            type: 'quizQuestion',
+            title: 'Question 3 of 5',
+            question: 'Which element resonates with you most?',
+            questionType: 'singleChoice',
+            options: [
+                { id: 'fire', label: 'Fire - Passion and transformation', icon: 'fas fa-fire' },
+                { id: 'water', label: 'Water - Emotion and intuition', icon: 'fas fa-water' },
+                { id: 'earth', label: 'Earth - Stability and growth', icon: 'fas fa-mountain' },
+                { id: 'air', label: 'Air - Communication and intellect', icon: 'fas fa-wind' }
+            ],
+            required: true,
+            backgroundStyle: 'gradient-1'
+        },
+        {
+            id: 'quiz4',
+            type: 'quizQuestion',
+            title: 'Question 4 of 5',
+            question: 'What do you seek guidance on?',
+            questionType: 'multipleChoice',
+            options: [
+                { id: 'purpose', label: 'Life purpose and direction', icon: 'fas fa-compass' },
+                { id: 'relationships', label: 'Love and relationships', icon: 'fas fa-heart' },
+                { id: 'finances', label: 'Finances and abundance', icon: 'fas fa-coins' },
+                { id: 'health', label: 'Health and vitality', icon: 'fas fa-heartbeat' },
+                { id: 'creativity', label: 'Creativity and expression', icon: 'fas fa-paintbrush' }
+            ],
+            required: true,
+            backgroundStyle: 'gradient-2'
+        },
+        {
+            id: 'quiz5',
+            type: 'quizQuestion',
+            title: 'Question 5 of 5',
+            question: 'Share an intention or wish for your future',
+            questionType: 'text', // <-- this is the question type
+            placeholder: 'Type your intention here...',
+            required: false,
+            backgroundStyle: 'gradient-3'
+        },
+        {
+            id: 'resultLoading',
+            type: 'resultLoading',
+            title: 'Preparing Your Palm Reading',
+            messages: [
+                "Tuning into the energy written in your palm...",
+                "Tracing your life line and heart line...",
+                "Listening to the story hidden in your hand..."
+            ],
+            duration: 4000, // 4 seconds – adjust if you like
+            backgroundStyle: 'mystic'
+        },
+        {
+            id: 'result',
+            type: 'result',
+            title: 'Your Palm Reading',
+            backgroundStyle: 'mystic'
+        }
+
+    ],
+
+    // Final result configuration
+    result: {
+        generateReading: function (userData, quizResponses) {
+            const readings = [
+                "Your palm reveals a strong life line indicating vitality and resilience. You have the capacity to overcome challenges and emerge stronger.",
+                "The heart line shows deep emotional intelligence and capacity for meaningful connections. Your relationships are guided by intuition.",
+                "The fate line suggests you're entering a period of significant personal growth and discovery. New opportunities are on the horizon.",
+                "The mount of Jupiter indicates natural leadership abilities. Trust your instincts when making important decisions.",
+                "Your minor lines reveal hidden talents waiting to be expressed. Creative pursuits will bring you fulfillment."
+            ];
+
+            // Select reading based on user's name (simple hash)
+            const nameHash = userData.name ? userData.name.length % readings.length : 0;
+            return readings[nameHash];
+        },
+
+        insights: [
+            "You possess strong intuitive abilities that guide your decisions",
+            "Your life path shows potential for creative expression and innovation",
+            "Relationships play a significant role in your personal growth",
+            "You have an innate ability to adapt to changing circumstances",
+            "Your palm suggests a balance between practical matters and spiritual growth"
+        ]
+    }
+};
+
+
+const appState = {
+    currentStep: 0,
+    userData: {
+        name: '',
+        email: '',
+        identity: '',
+        emailVerified: false,
+        palmImage: null,
+        gdprConsent: false
+    },
+    quizResponses: {},
+    isTransitioning: false,
+    loadingTimer: null,
+    cameraStream: null // Add this line
+};
+
+// Add this function to clean up camera when leaving photo step
+function cleanupCamera() {
+    if (appState.cameraStream) {
+        stopCamera();
+        appState.cameraStream = null;
+    }
+}
+
+
+
+// DOM Elements
+const appContent = document.getElementById('app-content');
+const backBtn = document.getElementById('back-btn');
+const nextBtn = document.getElementById('next-btn');
+const progressFill = document.querySelector('.progress-fill');
+const currentStepEl = document.querySelector('.current-step');
+const stepNameEl = document.querySelector('.step-name');
+const totalStepsEl = document.querySelector('.total-steps');
+const toast = document.getElementById('toast');
+
+// Initialize the app
+function initApp() {
+    // Set total steps
+    totalStepsEl.textContent = palmReadingConfig.steps.length;
+
+    // Render the first step
+    renderStep(0);
+
+    // Setup event listeners
+    backBtn.addEventListener('click', goToPreviousStep);
+    nextBtn.addEventListener('click', goToNextStep);
+
+    // Handle keyboard navigation
+    document.addEventListener('keydown', handleKeyboardNavigation);
+
+    // Update progress bar
+    updateProgressBar();
+}
+
+// Render a specific step
+function renderStep(stepIndex) {
+    if (stepIndex < 0 || stepIndex >= palmReadingConfig.steps.length) return;
+
+    const step = palmReadingConfig.steps[stepIndex];
+    appState.currentStep = stepIndex;
+
+    // Clear current content
+    appContent.innerHTML = '';
+
+    // Create step container
+    const stepContainer = document.createElement('div');
+    stepContainer.className = 'app-step';
+    stepContainer.setAttribute('data-step', stepIndex);
+    stepContainer.setAttribute('role', 'region');
+    stepContainer.setAttribute('aria-labelledby', `step-title-${stepIndex}`);
+
+    // Render based on step type
+    switch (step.type) {
+        case 'welcome':
+            renderWelcomeStep(stepContainer, step);
+            break;
+        case 'leadCapture':
+            renderLeadCaptureStep(stepContainer, step);
+            break;
+        case 'emailLoading':
+            renderEmailLoadingStep(stepContainer, step);
+            break;
+        case 'emailVerification':
+            renderEmailVerificationStep(stepContainer, step);
+            break;
+        case 'palmPhoto':
+            renderPalmPhotoStep(stepContainer, step);
+            break;
+        case 'quizQuestion':
+            renderQuizQuestionStep(stepContainer, step);
+            break;
+        case 'resultLoading':                     // ⬅️ NEW
+            renderResultLoadingStep(stepContainer, step);
+            break;
+        case 'result':
+            renderResultStep(stepContainer, step);
+            break;
+    }
+
+
+    appContent.appendChild(stepContainer);
+
+    // Update navigation buttons
+    updateNavigationButtons();
+
+    // Update progress indicator
+    updateProgressBar();
+
+    // Set focus for accessibility
+    setTimeout(() => {
+        const stepTitle = document.querySelector('.step-title');
+        if (stepTitle) {
+            stepTitle.setAttribute('tabindex', '-1');
+            stepTitle.focus();
+        }
+    }, 100);
+}
+
+// Render welcome step
+function renderWelcomeStep(container, step) {
+    const title = document.createElement('h1');
+    title.className = 'step-title';
+    title.textContent = step.title;
+    container.appendChild(title);
+
+    const subtitle = document.createElement('p');
+    subtitle.className = 'step-subtitle';
+    subtitle.textContent = step.subtitle;
+    container.appendChild(subtitle);
+
+    // Add mystical icon
+    const icon = document.createElement('div');
+    icon.className = 'result-icon';
+    icon.innerHTML = '<i class="fas fa-hand-sparkles"></i>';
+    container.appendChild(icon);
+
+    stepNameEl.textContent = 'Welcome';
+}
+
+// Render lead capture step
+function renderLeadCaptureStep(container, step) {
+    const title = document.createElement('h1');
+    title.className = 'step-title';
+    title.textContent = step.title;
+    container.appendChild(title);
+
+    const subtitle = document.createElement('p');
+    subtitle.className = 'step-subtitle';
+    subtitle.textContent = step.subtitle;
+    container.appendChild(subtitle);
+
+    // Create form
+    const form = document.createElement('form');
+    form.className = 'form-container';
+    form.setAttribute('novalidate', 'true');
+
+    // Name field
+    const nameGroup = document.createElement('div');
+    nameGroup.className = 'form-group';
+
+    const nameLabel = document.createElement('label');
+    nameLabel.className = 'form-label';
+    nameLabel.innerHTML = `<i class="${step.fields.name.icon}"></i> ${step.fields.name.label}`;
+
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'form-input';
+    nameInput.placeholder = step.fields.name.placeholder;
+    nameInput.required = step.fields.name.required;
+    nameInput.value = appState.userData.name;
+
+    nameInput.addEventListener('input', () => {
+        appState.userData.name = nameInput.value.trim();
+        validateLeadCaptureForm();
+    });
+
+    nameGroup.appendChild(nameLabel);
+    nameGroup.appendChild(nameInput);
+    form.appendChild(nameGroup);
+
+    // Email field
+    const emailGroup = document.createElement('div');
+    emailGroup.className = 'form-group';
+
+    const emailLabel = document.createElement('label');
+    emailLabel.className = 'form-label';
+    emailLabel.innerHTML = `<i class="${step.fields.email.icon}"></i> ${step.fields.email.label}`;
+
+    const emailInput = document.createElement('input');
+    emailInput.type = 'email';
+    emailInput.className = 'form-input';
+    emailInput.placeholder = step.fields.email.placeholder;
+    emailInput.required = step.fields.email.required;
+    emailInput.value = appState.userData.email;
+
+    emailInput.addEventListener('input', () => {
+        appState.userData.email = emailInput.value.trim();
+        validateLeadCaptureForm();
+    });
+
+    emailGroup.appendChild(emailLabel);
+    emailGroup.appendChild(emailInput);
+    form.appendChild(emailGroup);
+
+    // Identity field
+    // Identity field (dropdown version)
+    const identityGroup = document.createElement('div');
+    identityGroup.className = 'form-group';
+
+    const identityLabel = document.createElement('label');
+    identityLabel.className = 'form-label';
+    identityLabel.innerHTML = `<i class="fas fa-user-friends"></i> ${step.fields.identity.label}`;
+
+    const identitySelect = document.createElement('select');
+    identitySelect.className = 'form-select';
+    identitySelect.name = 'identity';
+
+    // Build options
+    step.fields.identity.options.forEach(option => {
+        const opt = document.createElement('option');
+        opt.value = option.id;
+        opt.textContent = option.label;
+
+        // Set placeholder option as selected when no value yet
+        if (!appState.userData.identity && option.id === '') {
+            opt.selected = true;
+        }
+
+        // Restore previous choice if user goes back
+        if (appState.userData.identity === option.id) {
+            opt.selected = true;
+        }
+
+        identitySelect.appendChild(opt);
+    });
+
+    identitySelect.addEventListener('change', () => {
+        // Ignore placeholder value ('')
+        appState.userData.identity = identitySelect.value;
+        validateLeadCaptureForm();
+    });
+
+    identityGroup.appendChild(identityLabel);
+    identityGroup.appendChild(identitySelect);
+    form.appendChild(identityGroup);
+
+
+    // GDPR consent
+    const gdprGroup = document.createElement('div');
+    gdprGroup.className = 'form-group';
+
+    const gdprContainer = document.createElement('div');
+    gdprContainer.className = 'checkbox-custom';
+
+    const gdprCheckbox = document.createElement('div');
+    gdprCheckbox.className = `checkbox-custom-input ${appState.userData.gdprConsent ? 'checked' : ''}`;
+    gdprCheckbox.addEventListener('click', () => {
+        appState.userData.gdprConsent = !appState.userData.gdprConsent;
+        gdprCheckbox.classList.toggle('checked', appState.userData.gdprConsent);
+        validateLeadCaptureForm();
+    });
+
+    const gdprLabel = document.createElement('label');
+    gdprLabel.className = 'checkbox-custom-label';
+    gdprLabel.innerHTML = step.fields.gdpr.label;
+
+    gdprContainer.appendChild(gdprCheckbox);
+    gdprContainer.appendChild(gdprLabel);
+    gdprGroup.appendChild(gdprContainer);
+    form.appendChild(gdprGroup);
+
+    // Error message area
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'form-error';
+    form.appendChild(errorDiv);
+
+    container.appendChild(form);
+
+    stepNameEl.textContent = 'Your Details';
+
+    // Initial validation
+    validateLeadCaptureForm();
+
+}
+
+// Validate lead capture form
+function validateLeadCaptureForm() {
+    const user = appState.userData;
+    let errorMessage = '';
+
+    if (!user.name.trim()) {
+        errorMessage = 'Please enter your name.';
+    } else if (!user.email.trim()) {
+        errorMessage = 'Please enter your email address.';
+    } else if (!validateEmail(user.email)) {
+        errorMessage = 'Please enter a valid email address.';
+    } else if (!user.identity) {
+        errorMessage = 'Please select how you identify.';
+    } else if (!user.gdprConsent) {
+        errorMessage = 'Please accept the terms so we can send your reading.';
+    }
+
+    const errorDiv = document.querySelector('.form-error');
+    if (errorDiv) {
+        errorDiv.textContent = errorMessage;
+        errorDiv.style.display = errorMessage ? 'block' : 'none';
+    }
+
+    nextBtn.disabled = !!errorMessage;
+}
+
+
+// Email validation
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+// Render email loading step
+function renderEmailLoadingStep(container, step) {
+    const title = document.createElement('h1');
+    title.className = 'step-title';
+    title.textContent = step.title;
+    container.appendChild(title);
+
+    const spinner = document.createElement('div');
+    spinner.className = 'loading-spinner';
+    container.appendChild(spinner);
+
+    const loadingText = document.createElement('p');
+    loadingText.className = 'loading-text';
+    loadingText.textContent = step.messages[0];
+    container.appendChild(loadingText);
+
+    const subtext = document.createElement('p');
+    subtext.className = 'loading-subtext';
+    subtext.textContent = `Verification code will be sent to ${appState.userData.email}`;
+    container.appendChild(subtext);
+
+    stepNameEl.textContent = 'Verifying';
+
+    // Disable navigation during loading
+    backBtn.disabled = true;
+    nextBtn.disabled = true;
+
+    // Simulate API call with timeout
+    let messageIndex = 0;
+    const messageInterval = setInterval(() => {
+        messageIndex = (messageIndex + 1) % step.messages.length;
+        loadingText.textContent = step.messages[messageIndex];
+    }, 1500);
+
+    appState.loadingTimer = setTimeout(() => {
+        clearInterval(messageInterval);
+        goToNextStep();
+    }, step.duration);
+}
+
+// Render email verification step
+function renderEmailVerificationStep(container, step) {
+    const title = document.createElement('h1');
+    title.className = 'step-title';
+    title.textContent = step.title;
+    container.appendChild(title);
+
+    const subtitle = document.createElement('p');
+    subtitle.className = 'step-subtitle';
+    subtitle.textContent = `${step.subtitle} (${appState.userData.email})`;
+    container.appendChild(subtitle);
+
+    // Create code inputs
+    const codeContainer = document.createElement('div');
+    codeContainer.className = 'verification-container';
+
+    const codeInputs = document.createElement('div');
+    codeInputs.className = 'code-inputs';
+
+    for (let i = 0; i < step.codeLength; i++) {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'code-input';
+        input.maxLength = 1;
+        input.setAttribute('inputmode', 'numeric');
+        input.setAttribute('pattern', '[0-9]*');
+
+        input.addEventListener('input', (e) => {
+            // Auto-focus next input
+            if (e.target.value.length === 1 && i < step.codeLength - 1) {
+                codeInputs.children[i + 1].focus();
+            }
+
+            // Validate when all inputs are filled
+            validateVerificationCode();
+        });
+
+        input.addEventListener('keydown', (e) => {
+            // Handle backspace
+            if (e.key === 'Backspace' && e.target.value === '' && i > 0) {
+                codeInputs.children[i - 1].focus();
+            }
+        });
+
+        codeInputs.appendChild(input);
+    }
+
+    codeContainer.appendChild(codeInputs);
+
+    // Verification hint
+    const hint = document.createElement('p');
+    hint.className = 'code-hint';
+    hint.textContent = 'For demo purposes, enter any 6-digit code';
+    codeContainer.appendChild(hint);
+
+    // Resend link
+    const resendLink = document.createElement('button');
+    resendLink.type = 'button';
+    resendLink.className = 'resend-link';
+    resendLink.textContent = 'Resend code';
+    resendLink.addEventListener('click', () => {
+        showToast('New verification code sent!');
+    });
+
+    codeContainer.appendChild(resendLink);
+    container.appendChild(codeContainer);
+
+    stepNameEl.textContent = 'Verify Email';
+
+    // Focus first input
+    setTimeout(() => {
+        codeInputs.children[0].focus();
+    }, 100);
+}
+
+// Validate verification code
+function validateVerificationCode() {
+    const inputs = document.querySelectorAll('.code-input');
+    let code = '';
+    inputs.forEach(input => {
+        code += input.value;
+    });
+
+    nextBtn.disabled = code.length !== 6;
+}
+
+// Render palm photo step - UPDATED VERSION
+// Render palm photo step - COMPLETELY REVISED VERSION
+function renderPalmPhotoStep(container, step) {
+    // Clear any existing camera
+    if (window.currentCameraStream) {
+        window.currentCameraStream.getTracks().forEach(track => track.stop());
+        window.currentCameraStream = null;
+    }
+
+    // Clear container and rebuild
+    container.innerHTML = '';
+
+    const title = document.createElement('h1');
+    title.className = 'step-title';
+    title.textContent = step.title;
+    container.appendChild(title);
+
+    const subtitle = document.createElement('p');
+    subtitle.className = 'step-subtitle';
+    subtitle.textContent = step.subtitle;
+    container.appendChild(subtitle);
+
+    // Instructions
+    const instructions = document.createElement('div');
+    instructions.className = 'step-subtitle';
+    instructions.style.fontSize = '1rem';
+    instructions.style.color = 'var(--color-accent)';
+    instructions.style.marginBottom = 'var(--spacing-lg)';
+    instructions.innerHTML = `
+        <p><i class="fas fa-lightbulb"></i> For best results:</p>
+        <ul style="text-align: left; max-width: 400px; margin: 0 auto;">
+            <li>Use your dominant hand</li>
+            <li>Palm facing up</li>
+            <li>Good natural lighting</li>
+            <li>Keep fingers relaxed</li>
+        </ul>
+    `;
+    container.appendChild(instructions);
+
+    // Create photo container
+    const photoContainer = document.createElement('div');
+    photoContainer.className = 'photo-container';
+    photoContainer.id = 'photo-container';
+
+    // Preview container
+    const previewContainer = document.createElement('div');
+    previewContainer.className = 'photo-preview-container';
+    previewContainer.id = 'preview-container';
+
+    // Placeholder (shown by default)
+    const placeholder = document.createElement('div');
+    placeholder.className = 'photo-placeholder';
+    placeholder.id = 'photo-placeholder';
+    placeholder.innerHTML = `
+        <i class="fas fa-hand-paper"></i>
+        <p>Take or upload a photo of your palm</p>
+        <small style="font-size: 0.8rem; margin-top: 10px;">
+            <i class="fas fa-info-circle"></i> Camera access requires HTTPS
+        </small>
+    `;
+
+    // Video element (hidden by default)
+    const video = document.createElement('video');
+    video.id = 'video-preview';
+    video.setAttribute('autoplay', '');
+    video.setAttribute('playsinline', '');
+    video.style.display = 'none';
+
+    // Image preview (hidden by default)
+    const imagePreview = document.createElement('img');
+    imagePreview.id = 'capture-preview';
+    imagePreview.style.display = 'none';
+    imagePreview.alt = 'Captured palm photo';
+
+    previewContainer.appendChild(video);
+    previewContainer.appendChild(imagePreview);
+    previewContainer.appendChild(placeholder);
+    photoContainer.appendChild(previewContainer);
+
+    // Camera controls container
+    const controls = document.createElement('div');
+    controls.className = 'photo-controls';
+    controls.id = 'photo-controls';
+
+    // Camera button
+    const cameraBtn = document.createElement('button');
+    cameraBtn.className = 'btn btn-primary';
+    cameraBtn.id = 'camera-btn';
+    cameraBtn.innerHTML = '<i class="fas fa-camera"></i> Use Camera';
+    cameraBtn.onclick = () => {
+        if (window.cameraActive && document.getElementById('video-preview').style.display === 'block') {
+            // Camera is active, capture photo
+            capturePhotoFromCamera();
+        } else {
+            // Start camera
+            initializeCamera();
+        }
+    };
+
+    // Use photo button (hidden initially)
+    const usePhotoBtn = document.createElement('button');
+    usePhotoBtn.className = 'btn btn-primary';
+    usePhotoBtn.id = 'use-photo-btn';
+    usePhotoBtn.innerHTML = '<i class="fas fa-check"></i> Use This Photo';
+    usePhotoBtn.style.display = 'none';
+    usePhotoBtn.onclick = () => {
+        if (appState.userData.palmImage) {
+            goToNextStep();
+        } else {
+            showToast('No photo available. Please capture or upload one first.');
+        }
+    };
+
+    // Retake button (hidden initially)
+    const retakeBtn = document.createElement('button');
+    retakeBtn.className = 'btn btn-secondary';
+    retakeBtn.id = 'retake-btn';
+    retakeBtn.innerHTML = '<i class="fas fa-redo"></i> Retake';
+    retakeBtn.style.display = 'none';
+    retakeBtn.onclick = () => {
+        resetPhotoInterface();
+    };
+
+    controls.appendChild(cameraBtn);
+    controls.appendChild(usePhotoBtn);
+    controls.appendChild(retakeBtn);
+    photoContainer.appendChild(controls);
+
+    // File upload section
+    const fallback = document.createElement('div');
+    fallback.className = 'photo-fallback';
+
+    const fileLabel = document.createElement('label');
+    fileLabel.className = 'file-input-label';
+    fileLabel.innerHTML = '<i class="fas fa-upload"></i> Upload Photo Instead';
+    fileLabel.style.cursor = 'pointer';
+
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.className = 'file-input';
+    fileInput.id = 'photo-upload-input';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+
+    fileLabel.onclick = () => {
+        fileInput.click();
+    };
+
+    fileInput.onchange = (e) => {
+        handlePhotoUpload(e);
+    };
+
+    fileLabel.appendChild(fileInput);
+    fallback.appendChild(fileLabel);
+
+    // Development bypass (only on localhost)
+    if (window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')) {
+        const bypassDiv = document.createElement('div');
+        bypassDiv.style.marginTop = '20px';
+        bypassDiv.style.padding = '15px';
+        bypassDiv.style.background = 'rgba(255,255,255,0.05)';
+        bypassDiv.style.borderRadius = '10px';
+        bypassDiv.style.fontSize = '0.9rem';
+
+        const bypassLabel = document.createElement('p');
+        bypassLabel.innerHTML = '<i class="fas fa-tools"></i> <strong>Development Mode:</strong> Camera requires HTTPS';
+        bypassLabel.style.marginBottom = '10px';
+
+        const bypassBtn = document.createElement('button');
+        bypassBtn.className = 'btn btn-secondary';
+        bypassBtn.style.fontSize = '0.9rem';
+        bypassBtn.innerHTML = '<i class="fas fa-forward"></i> Skip to Next Step';
+        bypassBtn.onclick = () => {
+            // Use a placeholder image
+            appState.userData.palmImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgZmlsbD0iIzBjMTMzNiIvPjxwYXRoIGQ9Ik0yNTAgMTUwYy01NSAwLTEwMCA0NS0xMDAgMTAwczQ1IDEwMCAxMDAgMTAwIDEwMC00NSAxMDAtMTAwLTQ1LTEwMC0xMDAtMTAwem0wIDE4MGMtNDQgMC04MC0zNi04MC04MHMzNi04MCA4MC04MCA4MCAzNiA4MCA4MC0zNiA4MC04MCA4MHoiIGZpbGw9IiMwNmI2ZDQiLz48cGF0aCBkPSJNMjUwIDEyMGMtNzIgMC0xMzAgNTgtMTMwIDEzMHM1OCAxMzAgMTMwIDEzMCAxMzAtNTggMTMwLTEzMC01OC0xMzAtMTMwLTEzMHptMCAyNDBjLTYxIDAtMTEwLTQ5LTExMC0xMTBzNDktMTEwIDExMC0xMTAgMTEwIDQ5IDExMCAxMTAtNDkgMTEwLTExMCAxMTB6IiBmaWxsPSIjN2MzYWVkIi8+PC9zdmc+';
+            goToNextStep();
+        };
+
+        bypassDiv.appendChild(bypassLabel);
+        bypassDiv.appendChild(bypassBtn);
+        fallback.appendChild(bypassDiv);
+    }
+
+    photoContainer.appendChild(fallback);
+    container.appendChild(photoContainer);
+
+    stepNameEl.textContent = 'Capture Palm';
+
+    // Initialize state
+    window.cameraActive = false;
+    window.cameraStream = null;
+    nextBtn.disabled = true;
+}
+
+// Initialize camera
+async function initializeCamera() {
+    const video = document.getElementById('video-preview');
+    const placeholder = document.getElementById('photo-placeholder');
+    const cameraBtn = document.getElementById('camera-btn');
+    const useBtn = document.getElementById('use-photo-btn');
+    const retakeBtn = document.getElementById('retake-btn');
+
+    if (!video || !placeholder) {
+        showToast('Camera interface not ready. Please refresh the page.');
+        return;
+    }
+
+    // Check for camera support
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showToast('Camera not supported in this browser. Please upload a photo instead.');
+        cameraBtn.disabled = true;
+        cameraBtn.innerHTML = '<i class="fas fa-times"></i> Camera Not Supported';
+        return;
+    }
+
+    try {
+        // Try to get camera access
+        const constraints = {
+            video: {
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+                facingMode: { ideal: 'environment' }
+            }
+        };
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+        // Store reference globally
+        window.cameraStream = stream;
+        window.cameraActive = true;
+
+        // Set video source
+        video.srcObject = stream;
+        video.style.display = 'block';
+        placeholder.style.display = 'none';
+
+        // Update button
+        cameraBtn.innerHTML = '<i class="fas fa-camera"></i> Capture Photo';
+        cameraBtn.disabled = false;
+
+        // Show success message
+        showToast('Camera activated! Click "Capture Photo" when ready.', 2000);
+
+    } catch (error) {
+        console.error('Camera error:', error);
+
+        let errorMessage = 'Could not access camera. ';
+        if (error.name === 'NotAllowedError') {
+            errorMessage += 'Permission denied. Please allow camera access or upload a photo.';
+        } else if (error.name === 'NotFoundError') {
+            errorMessage += 'No camera found on this device.';
+        } else if (error.name === 'NotReadableError') {
+            errorMessage += 'Camera is in use by another application.';
+        } else {
+            errorMessage += 'Please upload a photo instead.';
+        }
+
+        showToast(errorMessage);
+
+        // Update button
+        cameraBtn.innerHTML = '<i class="fas fa-times"></i> Camera Failed';
+        cameraBtn.disabled = true;
+
+        // Show placeholder with error
+        placeholder.innerHTML = `
+            <i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i>
+            <p>${errorMessage}</p>
+        `;
+    }
+}
+
+// Capture photo from camera
+function capturePhotoFromCamera() {
+    const video = document.getElementById('video-preview');
+    const imagePreview = document.getElementById('capture-preview');
+    const placeholder = document.getElementById('photo-placeholder');
+    const cameraBtn = document.getElementById('camera-btn');
+    const useBtn = document.getElementById('use-photo-btn');
+    const retakeBtn = document.getElementById('retake-btn');
+
+    if (!video || !imagePreview) return;
+
+    // Create canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+
+    // Draw video frame
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert to data URL
+    const imageData = canvas.toDataURL('image/jpeg', 0.85);
+
+    // Store in app state
+    appState.userData.palmImage = imageData;
+
+    // Update UI
+    imagePreview.src = imageData;
+    imagePreview.style.display = 'block';
+    video.style.display = 'none';
+    placeholder.style.display = 'none';
+
+    // Update buttons
+    cameraBtn.style.display = 'none';
+    useBtn.style.display = 'flex';
+    retakeBtn.style.display = 'flex';
+
+    // Enable next button
+    nextBtn.disabled = false;
+
+    // Stop camera stream
+    if (window.cameraStream) {
+        window.cameraStream.getTracks().forEach(track => track.stop());
+        window.cameraStream = null;
+        window.cameraActive = false;
+    }
+
+    showToast('Photo captured! Ready to continue.', 2000);
+}
+
+// Handle photo upload
+function handlePhotoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file
+    if (!file.type.startsWith('image/')) {
+        showToast('Please select an image file (JPEG, PNG, etc.)');
+        return;
+    }
+
+    // Check file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+        showToast('File too large. Maximum size is 5MB.');
+        return;
+    }
+
+    const reader = new FileReader();
+    const imagePreview = document.getElementById('capture-preview');
+    const placeholder = document.getElementById('photo-placeholder');
+    const cameraBtn = document.getElementById('camera-btn');
+    const useBtn = document.getElementById('use-photo-btn');
+    const retakeBtn = document.getElementById('retake-btn');
+    const video = document.getElementById('video-preview');
+
+    reader.onload = function (e) {
+        // Store in app state
+        appState.userData.palmImage = e.target.result;
+
+        // Update UI
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+
+        if (placeholder) placeholder.style.display = 'none';
+        if (video) video.style.display = 'none';
+        if (cameraBtn) cameraBtn.style.display = 'none';
+        if (useBtn) {
+            useBtn.style.display = 'flex';
+            useBtn.disabled = false;
+        }
+        if (retakeBtn) retakeBtn.style.display = 'flex';
+
+        // Enable next button
+        nextBtn.disabled = false;
+
+        // Stop camera if active
+        if (window.cameraStream) {
+            window.cameraStream.getTracks().forEach(track => track.stop());
+            window.cameraStream = null;
+            window.cameraActive = false;
+        }
+
+        showToast('Photo uploaded! Ready to continue.', 2000);
+    };
+
+    reader.onerror = function () {
+        showToast('Error reading file. Please try another image.');
+    };
+
+    reader.readAsDataURL(file);
+}
+
+// Reset photo interface
+function resetPhotoInterface() {
+    const video = document.getElementById('video-preview');
+    const imagePreview = document.getElementById('capture-preview');
+    const placeholder = document.getElementById('photo-placeholder');
+    const cameraBtn = document.getElementById('camera-btn');
+    const useBtn = document.getElementById('use-photo-btn');
+    const retakeBtn = document.getElementById('retake-btn');
+
+    // Reset UI
+    if (imagePreview) imagePreview.style.display = 'none';
+    if (video) video.style.display = 'none';
+    if (placeholder) {
+        placeholder.style.display = 'flex';
+        placeholder.innerHTML = `
+            <i class="fas fa-hand-paper"></i>
+            <p>Take or upload a photo of your palm</p>
+        `;
+    }
+
+    if (cameraBtn) {
+        cameraBtn.style.display = 'flex';
+        cameraBtn.innerHTML = '<i class="fas fa-camera"></i> Use Camera';
+        cameraBtn.disabled = false;
+    }
+
+    if (useBtn) useBtn.style.display = 'none';
+    if (retakeBtn) retakeBtn.style.display = 'none';
+
+    // Clear stored image
+    appState.userData.palmImage = null;
+
+    // Disable next button
+    nextBtn.disabled = true;
+
+    // Stop camera if active
+    if (window.cameraStream) {
+        window.cameraStream.getTracks().forEach(track => track.stop());
+        window.cameraStream = null;
+        window.cameraActive = false;
+    }
+}
+
+// Add cleanup when leaving the page
+window.addEventListener('beforeunload', () => {
+    if (window.cameraStream) {
+        window.cameraStream.getTracks().forEach(track => track.stop());
+    }
+});
+
+// Also clean up when going to next/previous step
+const originalGoToNextStep = goToNextStep;
+const originalGoToPreviousStep = goToPreviousStep;
+
+goToNextStep = function () {
+    // Clean up camera
+    if (window.cameraStream) {
+        window.cameraStream.getTracks().forEach(track => track.stop());
+        window.cameraStream = null;
+        window.cameraActive = false;
+    }
+
+    // Call original function
+    return originalGoToNextStep.apply(this, arguments);
+};
+
+goToPreviousStep = function () {
+    // Clean up camera
+    if (window.cameraStream) {
+        window.cameraStream.getTracks().forEach(track => track.stop());
+        window.cameraStream = null;
+        window.cameraActive = false;
+    }
+
+    // Call original function
+    return originalGoToPreviousStep.apply(this, arguments);
+};
+
+// Start camera - IMPROVED VERSION
+async function startCamera() {
+    const video = document.getElementById('video-preview');
+    const placeholder = document.querySelector('.photo-placeholder');
+    const captureBtn = document.getElementById('open-camera-btn');
+
+    // Check if browser supports mediaDevices
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showToast('Camera access not supported in this browser. Please upload a photo instead.');
+        return;
+    }
+
+    try {
+        // Request camera permissions
+        const constraints = {
+            video: {
+                facingMode: 'environment', // Prefer rear camera
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            }
+        };
+
+        // Try to get camera stream
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+        // Store stream reference for cleanup
+        appState.cameraStream = stream;
+
+        // Set video source
+        video.srcObject = stream;
+        video.style.display = 'block';
+        placeholder.style.display = 'none';
+
+        // Update button text
+        captureBtn.innerHTML = '<i class="fas fa-camera"></i> Capture Photo';
+        captureBtn.disabled = false;
+
+        // Enable next button temporarily (will be disabled again until capture)
+        nextBtn.disabled = false;
+
+    } catch (error) {
+        console.error('Camera access error:', error);
+
+        // Handle specific errors
+        let errorMessage = 'Could not access camera. ';
+
+        if (error.name === 'NotAllowedError') {
+            errorMessage += 'Camera permission was denied.';
+        } else if (error.name === 'NotFoundError') {
+            errorMessage += 'No camera found on this device.';
+        } else if (error.name === 'NotReadableError') {
+            errorMessage += 'Camera is already in use by another application.';
+        } else if (error.name === 'OverconstrainedError') {
+            errorMessage += 'Camera constraints could not be satisfied.';
+        } else {
+            errorMessage += 'Please upload a photo instead.';
+        }
+
+        showToast(errorMessage);
+
+        // Fallback: show placeholder and enable file upload
+        video.style.display = 'none';
+        placeholder.style.display = 'flex';
+        placeholder.innerHTML = `
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>${errorMessage}</p>
+        `;
+
+        captureBtn.disabled = true;
+        nextBtn.disabled = true; // Still need a photo
+    }
+}
+
+// Stop camera stream
+function stopCamera() {
+    if (appState.cameraStream) {
+        appState.cameraStream.getTracks().forEach(track => {
+            track.stop();
+        });
+        appState.cameraStream = null;
+    }
+
+    const video = document.getElementById('video-preview');
+    if (video) {
+        video.srcObject = null;
+        video.style.display = 'none';
+    }
+}
+
+// Capture photo from camera - IMPROVED VERSION
+function capturePhoto() {
+    const video = document.getElementById('video-preview');
+    const canvas = document.createElement('canvas');
+    const imagePreview = document.getElementById('capture-preview');
+    const placeholder = document.querySelector('.photo-placeholder');
+    const captureBtn = document.getElementById('open-camera-btn');
+    const useBtn = document.getElementById('use-photo-btn');
+    const retakeBtn = document.getElementById('retake-btn');
+
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw current video frame to canvas
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert to data URL (JPEG format, 80% quality)
+    const imageData = canvas.toDataURL('image/jpeg', 0.8);
+
+    // Set image preview
+    imagePreview.src = imageData;
+    imagePreview.style.display = 'block';
+    video.style.display = 'none';
+    placeholder.style.display = 'none';
+
+    // Stop camera to save battery
+    stopCamera();
+
+    // Update button visibility
+    captureBtn.style.display = 'none';
+    useBtn.style.display = 'flex';
+    retakeBtn.style.display = 'flex';
+
+    // Enable next button
+    nextBtn.disabled = false;
+
+    // Show success message
+    showToast('Photo captured! Click "Use This Photo" to continue.');
+}
+
+// Handle file upload - IMPROVED VERSION
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Check file type
+    if (!file.type.match('image.*')) {
+        showToast('Please select an image file (JPEG, PNG, etc.)');
+        return;
+    }
+
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        showToast('Image file is too large. Maximum size is 5MB.');
+        return;
+    }
+
+    const reader = new FileReader();
+    const imagePreview = document.getElementById('capture-preview');
+    const placeholder = document.querySelector('.photo-placeholder');
+    const captureBtn = document.getElementById('open-camera-btn');
+    const useBtn = document.getElementById('use-photo-btn');
+    const retakeBtn = document.getElementById('retake-btn');
+    const video = document.getElementById('video-preview');
+
+    reader.onload = function (e) {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+        placeholder.style.display = 'none';
+
+        // Stop camera if it's running
+        if (appState.cameraStream) {
+            stopCamera();
+        }
+
+        // Hide video
+        if (video) {
+            video.style.display = 'none';
+        }
+
+        // Update button visibility
+        captureBtn.style.display = 'none';
+        useBtn.style.display = 'flex';
+        retakeBtn.style.display = 'flex';
+
+        // Enable next button
+        nextBtn.disabled = false;
+
+        showToast('Photo loaded! Click "Use This Photo" to continue.');
+    };
+
+    reader.onerror = function () {
+        showToast('Error reading file. Please try another image.');
+    };
+
+    reader.readAsDataURL(file);
+}
+
+// Start camera
+async function startCamera() {
+    try {
+        const video = document.getElementById('video-preview');
+        const placeholder = document.querySelector('.photo-placeholder');
+        const captureBtn = document.querySelector('.photo-controls .btn-primary');
+        const useBtn = document.querySelector('.photo-controls .btn-primary:nth-child(2)');
+        const retakeBtn = document.querySelector('.photo-controls .btn-secondary');
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment' }
+        });
+
+        video.srcObject = stream;
+        video.style.display = 'block';
+        placeholder.style.display = 'none';
+
+        captureBtn.innerHTML = '<i class="fas fa-camera"></i> Capture Photo';
+        captureBtn.onclick = capturePhoto;
+        captureBtn.style.display = 'inline-flex';
+        useBtn.style.display = 'none';
+        retakeBtn.style.display = 'none';
+
+    } catch (error) {
+        console.error('Camera error:', error);
+        showToast('Camera access denied. Please upload a photo instead.');
+    }
+}
+
+// Capture photo from camera
+function capturePhoto() {
+    const video = document.getElementById('video-preview');
+    const canvas = document.createElement('canvas');
+    const imagePreview = document.getElementById('capture-preview');
+    const placeholder = document.querySelector('.photo-placeholder');
+    const captureBtn = document.querySelector('.photo-controls .btn-primary');
+    const useBtn = document.querySelector('.photo-controls .btn-primary:nth-child(2)');
+    const retakeBtn = document.querySelector('.photo-controls .btn-secondary');
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+
+    const imageData = canvas.toDataURL('image/jpeg');
+    imagePreview.src = imageData;
+    imagePreview.style.display = 'block';
+    video.style.display = 'none';
+    placeholder.style.display = 'none';
+
+    // Stop camera stream
+    if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+    }
+
+    captureBtn.style.display = 'none';
+    useBtn.style.display = 'inline-flex';
+    retakeBtn.style.display = 'inline-flex';
+}
+
+// Handle file upload
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    const imagePreview = document.getElementById('capture-preview');
+    const placeholder = document.querySelector('.photo-placeholder');
+    const captureBtn = document.querySelector('.photo-controls .btn-primary');
+    const useBtn = document.querySelector('.photo-controls .btn-primary:nth-child(2)');
+    const retakeBtn = document.querySelector('.photo-controls .btn-secondary');
+    const video = document.getElementById('video-preview');
+
+    reader.onload = function (e) {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+        placeholder.style.display = 'none';
+
+        if (video.srcObject) {
+            video.srcObject.getTracks().forEach(track => track.stop());
+            video.style.display = 'none';
+        }
+
+        captureBtn.style.display = 'none';
+        useBtn.style.display = 'inline-flex';
+        retakeBtn.style.display = 'inline-flex';
+    };
+
+    reader.readAsDataURL(file);
+}
+
+// Render quiz question step
+
+// Render quiz question step - FIXED VERSION
+
+// Render quiz question step - FIXED VERSION
+function renderQuizQuestionStep(container, step) {
+    // Clear container first
+    container.innerHTML = '';
+
+    // Calculate which quiz question this is (1-5)
+    const quizSteps = palmReadingConfig.steps.filter(s => s.type === 'quizQuestion');
+    const currentQuizStep = quizSteps.findIndex(s => s.id === step.id) + 1;
+
+    const questionType = step.questionType || 'singleChoice';
+
+    // Title
+    const title = document.createElement('h1');
+    title.className = 'step-title';
+    title.textContent = step.title || `Question ${currentQuizStep} of ${quizSteps.length}`;
+    container.appendChild(title);
+
+    // Question text
+    const question = document.createElement('p');
+    question.className = 'step-subtitle';
+    question.textContent = step.question || 'Please answer the question below';
+    container.appendChild(question);
+
+    // SINGLE / MULTIPLE CHOICE
+    if (questionType === 'singleChoice' || questionType === 'multipleChoice') {
+        const optionsContainer = document.createElement('div');
+        optionsContainer.className = 'options-container';
+
+        if (!step.options || !Array.isArray(step.options)) {
+            console.error('No options defined for question:', step);
+            optionsContainer.innerHTML = '<p class="error">Question configuration error</p>';
+        } else {
+            step.options.forEach(option => {
+                const optionBtn = document.createElement('button');
+                optionBtn.type = 'button';
+                optionBtn.className = 'option-btn';
+                optionBtn.innerHTML = `
+                    ${option.icon ? `<i class="${option.icon} option-icon"></i>` : ''}
+                    <span>${option.label || option.text || 'Option'}</span>
+                `;
+
+                // Existing response
+                const response = appState.quizResponses[step.id];
+                let isSelected = false;
+
+                if (questionType === 'singleChoice') {
+                    isSelected = response === option.id;
+                } else {
+                    isSelected = Array.isArray(response) && response.includes(option.id);
+                }
+
+                if (isSelected) {
+                    optionBtn.classList.add('selected');
+                }
+
+                optionBtn.addEventListener('click', () => {
+                    if (questionType === 'singleChoice') {
+                        // Deselect all
+                        container.querySelectorAll('.option-btn').forEach(btn => {
+                            btn.classList.remove('selected');
+                        });
+
+                        // Select this one
+                        optionBtn.classList.add('selected');
+                        appState.quizResponses[step.id] = option.id;
+                    } else {
+                        // Multiple choice - toggle
+                        optionBtn.classList.toggle('selected');
+
+                        if (!Array.isArray(appState.quizResponses[step.id])) {
+                            appState.quizResponses[step.id] = [];
+                        }
+
+                        const idx = appState.quizResponses[step.id].indexOf(option.id);
+                        if (idx > -1) {
+                            appState.quizResponses[step.id].splice(idx, 1);
+                        } else {
+                            appState.quizResponses[step.id].push(option.id);
+                        }
+                    }
+
+                    // Validate
+                    validateQuizQuestion(step);
+                });
+
+                optionsContainer.appendChild(optionBtn);
+            });
+        }
+
+        container.appendChild(optionsContainer);
+
+        // TEXT QUESTION
+    } else if (questionType === 'text') {
+        const textContainer = document.createElement('div');
+        textContainer.className = 'form-container';
+
+        const textarea = document.createElement('textarea');
+        textarea.className = 'form-textarea';
+        textarea.placeholder = step.placeholder || 'Type your answer here...';
+        textarea.value = appState.quizResponses[step.id] || '';
+
+        textarea.addEventListener('input', () => {
+            appState.quizResponses[step.id] = textarea.value.trim();
+            validateQuizQuestion(step);
+        });
+
+        textContainer.appendChild(textarea);
+        container.appendChild(textContainer);
+
+        // UNKNOWN TYPE
+    } else {
+        const errorMsg = document.createElement('p');
+        errorMsg.className = 'step-subtitle';
+        errorMsg.style.color = 'var(--color-error)';
+        errorMsg.textContent = 'Question type not supported';
+        container.appendChild(errorMsg);
+    }
+
+    stepNameEl.textContent = `Question ${currentQuizStep}`;
+
+    // Initial validation
+    validateQuizQuestion(step);
+}
+
+
+// Validate quiz question
+function validateQuizQuestion(step) {
+    const questionType = step.questionType || 'singleChoice';
+    const response = appState.quizResponses[step.id];
+
+    if (!step.required) {
+        nextBtn.disabled = false;
+        return;
+    }
+
+    if (questionType === 'singleChoice') {
+        nextBtn.disabled = !response;
+    } else if (questionType === 'multipleChoice') {
+        nextBtn.disabled = !response || response.length === 0;
+    } else if (questionType === 'text') {
+        nextBtn.disabled = !response || response.trim().length === 0;
+    } else {
+        // Unknown type: be safe and disable
+        nextBtn.disabled = true;
+    }
+}
+
+
+// Render result step
+function renderResultStep(container, step) {
+    const title = document.createElement('h1');
+    title.className = 'step-title';
+    title.textContent = `${appState.userData.name || 'Dear Seeker'}, Your Palm Reading`;
+    container.appendChild(title);
+
+    const icon = document.createElement('div');
+    icon.className = 'result-icon';
+    icon.innerHTML = '<i class="fas fa-crystal-ball"></i>';
+    container.appendChild(icon);
+
+    const resultContainer = document.createElement('div');
+    resultContainer.className = 'result-container';
+
+    // Generate reading
+    const reading = palmReadingConfig.result.generateReading(appState.userData, appState.quizResponses);
+
+    const resultText = document.createElement('p');
+    resultText.className = 'result-text';
+    resultText.textContent = reading;
+    resultContainer.appendChild(resultText);
+
+    // Insights
+    const insights = document.createElement('div');
+    insights.className = 'reading-insights';
+
+    const insightsTitle = document.createElement('h3');
+    insightsTitle.className = 'insight-title';
+    insightsTitle.textContent = 'Key Insights';
+    insights.appendChild(insightsTitle);
+
+    const insightsList = document.createElement('ul');
+    insightsList.className = 'insight-list';
+
+    palmReadingConfig.result.insights.forEach(insight => {
+        const li = document.createElement('li');
+        li.textContent = insight;
+        insightsList.appendChild(li);
+    });
+
+    insights.appendChild(insightsList);
+    resultContainer.appendChild(insights);
+
+    // CTA buttons
+    const ctaContainer = document.createElement('div');
+    ctaContainer.className = 'cta-buttons';
+
+    const unlockBtn = document.createElement('button');
+    unlockBtn.className = 'cta-primary';
+    unlockBtn.innerHTML = '<i class="fas fa-unlock"></i> Unlock Full Reading';
+    unlockBtn.addEventListener('click', () => {
+        showToast('Full reading unlocked! Check your email for details.');
+    });
+
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'cta-secondary';
+    shareBtn.innerHTML = '<i class="fas fa-share-alt"></i> Share Results';
+    shareBtn.addEventListener('click', () => {
+        if (navigator.share) {
+            navigator.share({
+                title: 'My Palm Reading',
+                text: reading,
+                url: window.location.href
+            });
+        } else {
+            showToast('Link copied to clipboard!');
+            navigator.clipboard.writeText(window.location.href);
+        }
+    });
+
+    ctaContainer.appendChild(unlockBtn);
+    ctaContainer.appendChild(shareBtn);
+    resultContainer.appendChild(ctaContainer);
+
+    container.appendChild(resultContainer);
+
+    stepNameEl.textContent = 'Your Reading';
+
+    // Hide navigation buttons
+    backBtn.style.display = 'none';
+    nextBtn.style.display = 'none';
+}
+
+// Update navigation buttons
+function updateNavigationButtons() {
+    const step = palmReadingConfig.steps[appState.currentStep];
+
+    // Update back button
+    backBtn.disabled = appState.currentStep === 0;
+    backBtn.style.visibility = appState.currentStep === 0 ? 'hidden' : 'visible';
+
+    // Update next button text
+    if (step.type === 'result') {
+        nextBtn.style.display = 'none';
+    } else {
+        nextBtn.style.display = 'flex';
+
+        if (step.type === 'emailVerification') {
+            nextBtn.innerHTML = 'Verify & Continue <i class="fas fa-check"></i>';
+        } else if (step.type === 'quizQuestion' && appState.currentStep === palmReadingConfig.steps.length - 2) {
+            nextBtn.innerHTML = 'See Results <i class="fas fa-crystal-ball"></i>';
+        } else {
+            nextBtn.innerHTML = 'Continue <i class="fas fa-chevron-right"></i>';
+        }
+    }
+}
+
+// Update progress bar
+function updateProgressBar() {
+    const progressPercentage = ((appState.currentStep + 1) / palmReadingConfig.steps.length) * 100;
+    progressFill.style.width = `${progressPercentage}%`;
+    currentStepEl.textContent = appState.currentStep + 1;
+}
+
+// Go to next step
+function goToNextStep() {
+    if (appState.isTransitioning) return;
+
+    const currentStep = palmReadingConfig.steps[appState.currentStep];
+
+
+    if (currentStep.type === 'palmPhoto') {
+        cleanupCamera();
+    }
+
+    // Special handling for verification step
+    if (currentStep.type === 'emailVerification') {
+        const inputs = document.querySelectorAll('.code-input');
+        let code = '';
+        inputs.forEach(input => {
+            code += input.value;
+        });
+
+        if (code.length !== 6) {
+            showToast('Please enter a 6-digit verification code');
+            return;
+        }
+
+        appState.userData.emailVerified = true;
+        showToast('Email verified successfully!');
+    }
+
+    // Check if we're on the last step
+    if (appState.currentStep === palmReadingConfig.steps.length - 1) {
+        return;
+    }
+
+    appState.isTransitioning = true;
+
+    // Add transition effect
+    appContent.style.opacity = '0.5';
+    appContent.style.transform = 'translateX(-20px)';
+
+    setTimeout(() => {
+        renderStep(appState.currentStep + 1);
+        appContent.style.opacity = '1';
+        appContent.style.transform = 'translateX(0)';
+        appState.isTransitioning = false;
+    }, 300);
+}
+
+// Go to previous step
+function goToPreviousStep() {
+    if (appState.isTransitioning || appState.currentStep === 0) return;
+
+    const currentStep = palmReadingConfig.steps[appState.currentStep];
+
+    // Clean up camera if we're leaving the photo step
+    if (currentStep.type === 'palmPhoto') {
+        cleanupCamera();
+    }
+
+    // Cancel loading timer if active
+    if (appState.loadingTimer) {
+        clearTimeout(appState.loadingTimer);
+        appState.loadingTimer = null;
+    }
+
+    appState.isTransitioning = true;
+
+    // Add transition effect
+    appContent.style.opacity = '0.5';
+    appContent.style.transform = 'translateX(20px)';
+
+    setTimeout(() => {
+        renderStep(appState.currentStep - 1);
+        appContent.style.opacity = '1';
+        appContent.style.transform = 'translateX(0)';
+        appState.isTransitioning = false;
+    }, 300);
+}
+
+// Handle keyboard navigation
+function handleKeyboardNavigation(e) {
+    // Don't handle if user is typing in an input/textarea
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+
+    switch (e.key) {
+        case 'ArrowLeft':
+            if (!backBtn.disabled) goToPreviousStep();
+            break;
+        case 'ArrowRight':
+        case 'Enter':
+            if (!nextBtn.disabled) goToNextStep();
+            break;
+    }
+}
+
+// Show toast notification
+function showToast(message, duration = 3000) {
+    toast.textContent = message;
+    toast.classList.add('show');
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, duration);
+}
+
+// Initialize the app when DOM is loaded
+// Initialize the app - WordPress compatible
+function mprInitialize() {
+    // Wait a bit to ensure WordPress admin bar is loaded
+    setTimeout(initApp, 100);
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mprInitialize);
+} else {
+    mprInitialize();
+}
+
+// Render result loading step (after last question)
+function renderResultLoadingStep(container, step) {
+    const title = document.createElement('h1');
+    title.className = 'step-title';
+    title.textContent = step.title || 'Preparing Your Palm Reading';
+    container.appendChild(title);
+
+    const spinner = document.createElement('div');
+    spinner.className = 'loading-spinner';
+    container.appendChild(spinner);
+
+    const loadingText = document.createElement('p');
+    loadingText.className = 'loading-text';
+
+    const messages = Array.isArray(step.messages) && step.messages.length
+        ? step.messages
+        : ["Tuning into your energy...", "Reading the lines of your palm..."];
+
+    loadingText.textContent = messages[0];
+    container.appendChild(loadingText);
+
+    // Optional subtext (you can remove this entirely if you don't want it)
+    const subtext = document.createElement('p');
+    subtext.className = 'loading-subtext';
+    subtext.textContent = 'Decoding the story written in your hand...';
+    container.appendChild(subtext);
+
+    stepNameEl.textContent = 'Reading';
+
+    // Disable navigation during loading
+    backBtn.disabled = true;
+    nextBtn.disabled = true;
+
+    // Rotate messages while loading
+    let messageIndex = 0;
+    let messageInterval = null;
+
+    if (messages.length > 1) {
+        messageInterval = setInterval(() => {
+            messageIndex = (messageIndex + 1) % messages.length;
+            loadingText.textContent = messages[messageIndex];
+        }, 1500);
+    }
+
+    // Simulate API call with timeout
+    appState.loadingTimer = setTimeout(() => {
+        if (messageInterval) {
+            clearInterval(messageInterval);
+        }
+        // Go straight to final result step
+        goToNextStep();
+    }, step.duration || 4000);
+}

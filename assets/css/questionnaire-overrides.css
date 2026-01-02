@@ -1,0 +1,12 @@
+/* Questionnaire spacing overrides for mobile layouts */
+@media (max-width: 640px) {
+  .options-container {
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .option-btn {
+    padding: var(--spacing-md);
+    font-size: 1rem;
+  }
+}

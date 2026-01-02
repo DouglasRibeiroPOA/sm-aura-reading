@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name='robots' content='max-image-preview:large' />
+  <title>Aura Reading – SoulMirror</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{PLUGIN_URL}}assets/css/swipe-template.css">
+</head>
+<body>
+
+<!-- Swipeable Card Template Container -->
+<div class="sm-swipe-template" id="aura-reading-result" data-sm-id-placeholder data-sm-lead-id-placeholder data-sm-url-placeholder data-sm-status-placeholder data-sm-unlock-placeholder data-modal-love-placeholder data-modal-career-placeholder data-modal-alignment-placeholder aria-live="polite">
+
+  <!-- Progress indicator -->
+  <div class="progress-indicator">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <!-- Swipe instruction overlay -->
+  <div class="swipe-instruction" id="swipeInstruction">
+    <div class="swipe-icon">
+      <i class="fas fa-arrow-left"></i>
+      <i class="fas fa-hand-point-up"></i>
+      <i class="fas fa-arrow-right"></i>
+    </div>
+    <h2 class="swipe-text">Swipe to Navigate</h2>
+    <p class="swipe-detail">Swipe left or right to move between reading cards</p>
+    <button class="start-btn" id="startBtn">Begin Reading</button>
+  </div>
+
+  <!-- Main app container -->
+  <div class="app-container" id="appContainer">
+    <!-- Cards container -->
+    <div class="cards-container" id="cardsContainer">
+
+      
+      <div class="reading-card active" id="card1">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-sun"></i>
+            </div>
+            <h1 class="card-title">Your Aura as a Mirror</h1>
+            <p class="card-subtitle">A glimpse into your aura's story</p>
+            <!-- OPENING_CONTENT_START -->
+            <p class="card-text">
+              Welcome to your personalized aura reading. Your energy field is a unique map revealing insights about your life's journey.
+            </p>
+            <p class="extra-text">
+              This teaser offers a taste of what a full aura reading can uncover, guiding you through life's intricate paths with insight and clarity.
+            </p>
+            <!-- OPENING_CONTENT_END -->
+
+          </div>
+
+          <div class="nav-hint" aria-hidden="true">
+            <div class="nav-icons">
+              <i class="fas fa-arrow-left"></i>
+              <i class="fas fa-arrow-right"></i>
+            </div>
+            <span>Swipe to navigate</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PALM_SUMMARY_CARD_START -->
+      <div class="reading-card" id="card2">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-sun"></i>
+            </div>
+            <h1 class="card-title">Aura Snapshot</h1>
+            <p class="card-subtitle">Key aura features detected</p>
+            <!-- PALM_SUMMARY_CONTENT_START -->
+            <ul class="palm-summary-list">
+              <li><strong>Dominant tone:</strong> Calm, steady, luminous</li>
+              <li>
+                <strong>Core layers:</strong>
+                <ul class="palm-summary-lines">
+                  <li><span class="palm-summary-arrow">&gt;</span> <strong>Emotional layer:</strong> Open, reflective</li>
+                  <li><span class="palm-summary-arrow">&gt;</span> <strong>Mental layer:</strong> Focused, clear</li>
+                  <li><span class="palm-summary-arrow">&gt;</span> <strong>Relational layer:</strong> Warm, discerning</li>
+                  <li><span class="palm-summary-arrow">&gt;</span> <strong>Spiritual layer:</strong> Quiet but steady</li>
+                </ul>
+              </li>
+              <li><strong>Flow pattern:</strong> Grounded, growth-oriented</li>
+              <li><strong>Overall energy:</strong> Soft, resilient, attentive</li>
+            </ul>
+            <!-- PALM_SUMMARY_CONTENT_END -->
+          </div>
+        </div>
+      </div>
+      <!-- PALM_SUMMARY_CARD_END -->
+
+      
+      <div class="reading-card" id="card3">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-road"></i>
+            </div>
+            <h1 class="card-title">Emotional State &amp; Inner Climate</h1>
+            <p class="card-subtitle">Tone, stability, and emotional rhythm</p>
+            <!-- LIFE_FOUNDATIONS_CONTENT_START -->
+            <p class="card-text">
+              Your aura reads as steady with a soft emotional core, shaped by experience rather than shortcuts.
+            </p>
+            <p class="extra-text">
+              Your emotional current shows depth and continuity, indicating a steady capacity to recover from challenges.
+            </p>
+            <p class="extra-text">
+              Core Theme: Your inner climate is built on strength, emotional depth, and grounded resilience.
+            </p>
+            <!-- LIFE_FOUNDATIONS_CONTENT_END -->
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card locked" id="card4" data-lock="love">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-heart"></i>
+            </div>
+            <h1 class="card-title">Love, Relationships &amp; Emotional Connection</h1>
+            <p class="card-subtitle">Patterns of connection</p>
+            <!-- LOVE_CONTENT_START -->
+            <p class="card-text">
+              Your aura reflects emotional depth paired with discernment. You may love intensely, but only when trust feels earned and safe.
+            </p>
+            <!-- LOVE_CONTENT_END -->
+          </div>
+
+          <div class="card-locked-overlay lock-overlay">
+            <div class="lock-icon"><i class="fas fa-lock"></i></div>
+            <button class="unlock-btn btn-unlock" data-unlock="love">
+              <i class="fas fa-gem"></i> Reveal Relationship Insight
+            </button>
+            <div class="unlocks-remaining" data-unlock-badge>You can unlock up to 2 sections</div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card" id="card5">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-brain"></i>
+            </div>
+            <h1 class="card-title">Energy Level &amp; Flow</h1>
+            <p class="card-subtitle">Vitality, rhythm, and recovery</p>
+            <!-- PERSONALITY_CONTENT_START -->
+            <p class="card-text">
+              Your aura shows a steady current with bursts of creative intensity.
+            </p>
+            <!-- PERSONALITY_CONTENT_END -->
+
+            <!-- TRAITS_START -->
+            <div class="trait-visual">
+              <div class="trait-row">
+                <div class="trait-name">Vitality</div>
+                <div class="trait-bar">
+                  <div class="trait-fill" data-width="85"></div>
+                </div>
+              </div>
+              <div class="trait-row">
+                <div class="trait-name">Flow</div>
+                <div class="trait-bar">
+                  <div class="trait-fill" data-width="78"></div>
+                </div>
+              </div>
+              <div class="trait-row">
+                <div class="trait-name">Recovery</div>
+                <div class="trait-bar">
+                  <div class="trait-fill" data-width="92"></div>
+                </div>
+              </div>
+            </div>
+            <!-- TRAITS_END -->
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card" id="card6">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-briefcase"></i>
+            </div>
+            <h1 class="card-title">Life Direction, Success &amp; Material Flow</h1>
+            <p class="card-subtitle">Alignment, ambition, and prosperity</p>
+            <!-- CAREER_CONTENT_START -->
+            <p class="card-text">
+              Your aura suggests that success grows best through alignment rather than pressure...
+            </p>
+            <!-- CAREER_CONTENT_END -->
+
+            <div class="symbol-grid">
+              <button class="symbol-item symbol-btn" type="button" data-modal="lovePatterns" aria-label="Open Love Patterns insight">
+                <span class="symbol">💖</span>
+                <span class="symbol-label">Emotional Connection</span>
+                <span class="symbol-micro">What you crave &amp; protect</span>
+              </button>
+
+              <button class="symbol-item symbol-btn" type="button" data-modal="careerDirection" aria-label="Open Career Direction insight">
+                <span class="symbol">💼</span>
+                <span class="symbol-label">Life Direction</span>
+                <span class="symbol-micro">Where you thrive</span>
+              </button>
+
+              <button class="symbol-item symbol-btn" type="button" data-modal="lifeAlignment" aria-label="Open Life Alignment insight">
+                <span class="symbol">🧭</span>
+                <span class="symbol-label">Energy Flow</span>
+                <span class="symbol-micro">Balance signal</span>
+              </button>
+            </div>
+            <p class="core-theme"><em>Tip: Tap the icons for quick insights (your “mini-reading”).</em></p>
+          </div>
+
+        </div>
+      </div>
+
+      
+      <div class="reading-card locked" id="card7" data-lock="challenges">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-mountain"></i>
+            </div>
+            <h1 class="card-title">Spiritual Memory &amp; Deeper Patterns</h1>
+            <p class="card-subtitle">What repeats beneath the surface</p>
+            <!-- CHALLENGES_CONTENT_START -->
+            <p class="card-text">
+              Your aura reveals tensions between comfort and growth...
+            </p>
+            <!-- CHALLENGES_CONTENT_END -->
+          </div>
+
+          <!-- Lock overlay (shown in teaser, hidden in paid) -->
+          <div class="card-locked-overlay lock-overlay" id="lock-challenges">
+            <div class="lock-icon"><i class="fas fa-lock"></i></div>
+            <button class="unlock-btn btn-unlock" data-unlock="challenges">
+              <i class="fas fa-gem"></i> Reveal Deeper Pattern
+            </button>
+            <div class="unlocks-remaining" data-unlock-badge>You can unlock up to 2 sections</div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card locked" id="card8" data-lock="phase">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-hourglass-half"></i>
+            </div>
+            <h1 class="card-title">Intentions, Healing &amp; Growth</h1>
+            <p class="card-subtitle">The chapter unfolding</p>
+            <!-- LIFE_PHASE_CONTENT_START -->
+            <p class="card-text">
+              You are in a transition phase where your focus and values are re-aligning...
+            </p>
+            <!-- LIFE_PHASE_CONTENT_END -->
+          </div>
+
+          <div class="card-locked-overlay lock-overlay" id="lock-phase">
+            <div class="lock-icon"><i class="fas fa-lock"></i></div>
+            <button class="unlock-btn btn-unlock" data-unlock="phase">
+              <i class="fas fa-gem"></i> Reveal Growth Path
+            </button>
+            <div class="unlocks-remaining" data-unlock-badge>You can unlock up to 2 sections</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reading-card locked" id="card10" data-lock="timeline">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h1 class="card-title">Your Timeline: The Next 6 Months</h1>
+            <p class="card-subtitle">What unfolds soon</p>
+            <!-- TIMELINE_CONTENT_START -->
+            <p class="card-text">
+              The next six months move from a quiet reset into a clearer opening that feels decisive.
+            </p>
+            <p class="extra-text">
+              Early weeks carry subtle shifts, while mid-season brings a window where momentum grows.
+            </p>
+            <p class="extra-text">
+              Two timing points stand out, shaping how your next chapter settles in.
+            </p>
+            <!-- TIMELINE_CONTENT_END -->
+          </div>
+
+          <div class="card-locked-overlay lock-overlay" id="lock-timeline">
+            <div class="lock-icon"><i class="fas fa-lock"></i></div>
+            <button class="unlock-btn btn-unlock" data-unlock="timeline">
+              <i class="fas fa-gem"></i> Reveal Timeline Insight
+            </button>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card locked premium-locked" id="card9" data-lock="deep_relationship_analysis">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-heartbeat"></i>
+            </div>
+            <h1 class="card-title">Deep Relationship Analysis</h1>
+            <p class="card-subtitle">Unlock deeper insights</p>
+            <p class="card-text">
+              Premium content available in full report...
+            </p>
+            <p class="extra-text">
+              Behind this preview sits a deeper layer of detail, weaving patterns, causes, and subtle signals into a coherent story.
+              The lines suggest repeating motifs, points of tension, and the small choices that shape larger outcomes, all hinted at but not fully shown here.
+              These notes are intentionally blurred, giving only a faint sense of the structure that the full report lays out in detail.
+            </p>
+            <p class="extra-text">
+              The extended analysis maps sequences, thresholds, and inflection points, showing how the energy shifts over time and how one phase sets up the next.
+              It connects internal drivers with external timing, highlighting where momentum builds, where it plateaus, and where a decisive window opens.
+              This is the dense core that turns a headline insight into a guided reading.
+            </p>
+            <p class="extra-text">
+              Unlocking the full report reveals the complete narrative, the specific cues, and the actionable takeaways that sit behind these blurred lines.
+              It expands each theme into concrete guidance and fuller context, turning abstract impressions into usable clarity.
+              What you see here is only a compressed shadow of the full material.
+            </p>
+          </div>
+
+          <!-- Lock overlay -->
+          <div class="card-locked-overlay lock-overlay" id="lock-deep-love">
+            <div class="lock-icon"><i class="fas fa-lock"></i></div>
+            <button class="unlock-btn btn-unlock" data-unlock="deep_relationship_analysis">
+              <i class="fas fa-gem"></i> Unlock Full Report
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="reading-card locked premium-locked" id="card11" data-lock="extended_timeline_12_months">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-calendar-check"></i>
+            </div>
+            <h1 class="card-title">Your Timeline: The Next 12 Months</h1>
+            <p class="card-subtitle">Longer arc and milestones</p>
+            <p class="card-text">
+              Premium content available in full report...
+            </p>
+            <p class="extra-text">
+              Behind this preview sits a deeper layer of detail, weaving patterns, causes, and subtle signals into a coherent story.
+              The lines suggest repeating motifs, points of tension, and the small choices that shape larger outcomes, all hinted at but not fully shown here.
+              These notes are intentionally blurred, giving only a faint sense of the structure that the full report lays out in detail.
+            </p>
+            <p class="extra-text">
+              The extended analysis maps sequences, thresholds, and inflection points, showing how the energy shifts over time and how one phase sets up the next.
+              It connects internal drivers with external timing, highlighting where momentum builds, where it plateaus, and where a decisive window opens.
+              This is the dense core that turns a headline insight into a guided reading.
+            </p>
+            <p class="extra-text">
+              Unlocking the full report reveals the complete narrative, the specific cues, and the actionable takeaways that sit behind these blurred lines.
+              It expands each theme into concrete guidance and fuller context, turning abstract impressions into usable clarity.
+              What you see here is only a compressed shadow of the full material.
+            </p>
+          </div>
+
+          <div class="card-locked-overlay lock-overlay" id="lock-extended-timeline">
+            <div class="lock-icon"><i class="fas fa-lock"></i></div>
+            <button class="unlock-btn btn-unlock" data-unlock="extended_timeline_12_months">
+              <i class="fas fa-gem"></i> Unlock Full Report
+            </button>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card locked premium-locked" id="card12" data-lock="life_purpose_soul_mission">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-compass"></i>
+            </div>
+            <h1 class="card-title">Life Purpose & Soul Mission</h1>
+            <p class="card-subtitle">Your deeper calling</p>
+            <p class="card-text">
+              Premium content available in full report...
+            </p>
+            <p class="extra-text">
+              Behind this preview sits a deeper layer of detail, weaving patterns, causes, and subtle signals into a coherent story.
+              The lines suggest repeating motifs, points of tension, and the small choices that shape larger outcomes, all hinted at but not fully shown here.
+              These notes are intentionally blurred, giving only a faint sense of the structure that the full report lays out in detail.
+            </p>
+            <p class="extra-text">
+              The extended analysis maps sequences, thresholds, and inflection points, showing how the energy shifts over time and how one phase sets up the next.
+              It connects internal drivers with external timing, highlighting where momentum builds, where it plateaus, and where a decisive window opens.
+              This is the dense core that turns a headline insight into a guided reading.
+            </p>
+            <p class="extra-text">
+              Unlocking the full report reveals the complete narrative, the specific cues, and the actionable takeaways that sit behind these blurred lines.
+              It expands each theme into concrete guidance and fuller context, turning abstract impressions into usable clarity.
+              What you see here is only a compressed shadow of the full material.
+            </p>
+          </div>
+
+          <div class="card-locked-overlay lock-overlay" id="lock-purpose">
+            <div class="lock-icon"><i class="fas fa-lock"></i></div>
+            <button class="unlock-btn btn-unlock" data-unlock="life_purpose_soul_mission">
+              <i class="fas fa-gem"></i> Unlock Full Report
+            </button>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card locked premium-locked" id="card13" data-lock="shadow_work_transformation">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-moon"></i>
+            </div>
+            <h1 class="card-title">Shadow Work & Transformation</h1>
+            <p class="card-subtitle">Hidden aspects</p>
+            <p class="card-text">
+              Premium content available in full report...
+            </p>
+            <p class="extra-text">
+              Behind this preview sits a deeper layer of detail, weaving patterns, causes, and subtle signals into a coherent story.
+              The lines suggest repeating motifs, points of tension, and the small choices that shape larger outcomes, all hinted at but not fully shown here.
+              These notes are intentionally blurred, giving only a faint sense of the structure that the full report lays out in detail.
+            </p>
+            <p class="extra-text">
+              The extended analysis maps sequences, thresholds, and inflection points, showing how the energy shifts over time and how one phase sets up the next.
+              It connects internal drivers with external timing, highlighting where momentum builds, where it plateaus, and where a decisive window opens.
+              This is the dense core that turns a headline insight into a guided reading.
+            </p>
+            <p class="extra-text">
+              Unlocking the full report reveals the complete narrative, the specific cues, and the actionable takeaways that sit behind these blurred lines.
+              It expands each theme into concrete guidance and fuller context, turning abstract impressions into usable clarity.
+              What you see here is only a compressed shadow of the full material.
+            </p>
+          </div>
+
+          <div class="card-locked-overlay lock-overlay" id="lock-shadow">
+            <div class="lock-icon"><i class="fas fa-lock"></i></div>
+            <button class="unlock-btn btn-unlock" data-unlock="shadow_work_transformation">
+              <i class="fas fa-gem"></i> Unlock Full Report
+            </button>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card locked premium-locked" id="card14" data-lock="practical_guidance_action_plan">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-list-check"></i>
+            </div>
+            <h1 class="card-title">Practical Guidance & Action Plan</h1>
+            <p class="card-subtitle">Next steps</p>
+            <p class="card-text">
+              Premium content available in full report...
+            </p>
+            <p class="extra-text">
+              Behind this preview sits a deeper layer of detail, weaving patterns, causes, and subtle signals into a coherent story.
+              The lines suggest repeating motifs, points of tension, and the small choices that shape larger outcomes, all hinted at but not fully shown here.
+              These notes are intentionally blurred, giving only a faint sense of the structure that the full report lays out in detail.
+            </p>
+            <p class="extra-text">
+              The extended analysis maps sequences, thresholds, and inflection points, showing how the energy shifts over time and how one phase sets up the next.
+              It connects internal drivers with external timing, highlighting where momentum builds, where it plateaus, and where a decisive window opens.
+              This is the dense core that turns a headline insight into a guided reading.
+            </p>
+            <p class="extra-text">
+              Unlocking the full report reveals the complete narrative, the specific cues, and the actionable takeaways that sit behind these blurred lines.
+              It expands each theme into concrete guidance and fuller context, turning abstract impressions into usable clarity.
+              What you see here is only a compressed shadow of the full material.
+            </p>
+          </div>
+
+          <div class="card-locked-overlay lock-overlay" id="lock-guidance">
+            <div class="lock-icon"><i class="fas fa-lock"></i></div>
+            <button class="unlock-btn btn-unlock" data-unlock="practical_guidance_action_plan">
+              <i class="fas fa-gem"></i> Unlock Full Report
+            </button>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="reading-card" id="card15">
+        <div class="card-content">
+          <div class="content-wrapper">
+            <div class="card-icon">
+              <i class="fas fa-eye"></i>
+            </div>
+            <h1 class="card-title">Reading Complete</h1>
+            <p class="card-subtitle">Your journey in full</p>
+            <p class="card-text">
+              You've now explored the key insights revealed by your aura. Remember, these readings offer reflections, not fixed destinies.
+            </p>
+            <p class="extra-text">
+              Your aura shows patterns and potentials, but your choices shape how these unfold in your life.
+            </p>
+          </div>
+
+          <div class="action-buttons">
+            <button class="action-btn secondary" id="backToDashboardBtn" data-dashboard-url="data-sm-home-url-placeholder">
+              <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Quick Insight Modal -->
+<div class="sm-modal" id="sm-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Quick insight">
+  <div class="sm-modal__backdrop" data-modal-close data-close="1"></div>
+  <div class="sm-modal__panel" role="document">
+    <button class="sm-modal__close" type="button" data-modal-close data-close="1" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="sm-modal__content">
+      <div class="sm-modal__badge" id="sm-modal-badge">Quick Insight</div>
+      <div class="sm-modal__counter" data-unlock-counter>
+        <span class="sm-modal__counter-label">Free unlocks</span>
+        <span class="sm-modal__counter-value" data-unlock-remaining>2 remaining</span>
+      </div>
+      <h3 class="sm-modal__title" id="sm-modal-title"></h3>
+      <p class="sm-modal__body" id="sm-modal-body"></p>
+      <div class="sm-modal__hint" id="sm-modal-hint">Unlock the full report to access every insight instantly.</div>
+      <div class="sm-modal__actions">
+        <button class="action-btn btn-premium sm-modal__cta" type="button" data-cta>
+          <i class="fas fa-crown"></i> View Plans
+        </button>
+        <button class="action-btn btn-ghost sm-modal__secondary" type="button" data-close="1">
+          Maybe later
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{PLUGIN_URL}}assets/js/swipe-template.js"></script>
+</body>
+</html>

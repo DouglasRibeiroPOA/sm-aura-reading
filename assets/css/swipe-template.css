@@ -1,0 +1,1017 @@
+/**
+ * Swipeable Card Template Styles
+ *
+ * SCOPED to .sm-swipe-template to prevent interference with existing templates.
+ * All selectors are prefixed with .sm-swipe-template
+ *
+ * @package MysticAuraReading
+ * @since 4.0.0
+ */
+
+/* CSS Reset - Scoped */
+.sm-swipe-template * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sm-swipe-template {
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at top, rgba(168, 139, 235, 0.12), transparent 45%),
+        linear-gradient(135deg, var(--aura-bg-primary, #F4F7FB), var(--aura-bg-secondary, #F6F3FA));
+    color: var(--aura-text-primary, #2F2F3A);
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+body.sm-swipe-report {
+    background: var(--aura-bg-primary, #F4F7FB);
+}
+
+body.sm-swipe-report #sm-palm-reading-app .background-animation,
+body.sm-swipe-report #sm-palm-reading-app .progress-container,
+body.sm-swipe-report #sm-palm-reading-app .navigation,
+body.sm-swipe-report #sm-aura-reading-app .background-animation,
+body.sm-swipe-report #sm-aura-reading-app .progress-container,
+body.sm-swipe-report #sm-aura-reading-app .navigation {
+    display: none;
+}
+
+body.sm-swipe-report #sm-palm-reading-app,
+body.sm-swipe-report #sm-palm-reading-app .app-container,
+body.sm-swipe-report #sm-palm-reading-app .app-content,
+body.sm-swipe-report #sm-aura-reading-app,
+body.sm-swipe-report #sm-aura-reading-app .app-container,
+body.sm-swipe-report #sm-aura-reading-app .app-content {
+    background: transparent;
+    width: 100%;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    max-width: none;
+    overflow: hidden;
+}
+
+body.sm-swipe-report #sm-palm-reading-app,
+body.sm-swipe-report #sm-aura-reading-app {
+    padding: 0;
+    margin: 0;
+    max-width: none;
+}
+
+body.sm-swipe-report #sm-palm-reading-app .app-container,
+body.sm-swipe-report #sm-aura-reading-app .app-container {
+    max-width: none;
+    width: 100%;
+    align-items: stretch;
+    justify-content: stretch;
+}
+
+body.sm-swipe-report .sm-swipe-template {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+/* App container */
+.sm-swipe-template .app-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+/* Cards container */
+.sm-swipe-template .cards-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    touch-action: pan-y;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Individual card */
+.sm-swipe-template .reading-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    opacity: 0;
+    transform: translateX(100%);
+    pointer-events: none;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 0.4s ease;
+}
+
+.sm-swipe-template .reading-card.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.sm-swipe-template .reading-card.previous {
+    opacity: 0;
+    transform: translateX(-100%);
+}
+
+.sm-swipe-template .reading-card.next {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+/* Card content - Responsive sizing */
+.sm-swipe-template .card-content {
+    width: 100%;
+    max-width: 850px;
+    height: 90vh;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 28px;
+    padding: 35px 40px;
+    box-shadow:
+        0 25px 60px rgba(168, 139, 235, 0.12),
+        0 10px 40px rgba(0, 0, 0, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.sm-swipe-template .card-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(90deg, var(--aura-accent-primary, #A88BEB), var(--aura-accent-alt, #9F8CF1));
+}
+
+/* Desktop - closer to top */
+@media (min-width: 768px) {
+    .sm-swipe-template .app-container {
+        padding-top: 20px;
+    }
+
+    .sm-swipe-template .card-content {
+        height: 88vh;
+        max-height: 90vh;
+    }
+}
+
+/* Mobile - very close to top */
+@media (max-width: 768px) {
+    .sm-swipe-template .app-container {
+        padding: 10px;
+        padding-top: 23px;
+        align-items: flex-start;
+    }
+
+    .sm-swipe-template .reading-card {
+        padding: 8px;
+    }
+
+    .sm-swipe-template .card-content {
+        max-width: 100%;
+        height: 95vh;
+        padding: 25px 22px;
+        border-radius: 24px;
+        margin-top: 0;
+    }
+}
+
+/* Extra small mobile */
+@media (max-width: 480px) {
+    .sm-swipe-template .app-container {
+        padding: 8px;
+        padding-top: 23px;
+    }
+
+    .sm-swipe-template .card-content {
+        padding: 22px 18px;
+        height: 96vh;
+    }
+}
+
+/* Card icon - Fixed positioning */
+.sm-swipe-template .card-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--aura-accent-primary, #A88BEB), var(--aura-accent-alt, #9F8CF1));
+    box-shadow: 0 15px 35px rgba(168, 139, 235, 0.22);
+    flex-shrink: 0;
+}
+
+/* Card title - Smaller font */
+.sm-swipe-template .card-title {
+    font-family: 'Cinzel', serif;
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--aura-text-primary, #2F2F3A);
+    margin-bottom: 12px;
+    line-height: 1.2;
+    padding: 0 5px;
+}
+
+/* Card subtitle */
+.sm-swipe-template .card-subtitle {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--aura-text-secondary, #6B6F85);
+    text-align: center;
+    margin-bottom: 25px;
+    letter-spacing: 0.2px;
+    padding: 0 5px;
+}
+
+/* Keep locked card titles/icons above the blur overlay */
+.sm-swipe-template .reading-card.locked .card-icon,
+.sm-swipe-template .reading-card.locked .card-title {
+    position: relative;
+    z-index: 12;
+}
+
+/* Card text - Smaller font and closer to margins */
+.sm-swipe-template .card-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #363546;
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 0 5px;
+}
+
+/* Palm Summary List Styles */
+.sm-swipe-template .palm-summary-list,
+.sm-swipe-template .palm-summary-lines {
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: left;
+    color: #363546;
+}
+
+.sm-swipe-template .palm-summary-list li,
+.sm-swipe-template .palm-summary-lines li {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Extra text class for additional content */
+.sm-swipe-template .extra-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #49475f;
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 0 5px;
+}
+
+.sm-swipe-template .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    color: #2f2d40;
+    margin: 10px 0 14px;
+    letter-spacing: 0.3px;
+}
+
+.sm-swipe-template .core-theme {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #5c4f7e;
+    text-align: center;
+    margin: 16px auto 0;
+    padding: 10px 16px;
+    max-width: 520px;
+    border-left: 3px solid rgba(168, 139, 235, 0.32);
+    background: rgba(168, 139, 235, 0.08);
+    border-radius: 10px;
+}
+
+/* Navigation buttons - positioned at bottom */
+.sm-swipe-template .nav-buttons {
+    display: flex;
+    gap: 20px;
+    margin-top: auto;
+    padding-top: 20px;
+    width: 100%;
+    justify-content: center;
+    padding: 20px 5px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+}
+
+.sm-swipe-template .nav-btn {
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 130px;
+}
+
+.sm-swipe-template .nav-btn.prev {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--aura-accent-primary, #A88BEB);
+    border: 2px solid rgba(168, 139, 235, 0.25);
+}
+
+.sm-swipe-template .nav-btn.next {
+    background: linear-gradient(135deg, var(--aura-accent-primary, #A88BEB), var(--aura-accent-alt, #9F8CF1));
+    color: white;
+    box-shadow: 0 8px 20px rgba(168, 139, 235, 0.18);
+}
+
+.sm-swipe-template .nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(168, 139, 235, 0.2);
+}
+
+.sm-swipe-template .nav-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Special elements */
+.sm-swipe-template .trait-visual {
+    width: 100%;
+    margin: 20px 0;
+    padding: 0 5px;
+}
+
+.sm-swipe-template .trait-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.sm-swipe-template .trait-name {
+    font-weight: 600;
+    color: #2f2d40;
+    width: 100px;
+    flex-shrink: 0;
+    font-size: 15px;
+}
+
+.sm-swipe-template .trait-bar {
+    flex: 1;
+    height: 7px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.sm-swipe-template .trait-score {
+    width: 34px;
+    text-align: right;
+    font-weight: 600;
+    color: #5a4f7e;
+    margin-left: 10px;
+    font-size: 14px;
+}
+
+.sm-swipe-template .trait-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--aura-accent-primary, #A88BEB), var(--aura-accent-alt, #9F8CF1));
+    border-radius: 10px;
+    width: 0;
+    transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Quote styling */
+.sm-swipe-template .insight-quote {
+    background: linear-gradient(135deg, rgba(168, 139, 235, 0.06), rgba(159, 140, 241, 0.06));
+    border-radius: 16px;
+    padding: 20px;
+    margin: 20px 0;
+    border-left: 3px solid var(--aura-accent-primary, #A88BEB);
+}
+
+.sm-swipe-template .quote-text {
+    font-size: 16px;
+    font-style: italic;
+    line-height: 1.5;
+    color: #4b4560;
+    margin-bottom: 8px;
+}
+
+.sm-swipe-template .quote-author {
+    color: var(--aura-accent-primary, #A88BEB);
+    text-align: right;
+    font-size: 14px;
+}
+
+.sm-swipe-template .symbol-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.sm-swipe-template .symbol-item {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(168, 139, 235, 0.25);
+    border-radius: 16px;
+    padding: 12px 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sm-swipe-template .symbol-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(168, 139, 235, 0.16);
+}
+
+.sm-swipe-template .symbol {
+    font-size: 20px;
+}
+
+.sm-swipe-template .symbol-label {
+    font-weight: 700;
+    color: #352953;
+    font-size: 14px;
+}
+
+.sm-swipe-template .symbol-micro {
+    font-size: 12px;
+    color: #6f628f;
+}
+
+.sm-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.sm-modal.is-open {
+    display: flex;
+}
+
+.sm-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(47, 47, 58, 0.45); /* Using aura-text-primary with opacity */
+    backdrop-filter: blur(6px);
+}
+
+.sm-modal__panel {
+    position: relative;
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 18px;
+    padding: 26px 26px 24px;
+    max-width: 420px;
+    width: calc(100% - 48px);
+    box-shadow: 0 24px 60px rgba(12, 9, 23, 0.25);
+    z-index: 1;
+    text-align: center;
+}
+
+.sm-modal__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: var(--aura-text-secondary, #6B6F85);
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.sm-modal__badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(168, 139, 235, 0.14);
+    color: var(--aura-accent-primary, #A88BEB);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.sm-modal__title {
+    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #2b2442;
+}
+
+.sm-modal__body {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #524b68;
+}
+
+/* Action buttons (on last slide) */
+.sm-swipe-template .action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 0 5px;
+}
+
+.sm-swipe-template .action-btn {
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.sm-swipe-template .action-btn.primary {
+    background: linear-gradient(135deg, var(--aura-accent-primary, #A88BEB), var(--aura-accent-alt, #9F8CF1));
+    color: white;
+    box-shadow: 0 8px 20px rgba(168, 139, 235, 0.2);
+}
+
+.sm-swipe-template .action-btn.secondary {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--aura-accent-primary, #A88BEB);
+    border: 2px solid rgba(168, 139, 235, 0.25);
+}
+
+.sm-swipe-template .action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(168, 139, 235, 0.2);
+}
+
+/* Navigation hint (card 1) */
+.sm-swipe-template .nav-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #6b6f85;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    padding: 8px 0 6px;
+}
+
+.sm-swipe-template .nav-icons {
+    display: flex;
+    gap: 12px;
+    font-size: 16px;
+}
+
+.sm-swipe-template .nav-icons i {
+    animation: sm-swipe-pulse 2s infinite;
+}
+
+.sm-swipe-template .nav-icons i:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.sm-swipe-template .nav-icons i:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+@keyframes sm-swipe-pulse {
+    0%, 100% { opacity: 0.3; transform: translateX(0); }
+    50% { opacity: 1; transform: translateX(4px); }
+}
+
+/* Animation for card entrance */
+@keyframes sm-swipe-fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.sm-swipe-template .animate-in {
+    animation: sm-swipe-fadeInUp 0.7s ease forwards !important;
+}
+
+/* Swipe animation */
+.sm-swipe-template .reading-card.swipe-left {
+    animation: sm-swipe-swipeLeft 0.4s forwards;
+}
+
+.sm-swipe-template .reading-card.swipe-right {
+    animation: sm-swipe-swipeRight 0.4s forwards;
+}
+
+@keyframes sm-swipe-swipeLeft {
+    0% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(-100%); opacity: 0; }
+}
+
+@keyframes sm-swipe-swipeRight {
+    0% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* New card entrance */
+@keyframes sm-swipe-cardEnterFromRight {
+    0% { transform: translateX(100%); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes sm-swipe-cardEnterFromLeft {
+    0% { transform: translateX(-100%); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+.sm-swipe-template .enter-from-right {
+    animation: sm-swipe-cardEnterFromRight 0.5s forwards;
+}
+
+.sm-swipe-template .enter-from-left {
+    animation: sm-swipe-cardEnterFromLeft 0.5s forwards;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .sm-swipe-template .card-title {
+        font-size: 30px;
+        margin-bottom: 10px;
+    }
+
+    .sm-swipe-template .card-subtitle {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .sm-swipe-template .card-text,
+    .sm-swipe-template .extra-text {
+        font-size: 18px;
+        line-height: 1.62;
+        margin-bottom: 18px;
+    }
+
+    .sm-swipe-template .palm-summary-list,
+    .sm-swipe-template .palm-summary-lines {
+        font-size: 18px;
+        line-height: 1.62;
+    }
+
+    .sm-swipe-template .palm-summary-list li,
+    .sm-swipe-template .palm-summary-lines li {
+        font-size: 18px;
+        line-height: 1.62;
+    }
+
+    .sm-swipe-template .card-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 30px;
+        margin-bottom: 15px;
+    }
+
+
+    .sm-swipe-template .nav-buttons {
+        flex-direction: column;
+        gap: 10px;
+        padding-top: 15px;
+    }
+
+    .sm-swipe-template .nav-btn {
+        width: 100%;
+        min-width: auto;
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .sm-swipe-template .trait-visual {
+        margin: 18px 0;
+    }
+
+    .sm-swipe-template .trait-row {
+        margin-bottom: 10px;
+    }
+
+    .sm-swipe-template .trait-name {
+        width: 85px;
+        font-size: 14px;
+    }
+
+    .sm-swipe-template .trait-bar {
+        height: 6px;
+    }
+
+    .sm-swipe-template .insight-quote {
+        padding: 18px;
+        margin: 18px 0;
+        border-radius: 14px;
+    }
+
+    .sm-swipe-template .quote-text {
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    .sm-swipe-template .action-buttons {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .sm-swipe-template .action-btn {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sm-swipe-template .card-title {
+        font-size: 22px;
+    }
+
+    .sm-swipe-template .card-text,
+    .sm-swipe-template .extra-text {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .sm-swipe-template .palm-summary-list,
+    .sm-swipe-template .palm-summary-lines {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .sm-swipe-template .palm-summary-list li,
+    .sm-swipe-template .palm-summary-lines li {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .sm-swipe-template .card-icon {
+        width: 65px;
+        height: 65px;
+        font-size: 28px;
+        margin-bottom: 12px;
+    }
+
+    .sm-swipe-template .nav-btn {
+        padding: 11px 18px;
+    }
+
+    .sm-swipe-template .trait-name {
+        width: 80px;
+        font-size: 13px;
+    }
+}
+
+/* Progress indicator - minimalist */
+.sm-swipe-template .progress-indicator {
+    position: fixed;
+    top: 15px;
+    left: 20px;
+    right: 20px;
+    height: 3px;
+    background: rgba(47, 47, 58, 0.08);
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 100;
+}
+
+.sm-swipe-template .progress-fill {
+    height: 100%;
+    width: 8.33%; /* 1/12 cards */
+    background: linear-gradient(90deg, var(--aura-accent-primary, #A88BEB), var(--aura-accent-alt, #9F8CF1));
+    border-radius: 10px;
+    transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Content wrapper for better scrolling */
+.sm-swipe-template .content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-bottom: 10px;
+    position: relative;
+}
+
+.sm-swipe-template .content-wrapper.fade-bottom {
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 70%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 70%, transparent 100%);
+}
+
+/* Swipe instruction overlay */
+.sm-swipe-template .swipe-instruction {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--aura-bg-primary, #F4F7FB), var(--aura-bg-secondary, #F6F3FA));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    text-align: center;
+    z-index: 200;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.sm-swipe-template .swipe-instruction.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sm-swipe-template .swipe-icon {
+    font-size: 60px;
+    margin-bottom: 30px;
+    color: var(--aura-accent-primary, #A88BEB);
+    animation: sm-swipe-swipeInstruction 2s infinite ease-in-out;
+}
+
+@keyframes sm-swipe-swipeInstruction {
+    0%, 100% { transform: translateX(0); }
+    33% { transform: translateX(-20px); }
+    66% { transform: translateX(20px); }
+}
+
+.sm-swipe-template .swipe-text {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--aura-text-primary, #2F2F3A);
+    margin-bottom: 15px;
+}
+
+.sm-swipe-template .swipe-detail {
+    font-size: 16px;
+    color: var(--aura-text-secondary, #6B6F85);
+    margin-bottom: 30px;
+    max-width: 320px;
+}
+
+.sm-swipe-template .start-btn {
+    padding: 16px 40px;
+    background: linear-gradient(135deg, var(--aura-accent-primary, #A88BEB), var(--aura-accent-alt, #9F8CF1));
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(168, 139, 235, 0.3);
+    transition: all 0.3s ease;
+}
+
+.sm-swipe-template .start-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(168, 139, 235, 0.4);
+}
+
+/* Lock overlay for cards (teaser template) */
+.sm-swipe-template .card-locked-overlay,
+.sm-swipe-template .lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: var(--nav-buttons-offset, 0px);
+    background: linear-gradient(135deg, rgba(168, 139, 235, 0.06), rgba(159, 140, 241, 0.06));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border-radius: 28px;
+    padding: 30px;
+    pointer-events: none;
+}
+
+.sm-swipe-template .lock-icon {
+    font-size: 48px;
+    color: var(--aura-accent-primary, #A88BEB);
+    margin-bottom: 20px;
+}
+
+.sm-swipe-template .unlock-btn,
+.sm-swipe-template .btn-unlock {
+    padding: 14px 28px;
+    background: linear-gradient(135deg, var(--aura-accent-primary, #A88BEB), var(--aura-accent-alt, #9F8CF1));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(168, 139, 235, 0.2);
+    transition: all 0.3s ease;
+    pointer-events: auto;
+}
+
+.sm-swipe-template .unlock-btn:hover,
+.sm-swipe-template .btn-unlock:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(168, 139, 235, 0.3);
+}
+
+.sm-swipe-template .unlocks-remaining {
+    margin-top: 15px;
+    font-size: 14px;
+    color: var(--aura-text-secondary, #6B6F85);
+}
+
+.sm-swipe-template .premium-locked .lock-overlay {
+    background: linear-gradient(135deg, rgba(254, 243, 199, 0.55), rgba(253, 230, 138, 0.45));
+    box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.18);
+}
+
+.sm-swipe-template .premium-locked .lock-icon {
+    color: #d97706;
+}
+
+.sm-modal__counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto 14px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(168, 139, 235, 0.16);
+    color: #6a4da8;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.sm-modal__counter-label {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 10px;
+}
+
+.sm-modal__hint {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #6f628f;
+}
+
+.sm-modal__actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    justify-content: center;
+}
+
+.sm-modal__actions .action-btn {
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+}
+
+.sm-modal__actions .btn-premium {
+    background: linear-gradient(135deg, var(--aura-accent-primary, #A88BEB), var(--aura-accent-alt, #9F8CF1));
+    color: #fff;
+}
+
+.sm-modal__actions .btn-ghost {
+    background: #f3f4f6;
+    color: #4b5563;
+}

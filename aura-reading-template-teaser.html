@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name='robots' content='max-image-preview:large' />
+  <title>Aura Reading – SoulMirror</title>
+</head>
+<body>
+
+<!-- RESULT CONTAINER DESIGN -->
+<div id="aura-reading-result" class="result-container" data-sm-id-placeholder data-sm-lead-id-placeholder data-sm-url-placeholder data-sm-status-placeholder data-sm-unlock-placeholder data-modal-love-placeholder data-modal-career-placeholder data-modal-alignment-placeholder aria-live="polite">
+  <!-- Animated mystical background -->
+  <div class="mystic-background">
+    <div class="aura-pulse aura-1"></div>
+    <div class="aura-pulse aura-2"></div>
+    <div class="aura-pulse aura-3"></div>
+    <div class="energy-orb orb-1"></div>
+    <div class="energy-orb orb-2"></div>
+  </div>
+
+  <!-- Main Result Card -->
+  <div class="result-card">
+
+    <!-- Header with title -->
+    <div class="result-header">
+      <!-- SM_LOGIN_BUTTON_PLACEHOLDER -->
+
+      <h1 class="result-title">
+        Your SoulMirror Aura Reading
+        <span class="result-subtitle">Your teaser reflection - a first look beneath the surface</span>
+        <span class="result-timestamp">{{READING_TIMESTAMP}}</span>
+      </h1>
+
+      <div class="header-badge" title="Teaser Preview">
+        <span class="badge-text">Teaser</span>
+      </div>
+    </div>
+
+    <!-- Reading Meta Information -->
+    <div class="reading-meta">
+      <div class="meta-item">
+        <i class="fas fa-user-circle meta-icon" aria-hidden="true"></i>
+        <span class="meta-label">Prepared for:</span>
+        <span class="meta-value user-name">Alexandra</span>
+      </div>
+      <div class="meta-item">
+        <i class="fas fa-calendar-alt meta-icon" aria-hidden="true"></i>
+        <span class="meta-label">Date:</span>
+        <span class="meta-value current-date">December 17, 2024</span>
+      </div>
+    </div>
+
+    <!-- NEW: Opening Reflection -->
+    <div class="opening-reflection" role="note">
+      <div class="opening-icon" aria-hidden="true">
+        <i class="fas fa-magic"></i>
+      </div>
+      <div class="opening-text">
+        <h2>Your Aura as a Mirror</h2>
+        <p>
+          Your aura holds patterns shaped by experience, intention, and instinct.
+          This teaser reflection shows what is most visible right now — the themes that rise first when your energy is read as a map.
+        </p>
+        <p class="opening-soft">
+          You’ll see a few insights clearly… and a few intentionally blurred. Those locked layers are where the deeper meaning lives.
+        </p>
+      </div>
+    </div>
+
+    <!-- Reading Content Sections -->
+    <div class="reading-content">
+
+      <!-- Aura Summary Snapshot (Visible) -->
+      <section class="reading-section section-palm-summary">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-sun"></i></div>
+          <h2>Aura Snapshot</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <ul class="palm-summary-list">
+            <li><strong>Dominant tone:</strong> Calm, steady, luminous</li>
+            <li>
+              <strong>Core layers:</strong>
+              <ul class="palm-summary-lines">
+                <li><span class="palm-summary-arrow">&gt;</span> <strong>Emotional layer:</strong> Open, reflective</li>
+                <li><span class="palm-summary-arrow">&gt;</span> <strong>Mental layer:</strong> Focused, clear</li>
+                <li><span class="palm-summary-arrow">&gt;</span> <strong>Relational layer:</strong> Warm, discerning</li>
+                <li><span class="palm-summary-arrow">&gt;</span> <strong>Spiritual layer:</strong> Quiet but steady</li>
+              </ul>
+            </li>
+            <li><strong>Flow pattern:</strong> Grounded, growth-oriented</li>
+            <li><strong>Overall energy:</strong> Soft, resilient, attentive</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Emotional State & Inner Climate (Visible) -->
+      <section class="reading-section section-life">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-heart"></i></div>
+          <h2>Emotional State &amp; Inner Climate</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <p>
+            Your aura reads as steady with a soft emotional core, shaped by experience rather than shortcuts.
+            You tend to grow through contrast — learning most when life challenges comfort.
+          </p>
+          <p>
+            Your emotional nature runs deep, but you don’t give access instantly.
+            When you commit to a path or a person, it’s intentional and grounded.
+          </p>
+          <div class="insight-point">
+            <i class="fas fa-star insight-icon" aria-hidden="true"></i>
+            <span class="insight-text">Core Theme: You evolve through lived experience, not shortcuts.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Love (LOCKED) -->
+      <section class="reading-section section-love locked" data-lock="love">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-heart"></i></div>
+          <h2>Love, Relationships &amp; Emotional Connection</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <p>
+            Your aura reflects emotional depth paired with discernment.
+            You may love intensely — but only when trust feels earned and safe.
+          </p>
+          <p>
+            There’s a pattern here that explains why certain connections feel magnetic… and why others fade fast.
+          </p>
+
+          <div class="insight-point">
+            <i class="fas fa-lock insight-icon" aria-hidden="true"></i>
+            <span class="insight-text">Locked Insight: Your relationship pattern + what to stop repeating.</span>
+          </div>
+        </div>
+
+        <div class="lock-overlay">
+          <div class="lock-card">
+            <div class="lock-title"><i class="fas fa-lock"></i> Hidden Layer</div>
+            <div class="lock-counter" data-unlock-badge>You can unlock up to 2 sections</div>
+            <div class="lock-sub">Reveal your connection pattern (deep insight + guidance).</div>
+            <button class="action-btn btn-primary btn-unlock" data-unlock="love">
+              <i class="fas fa-gem"></i> Reveal Relationship Insight
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Life Direction, Success & Material Flow (PARTIAL + Interactive Orbs) -->
+      <section class="reading-section section-destiny">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-briefcase"></i></div>
+          <h2>Life Direction, Success &amp; Material Flow</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <p>
+            Your aura suggests success grows best through alignment, not pressure.
+            You do your strongest work when it reflects who you are — not who you’re expected to be.
+          </p>
+
+          <div class="symbol-grid">
+            <button class="symbol-item symbol-btn" type="button" data-modal="lovePatterns" aria-label="Open Love Patterns insight">
+              <span class="symbol">💖</span>
+              <span class="symbol-label">Emotional Connection</span>
+              <span class="symbol-micro">What you crave &amp; protect</span>
+            </button>
+
+            <button class="symbol-item symbol-btn" type="button" data-modal="careerDirection" aria-label="Open Career Direction insight">
+              <span class="symbol">💼</span>
+              <span class="symbol-label">Life Direction</span>
+              <span class="symbol-micro">Where you thrive</span>
+            </button>
+
+            <button class="symbol-item symbol-btn" type="button" data-modal="lifeAlignment" aria-label="Open Life Alignment insight">
+              <span class="symbol">🧭</span>
+              <span class="symbol-label">Energy Flow</span>
+              <span class="symbol-micro">Balance signal</span>
+            </button>
+          </div>
+
+          <div class="insight-point muted">
+            <i class="fas fa-info-circle insight-icon" aria-hidden="true"></i>
+            <span class="insight-text">Tip: Tap the icons for quick insights (your “mini-reading”).</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Energy Level & Flow (Visible) -->
+      <section class="reading-section section-personality">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-brain"></i></div>
+          <h2>Energy Level &amp; Flow</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <p>
+            Your aura shows a steady current with bursts of creative intensity.
+            You sense undercurrents quickly — and you’re careful about what you act on.
+          </p>
+
+          <div class="trait-list">
+            <!-- TRAITS_REPLACE_START -->
+            <div class="trait-item">
+              <span class="trait-name">Vitality</span>
+              <div class="trait-bar"><div class="trait-fill" style="width: 85%"></div></div>
+            </div>
+            <div class="trait-item">
+              <span class="trait-name">Flow</span>
+              <div class="trait-bar"><div class="trait-fill" style="width: 78%"></div></div>
+            </div>
+            <div class="trait-item">
+              <span class="trait-name">Recovery</span>
+              <div class="trait-bar"><div class="trait-fill" style="width: 92%"></div></div>
+            </div>
+            <!-- TRAITS_REPLACE_END -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Spiritual Memory & Deeper Patterns (LOCKED) -->
+      <section class="reading-section section-challenges locked" data-lock="challenges">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-mountain"></i></div>
+          <h2>Spiritual Memory &amp; Deeper Patterns</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <p>
+            Your aura reveals repeating themes that run beneath the surface.
+            These aren’t obstacles — they’re patterns asking to be acknowledged.
+          </p>
+          <p>
+            What feels like resistance is often redirection toward something better aligned.
+            The deeper reading traces where these patterns began and how to shift them.
+          </p>
+
+          <div class="insight-point">
+            <i class="fas fa-lock insight-icon" aria-hidden="true"></i>
+            <span class="insight-text">Locked Insight: The pattern to release + the lesson it holds.</span>
+          </div>
+        </div>
+
+        <div class="lock-overlay">
+          <div class="lock-card">
+            <div class="lock-title"><i class="fas fa-lock"></i> Hidden Layer</div>
+            <div class="lock-counter" data-unlock-badge>You can unlock up to 2 sections</div>
+            <div class="lock-sub">Reveal your deeper pattern (growth map).</div>
+            <button class="action-btn btn-primary btn-unlock" data-unlock="challenges">
+              <i class="fas fa-gem"></i> Reveal Deeper Pattern
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Intentions, Healing & Growth (LOCKED) -->
+      <section class="reading-section section-phase locked" data-lock="phase">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-moon"></i></div>
+          <h2>Intentions, Healing &amp; Growth</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <p>
+            Your aura suggests a transition period — where clarity is forming, but not fully visible yet.
+            This phase often feels quiet on the outside and loud on the inside.
+          </p>
+          <p>
+            The deeper reading shows what is ready to heal, what is beginning, and what your next “yes” should be.
+          </p>
+
+          <div class="insight-point">
+            <i class="fas fa-lock insight-icon" aria-hidden="true"></i>
+            <span class="insight-text">Locked Insight: Your current healing chapter + the next step.</span>
+          </div>
+        </div>
+
+        <div class="lock-overlay">
+          <div class="lock-card">
+            <div class="lock-title"><i class="fas fa-lock"></i> Hidden Layer</div>
+            <div class="lock-counter" data-unlock-badge>You can unlock up to 2 sections</div>
+            <div class="lock-sub">Reveal your growth path (timing + direction).</div>
+            <button class="action-btn btn-primary btn-unlock" data-unlock="phase">
+              <i class="fas fa-gem"></i> Reveal Growth Path
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Timeline/Next 6 Months (LOCKED) - NEW -->
+      <section class="reading-section section-timeline locked" data-lock="timeline">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-calendar-check"></i></div>
+          <h2>Your Timeline: The Next 6 Months</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <p>
+            The next six months hold a pattern of emergence.
+            Expect subtle shifts early on, with a bigger opening as spring unfolds.
+          </p>
+          <p>
+            Look for subtle shifts in February and a bigger opening in April.
+            Timing isn't random — your energy field signals when doors are most likely to open.
+          </p>
+
+          <div class="insight-point">
+            <i class="fas fa-lock insight-icon" aria-hidden="true"></i>
+            <span class="insight-text">Locked Insight: Month-by-month guidance + key decision points.</span>
+          </div>
+        </div>
+
+        <div class="lock-overlay">
+          <div class="lock-card">
+            <div class="lock-title"><i class="fas fa-lock"></i> Hidden Layer</div>
+            <div class="lock-counter" data-unlock-badge>You can unlock up to 2 sections</div>
+            <div class="lock-sub">Reveal your Timeline (6-month forecast + key dates).</div>
+            <button class="action-btn btn-primary btn-unlock" data-unlock="timeline">
+              <i class="fas fa-gem"></i> Reveal Timeline
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Guidance (LOCKED) -->
+      <section class="reading-section section-guidance locked" data-lock="guidance">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-compass"></i></div>
+          <h2>What to Pay Attention to Now</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <div class="guidance-card">
+            <div class="guidance-text">
+              <h3>Notice where you're forcing certainty</h3>
+              <p>
+                Your aura suggests the next shift comes through patience, not pressure.
+                The deeper layer shows what to release — and what deserves your devotion.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lock-overlay">
+          <div class="lock-card">
+            <div class="lock-title"><i class="fas fa-lock"></i> Hidden Layer</div>
+            <div class="lock-counter" data-unlock-badge>You can unlock up to 2 sections</div>
+            <div class="lock-sub">Reveal guidance + your next three focus points.</div>
+            <button class="action-btn btn-primary btn-unlock" data-unlock="guidance">
+              <i class="fas fa-gem"></i> Reveal Guidance
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- NEW PREMIUM LOCKED SECTIONS -->
+
+      <!-- Deep Relationship Analysis (100% Premium Locked) -->
+      <section class="reading-section section-deep-love locked premium-locked" data-lock="deep_relationship_analysis">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-heart"></i></div>
+          <h2>Deep Relationship Analysis</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <p class="placeholder-text">
+            The celestial patterns weave through temporal nodes of resonance, revealing the threads that connect soul contracts to earthly experience. When lunar alignment meets Mars retrograde, the hidden patterns emerge from shadow into light...
+          </p>
+          <p class="placeholder-text">
+            Subtle attraction patterns emerge through the way you process intimacy, safety, and consistency. The longer arc reveals how trust is built, challenged, and renewed over time...
+          </p>
+          <p class="placeholder-text">
+            Your compatibility signatures are not just emotional — they are practical, energetic, and relational. This hidden layer shows how to recognize the patterns that serve you best...
+          </p>
+          <p class="placeholder-text">
+            A deeper map of timing and intention clarifies when to lean in, when to pause, and how to communicate what you truly need without losing yourself...
+          </p>
+        </div>
+
+        <div class="lock-overlay">
+          <div class="lock-card premium-lock-card">
+            <div class="lock-icon-premium"><i class="fas fa-lock"></i></div>
+            <div class="lock-title">Premium Insight</div>
+            <div class="lock-sub">Deep analysis of attachment styles, partner compatibility, relationship timing, and love patterns.</div>
+            <button class="action-btn btn-premium btn-unlock" data-unlock="deep_relationship_analysis">
+              <i class="fas fa-crown"></i> Unlock Deep Relationship Insights
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12-Month Extended Timeline (100% Premium Locked) -->
+      <section class="reading-section section-extended-timeline locked premium-locked" data-lock="extended_timeline_12_months">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-calendar-alt"></i></div>
+          <h2>12-Month Extended Timeline</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <p class="placeholder-text">
+            As Mercury traverses the fifth house of transformation, each lunar cycle brings shifting energies that ripple through the cosmic tapestry. The alignment of Jupiter and Saturn creates windows of opportunity that phase in and out of manifestation...
+          </p>
+          <p class="placeholder-text">
+            Subtle shifts in timing emerge as you move through layered seasons of focus, reflection, and expansion. Small choices compound into meaningful outcomes when you honor the signal of each month and the lessons it carries...
+          </p>
+          <p class="placeholder-text">
+            The horizon ahead is marked by two key windows of momentum and one critical pause for recalibration. This longer arc reveals how to sequence action with patience for a more grounded, sustainable rise...
+          </p>
+        </div>
+
+        <div class="lock-overlay">
+          <div class="lock-card premium-lock-card">
+            <div class="lock-icon-premium"><i class="fas fa-lock"></i></div>
+            <div class="lock-title">Premium Insight</div>
+            <div class="lock-sub">Month-by-month themes, timing for major decisions, and upcoming opportunities mapped to your unique energy.</div>
+            <button class="action-btn btn-premium btn-unlock" data-unlock="extended_timeline_12_months">
+              <i class="fas fa-crown"></i> Unlock Your Year Ahead
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Life Purpose & Soul Mission (100% Premium Locked) -->
+      <section class="reading-section section-life-purpose locked premium-locked" data-lock="life_purpose_soul_mission">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-star"></i></div>
+          <h2>Life Purpose & Soul Mission</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <p class="placeholder-text">
+            The akashic records reveal karmic imprints encoded in the soul's blueprint, where past life experiences intersect with present incarnation choices. Through the lens of sacred geometry, the path between earthly purpose and cosmic mission becomes illuminated...
+          </p>
+          <p class="placeholder-text">
+            Your gifts are not random; they form a pattern that points to a specific kind of service and impact. When you align with this inner compass, the outer world begins to mirror a clearer direction...
+          </p>
+          <p class="placeholder-text">
+            A deeper calling emerges where meaning and mastery overlap, asking you to refine your voice, claim your role, and bring consistency to what only you can offer...
+          </p>
+        </div>
+
+        <div class="lock-overlay">
+          <div class="lock-card premium-lock-card">
+            <div class="lock-icon-premium"><i class="fas fa-lock"></i></div>
+            <div class="lock-title">Premium Insight</div>
+            <div class="lock-sub">Soul purpose, karmic patterns, life mission alignment, and your unique contribution to the world.</div>
+            <button class="action-btn btn-premium btn-unlock" data-unlock="life_purpose_soul_mission">
+              <i class="fas fa-crown"></i> Unlock Your Life Purpose
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Shadow Work & Transformation (100% Premium Locked) -->
+      <section class="reading-section section-shadow-work locked premium-locked" data-lock="shadow_work_transformation">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-moon"></i></div>
+          <h2>Shadow Work & Transformation</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <p class="placeholder-text">
+            Within the dark moon phase of the psyche, unconscious patterns spiral through layers of resistance and revelation. The shadow self holds keys to integration, where rejected aspects await alchemical transformation into golden wisdom...
+          </p>
+          <p class="placeholder-text">
+            What you avoid often signals the doorway to your next expansion. As you meet the tension with honesty, the energy trapped in old stories starts to release...
+          </p>
+          <p class="placeholder-text">
+            This process is not a single breakthrough but a steady unfolding, where each step of acceptance unlocks a new level of strength and clarity...
+          </p>
+        </div>
+
+        <div class="lock-overlay">
+          <div class="lock-card premium-lock-card">
+            <div class="lock-icon-premium"><i class="fas fa-lock"></i></div>
+            <div class="lock-title">Premium Insight</div>
+            <div class="lock-sub">Shadow patterns, blocks to release, transformation path, and the hidden gifts within your challenges.</div>
+            <button class="action-btn btn-premium btn-unlock" data-unlock="shadow_work_transformation">
+              <i class="fas fa-crown"></i> Unlock Shadow & Growth Insights
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Practical Guidance & Action Plan (100% Premium Locked) -->
+      <section class="reading-section section-action-plan locked premium-locked" data-lock="practical_guidance_action_plan">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-compass"></i></div>
+          <h2>Practical Guidance & Action Plan</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <p class="placeholder-text">
+            As above, so below — the cosmic map requires earthly anchoring through intentional practice and aligned action. The synthesis of intuitive guidance with practical steps creates the bridge between potential and manifestation...
+          </p>
+          <p class="placeholder-text">
+            Each focus point is designed to compound progress, offering a clear rhythm for the weeks ahead and a simple framework to stay consistent...
+          </p>
+          <p class="placeholder-text">
+            The plan integrates mindset, behavior, and timing so your next moves feel grounded, practical, and aligned with your deeper priorities...
+          </p>
+          <p class="placeholder-text">
+            Small, repeatable rituals build momentum while protecting your energy. This layer outlines exactly where to begin and how to sustain it...
+          </p>
+        </div>
+
+        <div class="lock-overlay">
+          <div class="lock-card premium-lock-card">
+            <div class="lock-icon-premium"><i class="fas fa-lock"></i></div>
+            <div class="lock-title">Premium Insight</div>
+            <div class="lock-sub">3 specific focus points, daily/weekly rituals, practices tailored to your energy, and an accountability framework.</div>
+            <button class="action-btn btn-premium btn-unlock" data-unlock="practical_guidance_action_plan">
+              <i class="fas fa-crown"></i> Unlock Your Personalized Action Plan
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Closing (Updated with Premium CTA) -->
+      <section class="reading-section section-closing">
+        <div class="section-header">
+          <div class="section-icon"><i class="fas fa-eye"></i></div>
+          <h2>This Is Only the First Reflection</h2>
+          <div class="section-ornament"></div>
+        </div>
+        <div class="section-content">
+          <p>
+            Alexandra, this teaser captures what rises first — your strongest themes and the signals that are easiest to read.
+            The locked layers hold the "why": the patterns behind your choices, and the guidance that ties everything together.
+          </p>
+          <p class="closing-soft">
+            Your aura holds deeper insights waiting to be revealed. Unlock your complete reading to discover:
+          </p>
+          <ul class="premium-benefits-list">
+            <li><i class="fas fa-heart premium-icon"></i> Deep relationship patterns and compatibility insights</li>
+            <li><i class="fas fa-calendar-alt premium-icon"></i> Extended 12-month timeline with monthly themes</li>
+            <li><i class="fas fa-star premium-icon"></i> Your soul purpose and life mission alignment</li>
+            <li><i class="fas fa-moon premium-icon"></i> Shadow work and transformation guidance</li>
+            <li><i class="fas fa-compass premium-icon"></i> Personalized action plan with daily practices</li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Report Action -->
+    <div class="report-action">
+      <div class="report-action__copy">
+        <span class="report-action__eyebrow">Your next step</span>
+        <h3 class="report-action__title">Continue your journey</h3>
+        <p class="report-action__body">Unlock the full reading to reveal your deeper patterns and next moves.</p>
+      </div>
+      <a class="action-btn btn-primary report-action__btn" href="#" data-report-cta>
+        <i class="fas fa-gem"></i> Unlock Full Report
+      </a>
+    </div>
+
+    <!-- Footer Note -->
+    <div class="result-footer">
+      <p class="footer-note">
+        <i class="fas fa-magic footer-icon" aria-hidden="true"></i>
+        This teaser is generated using AI analysis of your aura photo and your answers. For entertainment purposes only.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal (for icon popups) -->
+<div class="sm-modal" id="sm-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Quick insight">
+  <div class="sm-modal__backdrop" data-close="1"></div>
+  <div class="sm-modal__panel" role="document">
+    <button class="sm-modal__close" type="button" aria-label="Close" data-close="1">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="sm-modal__content">
+      <div class="sm-modal__badge" id="sm-modal-badge">Unlock Insight</div>
+      <div class="sm-modal__counter" data-unlock-counter>
+        <span class="sm-modal__counter-label">Free unlocks</span>
+        <span class="sm-modal__counter-value" data-unlock-remaining>2 remaining</span>
+      </div>
+      <h3 class="sm-modal__title" id="sm-modal-title">Title</h3>
+      <p class="sm-modal__body" id="sm-modal-body">Body</p>
+      <div class="sm-modal__hint" id="sm-modal-hint">Unlock the full report to access every insight instantly.</div>
+      <div class="sm-modal__actions">
+        <button class="action-btn btn-premium sm-modal__cta" type="button" data-cta>
+          <i class="fas fa-crown"></i> View Plans
+        </button>
+        <button class="action-btn btn-ghost sm-modal__secondary" type="button" data-close="1">
+          Maybe later
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* RESULT CONTAINER STYLES */
+#aura-reading-result {
+  --mystic-primary: #A88BEB;
+  --mystic-secondary: #7BB7E6;
+  --mystic-accent: #6FD6C5;
+  --mystic-dark: #2F2F3A;
+  --mystic-light: #F4F7FB;
+  --mystic-glow: rgba(168, 139, 235, 0.16);
+
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 2rem auto;
+  font-family: var(--wp--preset--font-family--body, "Inter", sans-serif);
+  color: var(--wp--preset--color--contrast, #111111);
+  animation: fadeInUp 0.8s ease-out;
+}
+
+/* Mystical Background Elements */
+.mystic-background {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+.aura-pulse {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--mystic-glow) 0%, transparent 70%);
+  animation: pulse 8s infinite ease-in-out;
+}
+.aura-1 {
+  width: 300px; height: 300px;
+  top: -100px; right: -100px;
+  animation-delay: 0s;
+  background: radial-gradient(circle, rgba(168, 139, 235, 0.12) 0%, transparent 70%);
+}
+.aura-2 {
+  width: 200px; height: 200px;
+  bottom: -50px; left: -50px;
+  animation-delay: 2s;
+  background: radial-gradient(circle, rgba(111, 214, 197, 0.1) 0%, transparent 70%);
+}
+.aura-3 {
+  width: 400px; height: 400px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: 4s;
+  background: radial-gradient(circle, rgba(123, 183, 230, 0.08) 0%, transparent 70%);
+}
+
+.energy-orb {
+  position: absolute;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: float 6s infinite ease-in-out;
+}
+.orb-1 {
+  background: var(--mystic-primary);
+  top: 20%; right: 15%;
+  animation-delay: 1s;
+}
+.orb-2 {
+  background: var(--mystic-accent);
+  bottom: 30%; left: 10%;
+  animation-delay: 3s;
+}
+
+.constellation {
+  position: absolute;
+  width: 100%; height: 100%;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 1px, transparent 2px),
+    radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1) 1px, transparent 2px),
+    radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.1) 1px, transparent 2px);
+  background-size: 100px 100px, 120px 120px, 80px 80px;
+  opacity: 0.3;
+}
+
+/* Main Result Card */
+.result-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow:
+    0 20px 40px rgba(42, 35, 66, 0.1),
+    0 8px 32px rgba(156, 122, 231, 0.15),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  position: relative;
+  overflow: hidden;
+}
+.result-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--mystic-primary), var(--mystic-secondary), var(--mystic-accent));
+  z-index: 2;
+}
+
+/* Header Styles */
+.result-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+.header-icon {
+  width: 70px; height: 70px;
+  background: linear-gradient(135deg, var(--mystic-primary), var(--mystic-secondary));
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 8px 20px rgba(156, 122, 231, 0.3);
+  flex-shrink: 0;
+}
+.mystic-icon { width: 40px; height: 40px; }
+.result-title {
+  flex: 1;
+  font-family: var(--wp--preset--font-family--heading, "Cardo", serif);
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 700;
+  color: var(--mystic-dark);
+  margin: 0;
+  line-height: 1.2;
+}
+.result-subtitle {
+  display: block;
+  font-family: var(--wp--preset--font-family--body, "Inter", sans-serif);
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--mystic-secondary);
+  margin-top: 0.5rem;
+  letter-spacing: 0.02em;
+}
+.header-badge {
+  background: linear-gradient(135deg, var(--mystic-primary), var(--mystic-secondary));
+  padding: 0.5rem 1.2rem;
+  border-radius: 30px;
+  color: white;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(156, 122, 231, 0.3);
+  white-space: nowrap;
+}
+
+/* Reading Meta */
+.reading-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  background: var(--mystic-light);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(108, 99, 255, 0.1);
+}
+.meta-item { display: flex; align-items: center; gap: 0.75rem; }
+.meta-icon { color: var(--mystic-primary); font-size: 1.1rem; }
+.meta-label { font-weight: 600; color: var(--mystic-dark); font-size: 0.9rem; opacity: 0.8; }
+.meta-value { font-weight: 700; color: var(--mystic-secondary); margin-left: 0.25rem; }
+
+/* NEW: Opening Reflection */
+.opening-reflection {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  background: linear-gradient(135deg, rgba(156, 122, 231, 0.06), rgba(255, 107, 157, 0.05));
+  border: 1px solid rgba(156, 122, 231, 0.15);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+.opening-icon {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  background: linear-gradient(135deg, var(--mystic-primary), var(--mystic-accent));
+  box-shadow: 0 8px 18px rgba(156, 122, 231, 0.25);
+  flex-shrink: 0;
+  font-size: 1.2rem;
+}
+.opening-text h2 {
+  margin: 0 0 0.5rem 0;
+  font-family: var(--wp--preset--font-family--heading, "Cardo", serif);
+  color: var(--mystic-dark);
+  font-size: 1.35rem;
+}
+.opening-text p { margin: 0 0 0.75rem 0; color: #444; line-height: 1.65; }
+.opening-soft { opacity: 0.9; }
+
+/* Reading Sections */
+.reading-content { display: flex; flex-direction: column; gap: 2.5rem; }
+.reading-section {
+  background: white;
+  border-radius: 16px;
+  padding: 1.8rem;
+  border: 1px solid rgba(108, 99, 255, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.reading-section.locked {
+  overflow: visible;
+  padding-bottom: 3.2rem;
+}
+.reading-section.locked.premium-locked {
+  padding-bottom: 4rem;
+}
+.reading-section:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(108, 99, 255, 0.15); }
+.reading-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: linear-gradient(to bottom, var(--mystic-primary), var(--mystic-accent));
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 3;
+  background: transparent;
+  pointer-events: auto;
+}
+.section-icon {
+  width: 50px; height: 50px;
+  background: linear-gradient(135deg, var(--mystic-primary), var(--mystic-secondary));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+}
+.reading-section h2 {
+  font-family: var(--wp--preset--font-family--heading, "Cardo", serif);
+  font-size: 1.5rem;
+  color: var(--mystic-dark);
+  margin: 0;
+  flex: 1;
+}
+.section-ornament { width: 40px; height: 2px; background: linear-gradient(90deg, var(--mystic-primary), transparent); }
+.section-content { color: #444; line-height: 1.7; font-size: 1.05rem; }
+.palm-summary-list, .palm-summary-lines { font-size: 1.05rem; }
+.palm-summary-list li, .palm-summary-lines li { font-size: 1.05rem; }
+.insight-point {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  background: linear-gradient(90deg, rgba(156, 122, 231, 0.1), transparent);
+  border-left: 3px solid var(--mystic-accent);
+  border-radius: 0 8px 8px 0;
+}
+.insight-point.muted { border-left-color: rgba(108, 99, 255, 0.35); opacity: 0.95; }
+.insight-icon { color: var(--mystic-accent); font-size: 1.2rem; }
+.insight-point.muted .insight-icon { color: var(--mystic-secondary); }
+.insight-text { font-weight: 600; color: var(--mystic-dark); }
+
+/* Symbol Grid -> clickable buttons */
+.symbol-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.symbol-item {
+  text-align: center;
+  padding: 1rem;
+  background: var(--mystic-light);
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 0;
+  cursor: pointer;
+  width: 100%;
+}
+.symbol-item:hover { transform: translateY(-3px); background: white; box-shadow: 0 6px 12px rgba(108, 99, 255, 0.1); }
+.symbol { font-size: 2rem; margin-bottom: 0.25rem; display: block; }
+.symbol-label { font-size: 0.95rem; font-weight: 700; color: var(--mystic-secondary); display: block; }
+.symbol-micro { font-size: 0.85rem; color: #666; display: block; margin-top: 0.35rem; }
+
+/* Trait Visualization */
+.trait-list { margin-top: 1.5rem; }
+.trait-item { margin-bottom: 1rem; }
+.trait-name { display: block; font-weight: 600; color: var(--mystic-dark); margin-bottom: 0.5rem; }
+.trait-bar { height: 8px; background: rgba(108, 99, 255, 0.1); border-radius: 4px; overflow: hidden; }
+.trait-fill { height: 100%; background: linear-gradient(90deg, var(--mystic-primary), var(--mystic-accent)); border-radius: 4px; transition: width 1.5s ease-out; }
+
+/* Guidance Card */
+.guidance-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(156, 122, 231, 0.05), rgba(108, 99, 255, 0.05));
+  border-radius: 12px;
+  border: 1px solid rgba(156, 122, 231, 0.2);
+}
+.guidance-icon {
+  width: 60px; height: 60px;
+  background: linear-gradient(135deg, var(--mystic-primary), var(--mystic-secondary));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+.guidance-text h3 { color: var(--mystic-dark); margin: 0 0 0.5rem 0; font-size: 1.2rem; }
+.guidance-text p { color: #666; margin: 0; line-height: 1.6; }
+
+/* NEW: Locked sections (blur + overlay) */
+.locked .section-content {
+  filter: blur(16px);
+  user-select: none;
+  pointer-events: none;
+  opacity: 0.95;
+}
+.lock-overlay {
+  position: absolute;
+  top: 125px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1.25rem 1.25rem 2.75rem 1.25rem;
+  pointer-events: auto;
+  background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.0) 55%);
+  z-index: 2;
+}
+.lock-card {
+  width: min(520px, 100%);
+  pointer-events: auto;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(156, 122, 231, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem 1.5rem;
+  box-shadow: 0 16px 30px rgba(42, 35, 66, 0.12);
+  text-align: center;
+  margin-bottom: 1rem;
+  margin-top: 0.75rem;
+  transform: translateY(46px);
+}
+.lock-counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.6rem auto 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(108, 99, 255, 0.12);
+  color: var(--mystic-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.lock-title {
+  font-weight: 800;
+  color: var(--mystic-dark);
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.35rem;
+}
+.lock-sub { color: #555; margin-bottom: 0.9rem; font-size: 0.95rem; }
+
+/* Premium Locked Sections */
+.premium-locked .section-content {
+  filter: blur(22px);
+  opacity: 1;
+}
+.premium-locked .lock-overlay {
+  top: 130px;
+  align-items: center;
+  padding: 2rem 1.25rem 4.25rem 1.25rem;
+}
+.premium-lock-card {
+  background: #ffffff;
+  border: 2px solid rgba(255,193,7,0.4);
+  box-shadow: 0 20px 40px rgba(255,193,7,0.15), 0 8px 16px rgba(42, 35, 66, 0.1);
+  padding: 1.75rem 1.75rem;
+  margin-bottom: 0;
+  margin-top: 0;
+  transform: translateY(28px);
+}
+.section-deep-love.premium-locked {
+  padding-bottom: 6.75rem;
+}
+.section-shadow-work.premium-locked {
+  padding-bottom: 5rem;
+}
+.section-action-plan.premium-locked {
+  padding-bottom: 7rem;
+}
+.section-deep-love .premium-lock-card {
+  transform: translateY(18px);
+  padding: 2.35rem 2rem;
+  min-height: 260px;
+}
+.section-extended-timeline .premium-lock-card {
+  transform: translateY(4px);
+}
+.section-life-purpose .premium-lock-card {
+  transform: translateY(4px);
+}
+.section-shadow-work .premium-lock-card {
+  transform: translateY(4px);
+}
+.section-action-plan .premium-lock-card {
+  transform: translateY(10px);
+  padding: 2.35rem 2rem;
+  min-height: 270px;
+}
+.lock-icon-premium {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffd700, #ffa500);
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 6px 16px rgba(255,193,7,0.35);
+}
+.placeholder-text {
+  opacity: 0.9;
+  font-style: italic;
+  color: #5f5f5f;
+  user-select: none;
+}
+.premium-locked .placeholder-text {
+  opacity: 1;
+  color: #545454;
+}
+.premium-benefits-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0 0;
+}
+.report-action {
+  margin-top: 2.25rem;
+  padding: 1.75rem 1.6rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(156, 122, 231, 0.16), rgba(255, 107, 157, 0.12));
+  border: 1px solid rgba(156, 122, 231, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.report-action__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+  color: rgba(42, 35, 66, 0.6);
+  font-weight: 700;
+}
+.report-action__title {
+  margin: 0.35rem 0 0.4rem 0;
+  font-family: var(--wp--preset--font-family--heading, "Cardo", serif);
+  font-size: 1.4rem;
+  color: var(--mystic-dark);
+}
+.report-action__body {
+  margin: 0;
+  color: #5a516b;
+  font-size: 0.98rem;
+}
+.report-action__btn {
+  min-width: 220px;
+  text-align: center;
+}
+.premium-benefits-list li {
+  padding: 0.75rem 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+}
+.premium-benefits-list li:last-child {
+  border-bottom: none;
+}
+.premium-icon {
+  color: #ffa500;
+  font-size: 1.2rem;
+  margin-top: 0.1rem;
+  flex-shrink: 0;
+}
+
+/* Action Buttons */
+.result-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+}
+.action-btn {
+  flex: 1;
+  min-width: 150px;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  letter-spacing: 0.02em;
+  position: relative;
+  overflow: hidden;
+}
+.action-btn i {
+  flex-shrink: 0;
+}
+.btn-unlock {
+  color: white !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--mystic-primary), var(--mystic-secondary));
+  color: white;
+  box-shadow: 0 6px 16px rgba(156, 122, 231, 0.3);
+}
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(156, 122, 231, 0.4); }
+.btn-premium {
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+  color: #2a2342 !important;
+  box-shadow: 0 6px 20px rgba(255,193,7,0.4);
+  font-weight: 800;
+}
+.btn-premium:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(255,193,7,0.5);
+  background: linear-gradient(135deg, #ffed4e 0%, #ffb84d 100%);
+}
+.btn-secondary {
+  background: white;
+  color: var(--mystic-primary);
+  border: 2px solid var(--mystic-primary);
+}
+.btn-secondary:hover {
+  background: linear-gradient(135deg, var(--mystic-primary), var(--mystic-secondary));
+  color: white;
+  transform: translateY(-3px);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--mystic-dark);
+  border: 2px solid var(--mystic-light);
+}
+.btn-outline:hover { border-color: var(--mystic-primary); background: var(--mystic-light); transform: translateY(-3px); }
+
+/* Footer Note */
+.result-footer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(108, 99, 255, 0.1);
+  text-align: center;
+}
+.footer-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+}
+.footer-icon { color: var(--mystic-primary); }
+
+/* Modal - Simplified, bulletproof positioning */
+.sm-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
+  display: none !important; /* becomes flex when open */
+  align-items: center;
+  justify-content: center;
+  padding: 3vh 1rem;
+  margin: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none; /* Allow clicks to pass through when closed */
+}
+.sm-modal.is-open {
+  display: flex !important;
+  pointer-events: auto; /* Enable clicks when open */
+}
+.sm-modal__backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1 !important; /* Behind panel */
+  background: rgba(42, 35, 66, 0.75); /* Darker for better contrast */
+  backdrop-filter: blur(12px) !important; /* Stronger blur for better focus */
+  -webkit-backdrop-filter: blur(12px) !important;
+  cursor: pointer; /* Indicate clickable */
+}
+.sm-modal__panel {
+  position: relative !important;
+  z-index: 2 !important; /* Above backdrop */
+  width: min(560px, calc(100% - 2rem)) !important;
+  max-height: 85vh !important;
+  overflow-y: auto !important;
+  background: rgba(255,255,255,0.98); /* Slightly more opaque */
+  border-radius: 18px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.35); /* Stronger shadow */
+  border: 1px solid rgba(156, 122, 231, 0.3);
+  padding: 1.25rem 1.25rem 1.35rem;
+  margin: 0 !important;
+  pointer-events: auto; /* Ensure panel is clickable */
+}
+
+/* Mobile: Position from top with margin */
+@media (max-width: 768px) {
+  .sm-modal {
+    align-items: flex-start;
+    padding-top: 6vh;
+  }
+  .sm-modal__panel {
+    width: calc(100% - 2.5rem) !important;
+    max-height: 85vh !important;
+    padding: 1rem !important;
+    border-radius: 16px;
+  }
+}
+
+/* Desktop: Centered vertically and horizontally */
+@media (min-width: 769px) {
+  .sm-modal { align-items: center; }
+}
+
+/* REMOVED: Duplicate blur rules that were causing stacking issues */
+/* Modal blur is now handled ONLY by the backdrop element above */
+/* This prevents z-index and pointer-events conflicts */
+.sm-modal__close {
+  position: absolute;
+  top: 12px; right: 12px;
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(108, 99, 255, 0.15);
+  background: white;
+  cursor: pointer;
+  z-index: 3;
+}
+.sm-modal__close:hover {
+  background: #f5f5f5;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+.sm-modal__badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(156, 122, 231, 0.18), rgba(255, 107, 157, 0.15));
+  color: #1a1429; /* Darker, stronger color for better contrast */
+  font-weight: 900; /* Increased weight for stronger appearance */
+  font-size: 0.85rem; /* Slightly larger for better readability */
+  letter-spacing: 0.03em;
+  margin-bottom: 0.8rem;
+  text-transform: uppercase; /* Adds visual weight */
+}
+.sm-modal__title {
+  margin: 0 0 0.6rem 0;
+  font-family: var(--wp--preset--font-family--heading, "Cardo", serif);
+  color: var(--mystic-dark);
+  font-size: 1.5rem;
+}
+.sm-modal__body { margin: 0; color: #444; line-height: 1.7; font-size: 1.02rem; }
+.sm-modal__hint { margin-top: 0.95rem; color: #666; font-size: 0.92rem; }
+.sm-modal__counter {
+  margin-top: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 193, 7, 0.16);
+  color: #6a4c00;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.sm-modal__counter-label { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.7rem; }
+.sm-modal__actions {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(108, 99, 255, 0.4);
+  color: #3f36b6;
+}
+.btn-ghost:hover {
+  background: rgba(108, 99, 255, 0.08);
+}
+
+/* Animations */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.05); } }
+@keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(180deg); } }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .result-card { padding: 1.25rem; }
+  .result-header { flex-direction: column; text-align: center; gap: 1rem; }
+  .header-icon { width: 60px; height: 60px; }
+  .result-title { font-size: 1.6rem; }
+  .reading-meta { grid-template-columns: 1fr; }
+  .reading-section { padding: 1.4rem; }
+  .section-content { font-size: 0.95rem; line-height: 1.6; }
+  .palm-summary-list, .palm-summary-lines { font-size: 0.95rem; }
+  .palm-summary-list li, .palm-summary-lines li { font-size: 0.95rem; }
+  .section-title { font-size: 1.1rem; }
+  .section-header { flex-direction: column; text-align: center; }
+  .guidance-card { flex-direction: column; text-align: center; padding: 1.2rem; }
+  .result-actions { flex-direction: column; }
+  .action-btn { min-width: 100%; }
+  .opening-reflection { flex-direction: column; text-align: left; }
+  .opening-reflection p { font-size: 0.95rem; }
+  .lock-overlay { top: 160px; padding: 1.25rem 1.25rem 3.25rem 1.25rem; }
+  .premium-locked .lock-overlay { top: 190px; padding: 2rem 1.25rem 4.5rem 1.25rem; }
+  .section-deep-love.premium-locked,
+  .section-shadow-work.premium-locked,
+  .section-action-plan.premium-locked {
+    padding-bottom: 7rem;
+  }
+  .section-deep-love .premium-lock-card,
+  .section-extended-timeline .premium-lock-card,
+  .section-life-purpose .premium-lock-card,
+  .section-shadow-work .premium-lock-card,
+  .section-action-plan .premium-lock-card {
+    transform: translateY(4px);
+  }
+  .section-deep-love .premium-lock-card,
+  .section-extended-timeline .premium-lock-card {
+    transform: translateY(2px);
+  }
+  .section-deep-love .premium-lock-card,
+  .section-action-plan .premium-lock-card {
+    padding: 2.1rem 1.8rem;
+    min-height: 240px;
+  }
+  .report-action { flex-direction: column; text-align: left; align-items: flex-start; }
+  .report-action__btn { width: 100%; }
+  .sm-modal__actions { width: 100%; }
+  .sm-modal__actions .action-btn { width: 100%; }
+  .sm-modal__body { font-size: 0.95rem; }
+}
+@media (max-width: 480px) {
+  .result-card { padding: 1rem; }
+  .symbol-grid { grid-template-columns: 1fr; }
+  .reading-section { padding: 1.1rem; }
+  .section-content { font-size: 0.9rem; }
+  .palm-summary-list, .palm-summary-lines { font-size: 0.9rem; }
+  .palm-summary-list li, .palm-summary-lines li { font-size: 0.9rem; }
+  .result-title { font-size: 1.5rem; }
+  .lock-overlay { top: 190px; padding: 1.25rem 1rem 3.5rem 1rem; }
+  .premium-locked .lock-overlay { top: 220px; padding: 2rem 1rem 5rem 1rem; }
+  .section-deep-love.premium-locked,
+  .section-shadow-work.premium-locked,
+  .section-action-plan.premium-locked {
+    padding-bottom: 7.25rem;
+  }
+  .section-deep-love .premium-lock-card,
+  .section-extended-timeline .premium-lock-card,
+  .section-life-purpose .premium-lock-card,
+  .section-shadow-work .premium-lock-card,
+  .section-action-plan .premium-lock-card {
+    transform: translateY(2px);
+  }
+  .section-deep-love .premium-lock-card,
+  .section-extended-timeline .premium-lock-card {
+    transform: translateY(0);
+  }
+  .section-deep-love .premium-lock-card,
+  .section-action-plan .premium-lock-card {
+    padding: 1.95rem 1.6rem;
+    min-height: 220px;
+  }
+  .lock-card { padding: 1.25rem; }
+  .premium-lock-card { padding: 1.5rem; }
+}
+
+/* Print */
+@media print {
+  .mystic-background, .result-actions, .header-badge, .lock-overlay, .sm-modal { display: none !important; }
+  .result-card { box-shadow: none; border: 1px solid #ddd; }
+  .reading-section:hover { transform: none; box-shadow: none; }
+  .locked .section-content { filter: none; }
+}
+</style>
+
+
+<!-- JavaScript for teaser reading interactions is loaded externally via assets/js/teaser-reading.js -->
+
+</body>
+</html>
