@@ -58,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated aura prompts and summary labels to accept upper body photos and reduce palm wording
 - Reduced dynamic quiz to 4 questions and removed the extra free-text prompt
 - Ensured only the final question is free-text in fallback and dynamic quiz flows
+- Lightened dashboard and reports listing card styling for better contrast on the aura theme
 
 ### Fixed
 - Resolved activation fatal by switching to SM_AURA_VERSION and aura-specific FK constraint names
@@ -78,6 +79,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Normalized API key inputs, added masked key diagnostics, and ensured plaintext fallback without OpenSSL
 - Prevented vision resubmit lockouts and forced aura signal defaults to avoid empty outputs
 - Improved back button visibility on light backgrounds
+- Fixed dashboard share button to use native share/clipboard fallbacks
+- Fixed report titles to default to Aura Reading and drop time suffix
+- Improved reports table header and hover contrast for readability
+- Fixed Aura flow navigation so Back/Continue respond on the first quiz question
 
 ### Technical
 - Plugin namespace: `mystic-aura-reading`

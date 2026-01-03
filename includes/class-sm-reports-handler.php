@@ -5,7 +5,7 @@
  * Handles fetching, formatting, and presenting user reading reports for the dashboard.
  * Provides read-only access to past readings with pagination and metadata generation.
  *
- * @package MysticPalmReading
+ * @package MysticAuraReading
  * @since 2.0.0
  */
 
@@ -190,13 +190,13 @@ class SM_Reports_Handler {
 	 *
 	 * Strategy:
 	 * 1. Try to extract from opening section or first heading in content_data
-	 * 2. Fallback: "Palm Reading from {formatted_date}"
+	 * 2. Fallback: "Aura Reading"
 	 *
 	 * @param object $reading Reading database row.
 	 * @return string Generated title.
 	 */
 	private static function generate_report_title( $reading ) {
-		$default_title = 'Palm Reading';
+		$default_title = 'Aura Reading';
 
 		if ( empty( $reading->created_at ) ) {
 			return $default_title;
@@ -211,52 +211,26 @@ class SM_Reports_Handler {
 				foreach ( $content['sections'] as $section ) {
 					if ( isset( $section['id'] ) && $section['id'] === 'opening' && ! empty( $section['title'] ) ) {
 						$title = sanitize_text_field( $section['title'] );
-						return self::append_report_time( $title, $reading->created_at );
+						return $title;
 					}
 				}
 
 				// Strategy 2: Use first section title if available
 				if ( ! empty( $content['sections'][0]['title'] ) ) {
 					$title = sanitize_text_field( $content['sections'][0]['title'] );
-					return self::append_report_time( $title, $reading->created_at );
+					return $title;
 				}
 			}
 
 			// Strategy 3: Check for top-level title field
 			if ( ! empty( $content['title'] ) ) {
 				$title = sanitize_text_field( $content['title'] );
-				return self::append_report_time( $title, $reading->created_at );
+				return $title;
 			}
 		}
 
 		// Fallback: Generate date-based title
-		$date = mysql2date( 'F j, Y', $reading->created_at, false );
-		return sprintf( 'Palm Reading from %s', $date ) . self::format_report_time_suffix( $reading->created_at );
-	}
-
-	/**
-	 * Append time to a report title.
-	 *
-	 * @param string $title Title text.
-	 * @param string $created_at Datetime string.
-	 * @return string
-	 */
-	private static function append_report_time( $title, $created_at ) {
-		return $title . self::format_report_time_suffix( $created_at );
-	}
-
-	/**
-	 * Format report time suffix.
-	 *
-	 * @param string $created_at Datetime string.
-	 * @return string
-	 */
-	private static function format_report_time_suffix( $created_at ) {
-		if ( empty( $created_at ) ) {
-			return '';
-		}
-		$time = mysql2date( 'H:i', $created_at, false );
-		return ' - ' . $time;
+		return $default_title;
 	}
 
 	/**
@@ -368,7 +342,7 @@ class SM_Reports_Handler {
 	 * Template expects:
 	 * {
 	 *   id: "abc-123",
-	 *   title: "Palm Reading from Nov 15",
+	 *   title: "Aura Reading from Nov 15",
 	 *   date: "2023-11-15",
 	 *   time: "14:30",
 	 *   readingTime: "~4 min",

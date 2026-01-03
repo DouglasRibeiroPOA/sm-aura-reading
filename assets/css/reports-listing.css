@@ -31,7 +31,7 @@
     
     /* Dashboard Specific */
     --dashboard-bg: #F4F7FB;
-    --dashboard-card-bg: rgba(246, 243, 250, 0.8); /* Using aura-bg-secondary */
+    --dashboard-card-bg: rgba(255, 255, 255, 0.92);
     --dashboard-border: rgba(168, 139, 235, 0.2); /* Using aura-accent-primary */
     
     /* Spacing */
@@ -168,6 +168,7 @@
     font-family: 'Inter', sans-serif;
 }
 
+.btn-back-dashboard:hover {
     background: rgba(168, 139, 235, 0.2);
     border-color: rgba(168, 139, 235, 0.5);
     transform: translateY(-2px);
@@ -235,10 +236,10 @@
     grid-template-columns: minmax(280px, 2fr) minmax(180px, 1fr) minmax(160px, 1fr) minmax(200px, 1fr);
     gap: 24px;
     padding: 15px 24px;
-    background: rgba(15, 15, 26, 0.6);
+    background: rgba(255, 255, 255, 0.95);
     border: 1px solid var(--dashboard-border);
     border-radius: var(--radius-md) var(--radius-md) 0 0;
-    color: var(--color-text-secondary);
+    color: var(--color-text);
     font-weight: 600;
     font-size: 0.9rem;
 }
@@ -261,8 +262,8 @@
 }
 
 .report-row:hover {
-    background: rgba(15, 15, 26, 0.9);
-    border-color: rgba(168, 139, 235, 0.3);
+    background: rgba(168, 139, 235, 0.08);
+    border-color: rgba(168, 139, 235, 0.35);
 }
 
 .report-row:last-child {

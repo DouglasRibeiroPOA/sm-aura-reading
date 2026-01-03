@@ -68,7 +68,7 @@ $total_credits  = (int) $credit_balance['service'] + (int) $credit_balance['univ
             <div class="credit-breakdown">
                 <div class="credit-type">
                     <div class="credit-icon palm-icon">
-                        <i class="fas fa-sun"></i>
+                        <i class="fas fa-hands-praying"></i>
                     </div>
                     <div class="credit-details">
                         <span class="credit-name">Aura Readings</span>
@@ -99,12 +99,12 @@ $total_credits  = (int) $credit_balance['service'] + (int) $credit_balance['univ
         <div class="action-grid">
             <div class="action-card new-reading-card">
                 <div class="action-icon">
-                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-hands-praying"></i>
                 </div>
                 <h3>New Reading</h3>
                 <p>Unlock new energetic insights with a fresh aura reading.</p>
                 <div class="action-cost">
-                    <span class="cost-icon"><i class="fas fa-sun"></i></span>
+                    <span class="cost-icon"><i class="fas fa-hands-praying"></i></span>
                     <span class="cost-text">1 Credit</span>
                 </div>
                 <button id="generate-new-reading-btn" class="action-btn">
@@ -140,7 +140,7 @@ $total_credits  = (int) $credit_balance['service'] + (int) $credit_balance['univ
                 </div>
                 <h3>Share</h3>
                 <p>Invite friends to discover their aura story.</p>
-                <button class="action-btn" type="button">
+                <button id="share-app-btn" class="action-btn" type="button">
                     Share App
                 </button>
             </div>

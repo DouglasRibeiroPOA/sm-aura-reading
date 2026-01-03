@@ -47,6 +47,46 @@ function setButtonLoading(button, isLoading) {
 }
 
 /**
+ * Wire up the dashboard share button for app sharing.
+ */
+function initDashboardShare() {
+    const shareBtn = document.getElementById('share-app-btn');
+    if (!shareBtn) return;
+
+    shareBtn.addEventListener('click', async () => {
+        const shareUrl = window.location.origin + window.location.pathname;
+        const shareTitle = 'SoulMirror Aura Reading';
+
+        if (navigator.share) {
+            try {
+                await navigator.share({ title: shareTitle, url: shareUrl });
+                return;
+            } catch (err) {
+                if (err && err.name === 'AbortError') {
+                    return;
+                }
+            }
+        }
+
+        if (navigator.clipboard && window.isSecureContext) {
+            try {
+                await navigator.clipboard.writeText(shareUrl);
+                if (typeof showToast === 'function') {
+                    showToast('Share link copied to clipboard.');
+                }
+                return;
+            } catch (err) {
+                // Fall through to toast with URL.
+            }
+        }
+
+        if (typeof showToast === 'function') {
+            showToast('Share link: ' + shareUrl);
+        }
+    });
+}
+
+/**
  * Compress a base64 image to mobile-friendly dimensions/quality.
  * Falls back to the original string if anything fails.
  */
@@ -507,10 +547,18 @@ function initApp() {
     // Render the first step (or restored step)
     renderStep(initialStep);
 
-    // Setup event listeners - removed debouncing for instant response
+    // Setup event listeners - defer to global handlers in case they are wrapped later.
     // isTransitioning flag prevents double-clicks naturally
-    backBtn.addEventListener('click', goToPreviousStep);
-    nextBtn.addEventListener('click', goToNextStep);
+    backBtn.addEventListener('click', () => {
+        if (typeof window.goToPreviousStep === 'function') {
+            window.goToPreviousStep();
+        }
+    });
+    nextBtn.addEventListener('click', () => {
+        if (typeof window.goToNextStep === 'function') {
+            window.goToNextStep();
+        }
+    });
 
     // Handle keyboard navigation
     document.addEventListener('keydown', handleKeyboardNavigation);
@@ -572,6 +620,9 @@ function renderStep(stepIndex) {
 
     // Update progress indicator
     updateProgressBar();
+
+    // Ensure navigation isn't blocked by a stale transition flag.
+    appState.isTransitioning = false;
 
     // Set focus for accessibility
     setTimeout(() => {
@@ -2553,6 +2604,7 @@ async function loadExistingReading(leadId, token) {
 // Initialize the app when DOM is loaded
 // Initialize the app - WordPress compatible
 async function mprInitialize() {
+    initDashboardShare();
     const urlParams = new URLSearchParams(window.location.search);
     const hasReportFlag = urlParams.has('sm_report');
 
