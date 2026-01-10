@@ -431,7 +431,7 @@ const categoryIcons = {
 };
 
 function getReadingResultContainer() {
-    return document.getElementById('aura-reading-result') || getReadingResultContainer();
+    return document.getElementById('aura-reading-result');
 }
 
 function mapAgeToRange(ageInput) {
@@ -547,18 +547,18 @@ function initApp() {
     // Render the first step (or restored step)
     renderStep(initialStep);
 
-    // Setup event listeners - defer to global handlers in case they are wrapped later.
-    // isTransitioning flag prevents double-clicks naturally
-    backBtn.addEventListener('click', () => {
-        if (typeof window.goToPreviousStep === 'function') {
+    // Setup event listeners using event delegation to handle button re-renders
+    // Attach to document so it works even if buttons are replaced
+    document.addEventListener('click', (e) => {
+        const backBtn = e.target.closest('#back-btn');
+        const nextBtn = e.target.closest('#next-btn');
+
+        if (backBtn && typeof window.goToPreviousStep === 'function') {
             window.goToPreviousStep();
-        }
-    });
-    nextBtn.addEventListener('click', () => {
-        if (typeof window.goToNextStep === 'function') {
+        } else if (nextBtn && typeof window.goToNextStep === 'function') {
             window.goToNextStep();
         }
-    });
+    }, {once: false}); // Don't use once, we need it for multiple clicks
 
     // Handle keyboard navigation
     document.addEventListener('keydown', handleKeyboardNavigation);
