@@ -31,7 +31,8 @@ if ( '' === $display_name ) {
 if ( '' === $display_name ) {
 	$display_name = 'Mystic Seeker';
 }
-$credit_balance = SM_Credit_Handler::get_instance()->get_credit_balance();
+// Force fresh credit fetch on dashboard load to ensure up-to-date balance
+$credit_balance = SM_Credit_Handler::get_instance()->get_credit_balance( true );
 $settings       = SM_Settings::init();
 $profile_url    = $settings->get_profile_url();
 $credits_url    = $settings->get_dashboard_credits_url();
@@ -171,9 +172,6 @@ $total_credits  = (int) $credit_balance['service'] + (int) $credit_balance['univ
             <span class="total-steps"></span>
         </div>
     </div>
-    <div class="navigation">
-        <button id="back-btn"></button>
-        <button id="next-btn"></button>
-    </div>
+    <!-- Navigation buttons are in the flow container, not needed here -->
     <div id="toast"></div>
 </div>

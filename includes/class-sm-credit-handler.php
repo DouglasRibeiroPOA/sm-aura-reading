@@ -51,10 +51,11 @@ class SM_Credit_Handler {
     /**
      * Get current user's credit balance summary.
      *
+     * @param bool $force_refresh Whether to bypass cache and fetch fresh data.
      * @return array
      */
-    public function get_credit_balance() {
-        $result = $this->check_user_credits();
+    public function get_credit_balance( $force_refresh = false ) {
+        $result = $this->check_user_credits( '', $force_refresh );
 
         if ( empty( $result['success'] ) ) {
             SM_Logger::log(
@@ -79,9 +80,11 @@ class SM_Credit_Handler {
     /**
      * Checks if the current user has enough credits to perform an action.
      *
+     * @param string $jwt_token Optional JWT token (uses stored token if empty).
+     * @param bool   $force_refresh Whether to bypass cache and fetch fresh data.
      * @return array A result array, e.g., ['success' => true, 'has_credits' => true]
      */
-    public function check_user_credits( $jwt_token = '' ) {
+    public function check_user_credits( $jwt_token = '', $force_refresh = false ) {
         if ( class_exists( 'SM_Auth_Handler' ) ) {
             SM_Auth_Handler::get_instance()->ensure_session();
         }
@@ -118,24 +121,28 @@ class SM_Credit_Handler {
             'CREDIT_CHECK_START',
             'Starting credit check.',
             array(
-                'service_slug' => $service_slug,
-                'has_token'    => ! empty( $jwt_token ),
+                'service_slug'  => $service_slug,
+                'has_token'     => ! empty( $jwt_token ),
+                'force_refresh' => $force_refresh,
             )
         );
 
-        $cached = $this->get_cached_credits( $jwt_token, $service_slug );
-        if ( ! empty( $cached ) ) {
-            SM_Logger::log(
-                'info',
-                'CREDIT_CHECK_CACHE_HIT',
-                'Using cached credit balances.',
-                array(
-                    'service_slug'      => $service_slug,
-                    'service_balance'   => isset( $cached['service_balance'] ) ? (int) $cached['service_balance'] : 0,
-                    'universal_balance' => isset( $cached['universal_balance'] ) ? (int) $cached['universal_balance'] : 0,
-                )
-            );
-            return $cached;
+        // Skip cache if force_refresh is true
+        if ( ! $force_refresh ) {
+            $cached = $this->get_cached_credits( $jwt_token, $service_slug );
+            if ( ! empty( $cached ) ) {
+                SM_Logger::log(
+                    'info',
+                    'CREDIT_CHECK_CACHE_HIT',
+                    'Using cached credit balances.',
+                    array(
+                        'service_slug'      => $service_slug,
+                        'service_balance'   => isset( $cached['service_balance'] ) ? (int) $cached['service_balance'] : 0,
+                        'universal_balance' => isset( $cached['universal_balance'] ) ? (int) $cached['universal_balance'] : 0,
+                    )
+                );
+                return $cached;
+            }
         }
 
         $account_service_url = isset( $settings['account_service_url'] ) ? rtrim( $settings['account_service_url'], '/' ) : '';
