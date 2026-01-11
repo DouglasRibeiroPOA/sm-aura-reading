@@ -21,7 +21,7 @@
 - Phase 4: Templates & Content - 11/11 tasks (100%) ✅ **COMPLETE**
 - Phase 5: AI Prompts & Question Bank - 8/8 tasks (100%) ✅ **COMPLETE**
 - Phase 6: Integration & Configuration - 11/14 tasks (79%) ⚠️ Offerings URL + MailerLite group pending
-- Phase 7: Testing & Quality Assurance - 17/30 tasks (57%)
+- Phase 7: Testing & Quality Assurance - 26/39 tasks (67%)
 - Phase 8: Documentation - 4/4 tasks (100%) ✅ **COMPLETE**
 
 **🎉 Major Milestone:** All critical blockers have been fixed! The plugin now has a solid foundation and backend ready for testing.
@@ -563,9 +563,9 @@ wp_sm_aura_flow_sessions
 
 ### Phase 7: Testing & Quality Assurance
 
-**Progress:** 18/31 tasks complete (58%)
+**Progress:** 26/39 tasks complete (67%)
 ```
-[▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░] 58%
+[▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░] 67%
 ```
 
 #### E2E Tests (tests/)
@@ -593,6 +593,14 @@ wp_sm_aura_flow_sessions
 - [x] Reduce dynamic quiz to 4 questions and remove extra free-text prompt
 - [x] Ensure only the final question is free text in dynamic and fallback flows
 - [x] Fix quiz navigation buttons after the camera step in aura flow
+- [x] Restore teaser report refresh + email access with a teaser token
+- [x] Isolate guest vs paid flow state across session storage and flow cookies
+- [x] Fix smStorage redeclaration blocking app initialization
+- [x] Preserve in-progress flow refresh via sm_flow URL flag and scoped localStorage restore
+- [x] Allow teaser report refresh and magic token access without paid login redirect
+- [x] Prevent step enforcement from snapping users back after refresh on quiz steps
+- [x] Persist dynamic quiz questions and demographics across refreshes
+- [x] Persist uploaded aura photo state across refreshes to prevent missing-photo errors
 
 #### Manual Testing Checklist
 - [ ] Lead creation and OTP verification

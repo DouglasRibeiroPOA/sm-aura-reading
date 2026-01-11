@@ -12,9 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SM_Flow_Session {
 
 	/**
-	 * Cookie name for the flow session.
+	 * Cookie names for flow session contexts.
 	 */
-	const COOKIE_NAME = 'sm_flow_id';
+	const COOKIE_NAME_GUEST = 'sm_flow_id_guest';
+	const COOKIE_NAME_AUTH  = 'sm_flow_id_auth';
+	const COOKIE_NAME_MAGIC = 'sm_flow_id_magic';
 
 	/**
 	 * Flow session TTL in seconds (default 24 hours).
@@ -293,11 +295,12 @@ class SM_Flow_Session {
 	 * @return string
 	 */
 	private function get_flow_id_from_cookie() {
-		if ( empty( $_COOKIE[ self::COOKIE_NAME ] ) ) {
+		$cookie_name = $this->get_cookie_name();
+		if ( empty( $_COOKIE[ $cookie_name ] ) ) {
 			return '';
 		}
 
-		return sanitize_text_field( wp_unslash( $_COOKIE[ self::COOKIE_NAME ] ) );
+		return sanitize_text_field( wp_unslash( $_COOKIE[ $cookie_name ] ) );
 	}
 
 	/**
@@ -311,10 +314,11 @@ class SM_Flow_Session {
 			return;
 		}
 
+		$cookie_name = $this->get_cookie_name();
 		$expires = time() + self::FLOW_TTL;
 
 		setcookie(
-			self::COOKIE_NAME,
+			$cookie_name,
 			sanitize_text_field( (string) $flow_id ),
 			array(
 				'expires'  => $expires,
@@ -336,8 +340,9 @@ class SM_Flow_Session {
 			return;
 		}
 
+		$cookie_name = $this->get_cookie_name();
 		setcookie(
-			self::COOKIE_NAME,
+			$cookie_name,
 			'',
 			array(
 				'expires'  => time() - DAY_IN_SECONDS,
@@ -365,6 +370,24 @@ class SM_Flow_Session {
 		}
 
 		return sanitize_text_field( (string) $user['account_id'] );
+	}
+
+	/**
+	 * Resolve the flow cookie name based on context.
+	 *
+	 * @return string
+	 */
+	private function get_cookie_name() {
+		$has_magic = isset( $_GET['sm_magic'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['sm_magic'] ) );
+		if ( $has_magic ) {
+			return self::COOKIE_NAME_MAGIC;
+		}
+
+		if ( class_exists( 'SM_Auth_Handler' ) && SM_Auth_Handler::get_instance()->is_user_logged_in() ) {
+			return self::COOKIE_NAME_AUTH;
+		}
+
+		return self::COOKIE_NAME_GUEST;
 	}
 
 	/**

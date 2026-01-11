@@ -51,6 +51,75 @@
     let teaserEventDispatched = false; // New flag to prevent duplicate teaser events
     const STORAGE_KEY = 'sm_lead_cache';
     const STEP_STORAGE_KEY = 'sm_flow_step_id';
+    const DYNAMIC_QUESTIONS_KEY = 'sm_dynamic_questions';
+    const DYNAMIC_DEMOGRAPHICS_KEY = 'sm_dynamic_demographics';
+    const UPLOADED_IMAGE_KEY = 'sm_uploaded_image_url';
+    var smStorage = window.smStorage || (() => {
+        const scopedKeys = new Set([
+            'sm_reading_loaded',
+            'sm_reading_lead_id',
+            'sm_reading_token',
+            'sm_existing_reading_id',
+            'sm_email',
+            'sm_flow_step_id',
+            'sm_lead_cache',
+            'sm_reading_type',
+            'sm_paywall_redirect',
+            'sm_paywall_return_url',
+            'sm_loop_guard',
+            'sm_logout_in_progress',
+            'sm_dynamic_questions',
+            'sm_dynamic_demographics',
+            'sm_palm_image',
+            'sm_uploaded_image_url'
+        ]);
+
+        const getContext = () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('sm_magic') === '1') {
+                return 'magic';
+            }
+            if (params.get('start_new') === '1') {
+                return 'auth';
+            }
+            if (typeof smData !== 'undefined' && smData.isLoggedIn) {
+                return 'auth';
+            }
+            return 'guest';
+        };
+
+        const context = getContext();
+        const key = (base) => (scopedKeys.has(base) ? `${context}:${base}` : base);
+
+        const get = (base) => {
+            const scoped = key(base);
+            let value = sessionStorage.getItem(scoped);
+            if (value === null && scopedKeys.has(base)) {
+                const legacy = sessionStorage.getItem(base);
+                if (legacy !== null) {
+                    sessionStorage.setItem(scoped, legacy);
+                    sessionStorage.removeItem(base);
+                    value = legacy;
+                }
+            }
+            return value;
+        };
+
+        const set = (base, value) => {
+            sessionStorage.setItem(key(base), value);
+        };
+
+        const remove = (base) => {
+            sessionStorage.removeItem(key(base));
+            if (scopedKeys.has(base)) {
+                sessionStorage.removeItem(base);
+            }
+        };
+
+        return { context, key, get, set, remove };
+    })();
+
+    window.smStorage = smStorage;
 
     function ensureSwipeTemplateAssets() {
         const swipeTemplate = document.querySelector('.sm-swipe-template');
@@ -94,10 +163,10 @@
     function persistLeadCache(data) {
         try {
             if (!data || !data.leadId) {
-                sessionStorage.removeItem(STORAGE_KEY);
+                smStorage.remove(STORAGE_KEY);
                 return;
             }
-            sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ leadId: data.leadId }));
+            smStorage.set(STORAGE_KEY, JSON.stringify({ leadId: data.leadId }));
         } catch (e) {
             logError('Persist lead cache failed', e);
         }
@@ -105,12 +174,52 @@
 
     function readLeadCache() {
         try {
-            const raw = sessionStorage.getItem(STORAGE_KEY);
+            const raw = smStorage.get(STORAGE_KEY);
             if (!raw) return null;
             return JSON.parse(raw);
         } catch (e) {
             logError('Read lead cache failed', e);
             return null;
+        }
+    }
+
+    function restoreDynamicQuestionsFromStorage() {
+        const rawQuestions = smStorage.get(DYNAMIC_QUESTIONS_KEY);
+        if (rawQuestions) {
+            try {
+                const parsed = JSON.parse(rawQuestions);
+                if (Array.isArray(parsed) && parsed.length) {
+                    apiState.dynamicQuestions = parsed;
+                    appState.dynamicQuestions = parsed;
+                } else {
+                    smStorage.remove(DYNAMIC_QUESTIONS_KEY);
+                }
+            } catch (error) {
+                logError('Failed to restore dynamic questions', error);
+                smStorage.remove(DYNAMIC_QUESTIONS_KEY);
+            }
+        }
+
+        const rawDemographics = smStorage.get(DYNAMIC_DEMOGRAPHICS_KEY);
+        if (rawDemographics) {
+            try {
+                const parsed = JSON.parse(rawDemographics);
+                if (parsed && parsed.ageRange && parsed.gender) {
+                    apiState.demographics = { ageRange: parsed.ageRange, gender: parsed.gender };
+                } else {
+                    smStorage.remove(DYNAMIC_DEMOGRAPHICS_KEY);
+                }
+            } catch (error) {
+                logError('Failed to restore demographics', error);
+                smStorage.remove(DYNAMIC_DEMOGRAPHICS_KEY);
+            }
+        }
+    }
+
+    function restoreImageUploadState() {
+        const uploadedUrl = smStorage.get(UPLOADED_IMAGE_KEY);
+        if (uploadedUrl) {
+            apiState.imageUploaded = true;
         }
     }
 
@@ -129,17 +238,21 @@
 
     function clearClientSession() {
         try {
-            sessionStorage.removeItem(STORAGE_KEY);
-            sessionStorage.removeItem(STEP_STORAGE_KEY);
-            sessionStorage.removeItem('sm_reading_lead_id');
-            sessionStorage.removeItem('sm_existing_reading_id');
-            sessionStorage.removeItem('sm_reading_token');
-            sessionStorage.removeItem('sm_reading_loaded');
-            sessionStorage.removeItem('sm_reading_type');
-            sessionStorage.removeItem('sm_email');
-            sessionStorage.removeItem('sm_loop_guard');
-            sessionStorage.removeItem('sm_paywall_redirect');
-            sessionStorage.removeItem('sm_paywall_return_url');
+            smStorage.remove(STORAGE_KEY);
+            smStorage.remove(STEP_STORAGE_KEY);
+            smStorage.remove('sm_reading_lead_id');
+            smStorage.remove('sm_existing_reading_id');
+            smStorage.remove('sm_reading_token');
+            smStorage.remove('sm_reading_loaded');
+            smStorage.remove('sm_reading_type');
+            smStorage.remove('sm_email');
+            smStorage.remove('sm_loop_guard');
+            smStorage.remove('sm_paywall_redirect');
+            smStorage.remove('sm_paywall_return_url');
+            smStorage.remove(DYNAMIC_QUESTIONS_KEY);
+            smStorage.remove(DYNAMIC_DEMOGRAPHICS_KEY);
+            smStorage.remove('sm_palm_image');
+            smStorage.remove(UPLOADED_IMAGE_KEY);
             teaserEventDispatched = false; // Also reset here for comprehensive reset
         } catch (e) {
             logError('Clear client session failed', e);
@@ -152,6 +265,7 @@
             url.searchParams.delete('sm_report');
             url.searchParams.delete('lead_id');
             url.searchParams.delete('lead');
+            url.searchParams.delete('sm_flow');
             window.history.replaceState({}, document.title, url.pathname + (url.search || '') + (url.hash || ''));
         } catch (error) {
             logError('Failed to clear report URL params', error);
@@ -241,6 +355,11 @@
             return;
         }
 
+        const storedStepId = smStorage.get(STEP_STORAGE_KEY);
+        if (storedStepId && storedStepId !== stepId) {
+            return;
+        }
+
         if (!window.appContent || typeof window.renderStep !== 'function' || typeof palmReadingConfig === 'undefined') {
             setTimeout(() => enforceStepAfterInit(stepId, attemptsLeft - 1), 200);
             return;
@@ -279,7 +398,7 @@
             const result = original(stepIndex);
             try {
                 if (typeof palmReadingConfig !== 'undefined' && palmReadingConfig.steps[stepIndex]) {
-                    sessionStorage.setItem(STEP_STORAGE_KEY, palmReadingConfig.steps[stepIndex].id);
+                    smStorage.set(STEP_STORAGE_KEY, palmReadingConfig.steps[stepIndex].id);
 
                     // --- FIX for Enter key submission ---
                     // Add new listener if we are on the emailVerification step
@@ -318,6 +437,9 @@
                             });
                     }
                     if (step.id !== 'result' && step.id !== 'resultLoading') {
+                        if (step.id !== 'welcome') {
+                            markFlowUrl();
+                        }
                         const modal = document.getElementById('sm-modal') || document.querySelector('.sm-modal');
                         if (modal) {
                             modal.remove();
@@ -338,15 +460,15 @@
             return;
         }
 
-        const storedReadingLoaded = sessionStorage.getItem('sm_reading_loaded');
-        const stepId = sessionStorage.getItem(STEP_STORAGE_KEY);
+        const storedReadingLoaded = smStorage.get('sm_reading_loaded');
+        const stepId = smStorage.get(STEP_STORAGE_KEY);
         if ((stepId === 'result' || stepId === 'resultLoading') && storedReadingLoaded !== 'true') {
-            sessionStorage.removeItem(STEP_STORAGE_KEY);
+            smStorage.remove(STEP_STORAGE_KEY);
             return;
         }
         if (storedReadingLoaded === 'true') {
             if (stepId && stepId !== 'result' && stepId !== 'resultLoading') {
-                sessionStorage.removeItem('sm_reading_loaded');
+                smStorage.remove('sm_reading_loaded');
             } else {
                 return;
             }
@@ -450,7 +572,10 @@
 
     // API Request Helper
     async function makeApiRequest(endpoint, method = 'POST', body = null) {
-        const url = smData.apiUrl + endpoint;
+        let url = smData.apiUrl + endpoint;
+        if (smStorage && smStorage.context === 'magic') {
+            url += (url.includes('?') ? '&' : '?') + 'sm_magic=1';
+        }
 
         const options = {
             method: method,
@@ -571,18 +696,23 @@
         try {
             const url = new URL(window.location.href);
             url.searchParams.set('sm_report', '1');
+            url.searchParams.delete('sm_flow');
 
             // CRITICAL: Add lead_id to URL for reliable refresh detection
             if (apiState.leadId) {
                 url.searchParams.set('lead_id', apiState.leadId);
             }
 
-            const storedReadingType = sessionStorage.getItem('sm_reading_type');
+            const storedReadingType = smStorage.get('sm_reading_type');
+            const storedReadingToken = smStorage.get('sm_reading_token');
             const reportContainer = getReadingResultContainer();
             const domReadingType = reportContainer ? reportContainer.dataset.readingType : '';
             const readingType = domReadingType || storedReadingType || getPreferredReadingType();
             if (readingType) {
                 url.searchParams.set('reading_type', readingType);
+            }
+            if (readingType === 'aura_teaser' && storedReadingToken) {
+                url.searchParams.set('token', storedReadingToken);
             }
 
             window.history.pushState({}, '', url.toString());
@@ -592,8 +722,20 @@
         }
     }
 
+    function markFlowUrl() {
+        try {
+            const url = new URL(window.location.href);
+            if (!url.searchParams.has('sm_report')) {
+                url.searchParams.set('sm_flow', '1');
+            }
+            window.history.replaceState({}, '', url.toString());
+        } catch (error) {
+            logError('Failed to mark flow URL', error);
+        }
+    }
+
     // Render an existing reading and jump to the result step
-    function renderExistingReading(readingHtml, readingId, leadId, readingType = 'aura_teaser') {
+    function renderExistingReading(readingHtml, readingId, leadId, readingType = 'aura_teaser', readingToken = '') {
         if (!readingHtml) return false;
 
         // Check if reading is already rendered in DOM (prevent duplicate renders)
@@ -614,7 +756,7 @@
         if (leadId) {
             apiState.leadId = leadId;
             appState.leadId = leadId;
-            sessionStorage.setItem('sm_reading_lead_id', leadId);
+            smStorage.set('sm_reading_lead_id', leadId);
         }
 
         const lastStepIndex = palmReadingConfig.steps.length - 1;
@@ -664,16 +806,19 @@
         }
 
         // ONLY mark reading as loaded AFTER confirming container exists (CRITICAL for page refresh)
-        sessionStorage.setItem('sm_reading_loaded', 'true');
-        sessionStorage.setItem('sm_flow_step_id', 'result');
-        sessionStorage.setItem('sm_reading_type', resolvedReadingType);
+        smStorage.set('sm_reading_loaded', 'true');
+        smStorage.set('sm_flow_step_id', 'result');
+        smStorage.set('sm_reading_type', resolvedReadingType);
+        if (readingToken) {
+            smStorage.set('sm_reading_token', readingToken);
+        }
 
         // Cache reading id and lead id if provided
         if (readingId) {
-            sessionStorage.setItem('sm_existing_reading_id', readingId);
+            smStorage.set('sm_existing_reading_id', readingId);
         }
         if (leadId) {
-            sessionStorage.setItem('sm_reading_lead_id', leadId);
+            smStorage.set('sm_reading_lead_id', leadId);
         }
 
         log('🔥 EXISTING READING RENDERED - About to mark URL with lead_id:', leadId);
@@ -724,7 +869,13 @@
                         email: email
                     });
 
-                    renderExistingReading(response.data.reading_html, response.data.reading_id, response.data.lead_id || null, response.data.reading_type || 'aura_teaser');
+                    renderExistingReading(
+                        response.data.reading_html,
+                        response.data.reading_id,
+                        response.data.lead_id || null,
+                        response.data.reading_type || 'aura_teaser',
+                        response.data.reading_token || ''
+                    );
                     return { existingReading: true };
                 }
 
@@ -821,7 +972,7 @@
                 apiState.otpVerified = true;
                 appState.userData.emailVerified = true;
                 if (appState.userData.email) {
-                    sessionStorage.setItem('sm_email', appState.userData.email);
+                    smStorage.set('sm_email', appState.userData.email);
                 }
                 log('✓ OTP verified successfully');
 
@@ -909,7 +1060,7 @@
                     });
                 }
                 if (appState.userData.email) {
-                    sessionStorage.setItem('sm_email', appState.userData.email);
+                    smStorage.set('sm_email', appState.userData.email);
                 }
 
                 log('✓ Magic link verified successfully');
@@ -933,9 +1084,9 @@
                         return false;
                     }
 
-                    sessionStorage.setItem('sm_reading_lead_id', apiState.leadId);
-                    sessionStorage.setItem('sm_reading_token', token);
-                    sessionStorage.setItem('sm_reading_loaded', 'true');
+                    smStorage.set('sm_reading_lead_id', apiState.leadId);
+                    smStorage.set('sm_reading_token', token);
+                    smStorage.set('sm_reading_loaded', 'true');
                     markReportUrl();
 
                     // Hide navigation and update progress to last step
@@ -1033,6 +1184,8 @@
 
             if (response.success && response.data && response.data.image_url) {
                 apiState.imageUploaded = true;
+                smStorage.set(UPLOADED_IMAGE_KEY, response.data.image_url);
+                smStorage.remove('sm_palm_image');
                 log('✓ Palm image uploaded', { url: response.data.image_url });
 
                 // Update flow state - image uploaded, ready for quiz
@@ -1074,6 +1227,8 @@
                 apiState.dynamicQuestions = questions;
                 apiState.demographics = { ageRange, gender };
                 appState.dynamicQuestions = questions;
+                smStorage.set(DYNAMIC_QUESTIONS_KEY, JSON.stringify(questions));
+                smStorage.set(DYNAMIC_DEMOGRAPHICS_KEY, JSON.stringify({ ageRange, gender }));
                 log('✓ Dynamic questions fetched', { count: questions.length, ageRange, gender });
                 return questions;
             }
@@ -1268,6 +1423,10 @@
         const endpoint = usePaidFlow ? 'reading/generate-paid' : 'reading/generate';
         const readingType = usePaidFlow ? 'aura_full' : 'aura_teaser';
         try {
+            if (!apiState.imageUploaded && smStorage.get(UPLOADED_IMAGE_KEY)) {
+                apiState.imageUploaded = true;
+            }
+
             if (!apiState.imageUploaded && appState.userData && appState.userData.palmImage) {
                 log('Palm image not uploaded yet. Uploading before reading generation...');
                 const imageUrl = await uploadPalmImage(appState.userData.palmImage);
@@ -1295,7 +1454,10 @@
                 }
                 log('✓ AI reading generated');
                 if (readingData.reading_id) {
-                    sessionStorage.setItem('sm_existing_reading_id', readingData.reading_id);
+                    smStorage.set('sm_existing_reading_id', readingData.reading_id);
+                }
+                if (readingData.reading_token) {
+                    smStorage.set('sm_reading_token', readingData.reading_token);
                 }
 
                 // Update flow state - reading generated successfully
@@ -1307,8 +1469,8 @@
 
                 // Cache reading metadata (but DON'T set sm_reading_loaded yet)
                 // The rendering function will set it AFTER validating the container exists
-                sessionStorage.setItem('sm_reading_lead_id', apiState.leadId);
-                sessionStorage.setItem('sm_existing_reading_id', readingData.reading_id);
+                smStorage.set('sm_reading_lead_id', apiState.leadId);
+                smStorage.set('sm_existing_reading_id', readingData.reading_id);
 
                 log('🔥 READING GENERATED - About to mark URL with lead_id:', apiState.leadId);
                 markReportUrl();
@@ -1791,8 +1953,9 @@
                 const questions = await fetchDynamicQuestions(demographics.ageRange, demographics.gender);
                 if (questions && questions.length > 0) {
                     log('Background: Dynamic questions fetched successfully');
-                    // Reset quiz answers when new questions load
-                    appState.quizResponses = {};
+                    if (!appState.quizResponses || !Object.keys(appState.quizResponses).length) {
+                        appState.quizResponses = {};
+                    }
                     // Note: UI will continue using static questions if user already started answering
                 } else {
                     logError('Background: Dynamic questions fetch failed (non-blocking)');
@@ -1840,7 +2003,7 @@
             };
 
             if (lead.email) {
-                sessionStorage.setItem('sm_email', lead.email);
+                smStorage.set('sm_email', lead.email);
             }
 
             const removeStartNewParam = () => {
@@ -1895,7 +2058,7 @@
 
     async function handleReportRefresh() {
         const params = new URLSearchParams(window.location.search);
-        if (sessionStorage.getItem('sm_logout_in_progress') === '1') {
+        if (smStorage.get('sm_logout_in_progress') === '1') {
             return false;
         }
         if (!params.has('sm_report')) {
@@ -1914,7 +2077,7 @@
         // Try to get lead_id from multiple sources (in order of preference)
         const urlLeadId = params.get('lead_id') || params.get('lead');
         const cachedLead = readLeadCache();
-        const sessionLeadId = sessionStorage.getItem('sm_reading_lead_id');
+        const sessionLeadId = smStorage.get('sm_reading_lead_id');
         const leadId = urlLeadId || (cachedLead && cachedLead.leadId) || sessionLeadId;
 
         log('Lead ID sources:', { urlLeadId, cachedLeadId: cachedLead?.leadId, sessionLeadId, finalLeadId: leadId });
@@ -1928,14 +2091,20 @@
         try {
             showMagicOverlay();
             log(`Fetching report for lead ID: ${leadId}`);
-            const storedReadingType = sessionStorage.getItem('sm_reading_type');
+            const storedReadingType = smStorage.get('sm_reading_type');
             const urlReadingType = params.get('reading_type');
             const readingType = urlReadingType || storedReadingType || getPreferredReadingType();
             const response = await makeApiRequest(`reading/get-by-lead?lead_id=${leadId}&reading_type=${readingType}`, 'GET');
 
             if (response.success && response.data.exists && response.data.reading_html) {
                 log('✅ Successfully refetched report. Rendering...');
-                renderExistingReading(response.data.reading_html, response.data.reading_id, leadId, response.data.reading_type || readingType || 'aura_teaser');
+                renderExistingReading(
+                    response.data.reading_html,
+                    response.data.reading_id,
+                    leadId,
+                    response.data.reading_type || readingType || 'aura_teaser',
+                    response.data.reading_token || ''
+                );
                 hideMagicOverlay();
                 return true; // Report handled
             } else {
@@ -1952,10 +2121,10 @@
             // CRITICAL: Clear reading state when report refresh fails
             // This prevents the page from trying to render a non-existent reading
             log('Clearing reading state flags since report refresh failed');
-            sessionStorage.removeItem('sm_reading_loaded');
-            sessionStorage.removeItem('sm_reading_lead_id');
-            sessionStorage.removeItem('sm_reading_token');
-            sessionStorage.removeItem('sm_existing_reading_id');
+            smStorage.remove('sm_reading_loaded');
+            smStorage.remove('sm_reading_lead_id');
+            smStorage.remove('sm_reading_token');
+            smStorage.remove('sm_existing_reading_id');
 
             // Return false to let normal flow continue (will start from welcome step)
             return false;
@@ -1997,7 +2166,7 @@
     }
 
     async function handleFlowStateBootstrap() {
-        if (sessionStorage.getItem('sm_logout_in_progress') === '1') {
+        if (smStorage.get('sm_logout_in_progress') === '1') {
             return false;
         }
         if (!window.smData || !window.smData.isLoggedIn) {
@@ -2015,7 +2184,7 @@
         if (flow.status === 'reading_ready' && flow.lead_id) {
             const params = new URLSearchParams(window.location.search);
             const hasReportFlag = params.has('sm_report');
-            const storedReadingLoaded = sessionStorage.getItem('sm_reading_loaded') === 'true';
+            const storedReadingLoaded = smStorage.get('sm_reading_loaded') === 'true';
             if (!hasReportFlag && !storedReadingLoaded) {
                 return false;
             }
@@ -2031,7 +2200,13 @@
                 const readingType = getPreferredReadingType();
                 const response = await makeApiRequest(`reading/get-by-lead?lead_id=${flow.lead_id}&reading_type=${readingType}`, 'GET');
                 if (response.success && response.data.exists && response.data.reading_html) {
-                    renderExistingReading(response.data.reading_html, response.data.reading_id, flow.lead_id, response.data.reading_type || readingType || 'aura_teaser');
+                    renderExistingReading(
+                        response.data.reading_html,
+                        response.data.reading_id,
+                        flow.lead_id,
+                        response.data.reading_type || readingType || 'aura_teaser',
+                        response.data.reading_token || ''
+                    );
                     hideMagicOverlay();
                     return true;
                 }
@@ -2074,10 +2249,12 @@
 
                 showAuthErrorToast();
                 wrapRenderStepForRestore();
+                restoreDynamicQuestionsFromStorage();
+                restoreImageUploadState();
 
                 // --- EMERGENCY FIX: Check for infinite loop guard ---
                 // Uses counter-based detection: requires 5+ rapid refreshes within 500ms to trigger
-                const loopGuard = sessionStorage.getItem('sm_loop_guard');
+                const loopGuard = smStorage.get('sm_loop_guard');
                 const currentTime = Date.now();
                 if (loopGuard) {
                     try {
@@ -2092,29 +2269,29 @@
                             // Only block if 5+ rapid refreshes
                             if (guardData.count >= 5) {
                                 logError(`⚠️ INFINITE LOOP DETECTED - Stopping refresh cycle (${guardData.count} rapid refreshes within 500ms)`);
-                                sessionStorage.removeItem('sm_loop_guard');
+                                smStorage.remove('sm_loop_guard');
                                 return; // Stop all processing to break the loop
                             }
 
-                            sessionStorage.setItem('sm_loop_guard', JSON.stringify(guardData));
+                            smStorage.set('sm_loop_guard', JSON.stringify(guardData));
                         } else {
                             // More than 500ms since last load, reset counter
-                            sessionStorage.setItem('sm_loop_guard', JSON.stringify({ timestamp: currentTime, count: 1 }));
+                            smStorage.set('sm_loop_guard', JSON.stringify({ timestamp: currentTime, count: 1 }));
                         }
                     } catch (e) {
                         // Invalid JSON, reset guard
-                        sessionStorage.setItem('sm_loop_guard', JSON.stringify({ timestamp: currentTime, count: 1 }));
+                        smStorage.set('sm_loop_guard', JSON.stringify({ timestamp: currentTime, count: 1 }));
                     }
                 } else {
                     // First load, initialize counter
-                    sessionStorage.setItem('sm_loop_guard', JSON.stringify({ timestamp: currentTime, count: 1 }));
+                    smStorage.set('sm_loop_guard', JSON.stringify({ timestamp: currentTime, count: 1 }));
                 }
                 // --- END LOOP GUARD ---
 
                 // --- FIX for report refresh loop ---
                 const reportRefreshed = await handleReportRefresh();
                 if (reportRefreshed) {
-                    sessionStorage.removeItem('sm_loop_guard'); // Clear guard on success
+                    smStorage.remove('sm_loop_guard'); // Clear guard on success
                     return; // Stop further processing if report was handled
                 }
                 // --- END FIX ---
@@ -2140,8 +2317,8 @@
             // --- FIX for Email Persistence on OTP page refresh ---
             // If appState.userData.email is empty but sm_email exists in sessionStorage, restore it.
             // This handles cases where the page refreshes directly on the OTP step.
-            if (!appState.userData.email && sessionStorage.getItem('sm_email')) {
-                appState.userData.email = sessionStorage.getItem('sm_email');
+            if (!appState.userData.email && smStorage.get('sm_email')) {
+                appState.userData.email = smStorage.get('sm_email');
                 log('Restored appState.userData.email from sessionStorage.', { email: appState.userData.email });
             }
             // --- END FIX ---
@@ -2286,7 +2463,7 @@
         if (logoutBtn) {
             logoutBtn.addEventListener('click', async () => {
                 log('Logout button clicked');
-                sessionStorage.setItem('sm_logout_in_progress', '1');
+                smStorage.set('sm_logout_in_progress', '1');
                 logoutBtn.disabled = true;
                 clearClientSession();
                 clearReportUrlParams();
@@ -2294,11 +2471,11 @@
                     const response = await makeApiRequest('auth/logout', 'POST');
                     resetFlowState(false);
                     if (response.success && response.data.redirect_url) {
-                        sessionStorage.removeItem('sm_logout_in_progress');
+                        smStorage.remove('sm_logout_in_progress');
                         window.location.replace(response.data.redirect_url);
                     } else {
                         // Fallback redirect
-                        sessionStorage.removeItem('sm_logout_in_progress');
+                        smStorage.remove('sm_logout_in_progress');
                         window.location.replace(smData.homeUrl || '/');
                     }
                 } catch (error) {
@@ -2306,7 +2483,7 @@
                     showToast('Logout failed. Please try again.', 'error');
                     resetFlowState(false);
                     // Force redirect even on failure
-                    sessionStorage.removeItem('sm_logout_in_progress');
+                    smStorage.remove('sm_logout_in_progress');
                     window.location.replace(smData.homeUrl || '/');
                 }
             });

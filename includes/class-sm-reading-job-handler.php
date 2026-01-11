@@ -499,12 +499,21 @@ class SM_Reading_Job_Handler {
 			? __( 'Your Full Aura Reading Is Ready', 'mystic-aura-reading' )
 			: __( 'Your Aura Reading Is Ready', 'mystic-aura-reading' );
 
+		$report_args = array(
+			'sm_report'    => 1,
+			'lead_id'      => $lead_id,
+			'reading_type' => $reading_type,
+		);
+
+		if ( 'aura_teaser' === $reading_type && class_exists( 'SM_Reading_Token' ) ) {
+			$reading_token = SM_Reading_Token::generate( $lead_id, $reading_id, $reading_type );
+			if ( '' !== $reading_token ) {
+				$report_args['token'] = $reading_token;
+			}
+		}
+
 		$report_url = add_query_arg(
-			array(
-				'sm_report'   => 1,
-				'lead_id'     => $lead_id,
-				'reading_type'=> $reading_type,
-			),
+			$report_args,
 			home_url( '/' )
 		);
 

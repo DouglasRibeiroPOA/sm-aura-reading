@@ -1850,12 +1850,18 @@ class SM_REST_Controller extends WP_REST_Controller {
 				)
 			);
 
+			$reading_token = '';
+			if ( class_exists( 'SM_Reading_Token' ) ) {
+				$reading_token = SM_Reading_Token::generate( $lead_id, $existing_reading->id, 'aura_teaser' );
+			}
+
 			return $this->success_response(
 				array(
-					'reading_html' => $reading_html,
-					'reading_id'   => $existing_reading->id,
-					'is_existing'  => true, // Flag to inform frontend this is a cached reading
-					'status'       => 'ready',
+					'reading_html'  => $reading_html,
+					'reading_id'    => $existing_reading->id,
+					'reading_token' => $reading_token,
+					'is_existing'   => true, // Flag to inform frontend this is a cached reading
+					'status'        => 'ready',
 				)
 			);
 		}
@@ -2004,12 +2010,18 @@ class SM_REST_Controller extends WP_REST_Controller {
 			)
 		);
 
+		$reading_token = '';
+		if ( class_exists( 'SM_Reading_Token' ) ) {
+			$reading_token = SM_Reading_Token::generate( $lead_id, $reading_id, 'aura_teaser' );
+		}
+
 		return $this->success_response(
 			array(
-				'reading_html' => $reading_html, // Already escaped by renderer
-				'reading_id'   => $reading_id,
-				'is_existing'  => false,
-				'status'       => 'ready',
+				'reading_html'  => $reading_html, // Already escaped by renderer
+				'reading_id'    => $reading_id,
+				'reading_token' => $reading_token,
+				'is_existing'   => false,
+				'status'        => 'ready',
 			)
 		);
 	}
@@ -2065,12 +2077,18 @@ class SM_REST_Controller extends WP_REST_Controller {
 				)
 			);
 
+			$reading_token = '';
+			if ( 'aura_teaser' === $reading_type && class_exists( 'SM_Reading_Token' ) ) {
+				$reading_token = SM_Reading_Token::generate( $lead_id, $existing_reading->id, $reading_type );
+			}
+
 			return $this->success_response(
 				array(
-					'status'       => 'ready',
-					'reading_html' => $reading_html,
-					'reading_id'   => $existing_reading->id,
-					'reading_type' => $reading_type,
+					'status'        => 'ready',
+					'reading_html'  => $reading_html,
+					'reading_id'    => $existing_reading->id,
+					'reading_type'  => $reading_type,
+					'reading_token' => $reading_token,
 				)
 			);
 		}
@@ -2898,44 +2916,71 @@ class SM_REST_Controller extends WP_REST_Controller {
 			)
 		);
 
-		$lead_id = $this->sanitize_string( $request->get_param( 'lead_id' ) );
-		$token   = $this->sanitize_string( $request->get_param( 'token' ) );
+		$lead_id      = $this->sanitize_string( $request->get_param( 'lead_id' ) );
+		$token        = $this->sanitize_string( $request->get_param( 'token' ) );
 		$reading_type = $this->sanitize_string( $request->get_param( 'reading_type' ) );
 		$token_validated = false;
+		$reading_token_payload = null;
 
-		// If a magic link token is provided, validate it and allow the call without nonce.
+		// If a token is provided, validate it and allow the call without nonce.
 		if ( '' !== $token ) {
-			$otp_handler = class_exists( 'SM_OTP_Handler' ) ? SM_OTP_Handler::init() : null;
-			if ( null !== $otp_handler ) {
-				$token_check = $otp_handler->verify_magic_token( $lead_id, $token );
-				if ( is_wp_error( $token_check ) ) {
-					SM_Logger::log(
-						'warning',
-						'REST_READING_GET_BY_LEAD',
-						'Magic token validation failed for reading lookup',
-						array(
-							'lead_id' => $lead_id,
-							'error'   => $token_check->get_error_message(),
-							'code'    => $token_check->get_error_code(),
-						)
-					);
+			$reading_token_error = null;
+			if ( class_exists( 'SM_Reading_Token' ) ) {
+				$reading_token_payload = SM_Reading_Token::validate( $token, $lead_id );
+				if ( ! is_wp_error( $reading_token_payload ) ) {
+					$token_validated = true;
+					if ( '' === $lead_id && ! empty( $reading_token_payload['lead_id'] ) ) {
+						$lead_id = $this->sanitize_string( $reading_token_payload['lead_id'] );
+					}
+					if ( '' === $reading_type && ! empty( $reading_token_payload['reading_type'] ) ) {
+						$reading_type = $this->sanitize_string( $reading_token_payload['reading_type'] );
+					}
+				} else {
+					$reading_token_error = $reading_token_payload;
+				}
+			}
+
+			if ( ! $token_validated ) {
+				if ( $reading_token_error && 'token_not_reading' !== $reading_token_error->get_error_code() ) {
 					return $this->error_response(
-						$token_check->get_error_code(),
-						$token_check->get_error_message(),
+						$reading_token_error->get_error_code(),
+						$reading_token_error->get_error_message(),
 						403
 					);
 				}
 
-				SM_Logger::log(
-					'info',
-					'REST_READING_GET_BY_LEAD',
-					'Magic token validated for reading lookup',
-					array(
-						'lead_id' => $lead_id,
-					)
-				);
+				$otp_handler = class_exists( 'SM_OTP_Handler' ) ? SM_OTP_Handler::init() : null;
+				if ( null !== $otp_handler ) {
+					$token_check = $otp_handler->verify_magic_token( $lead_id, $token );
+					if ( is_wp_error( $token_check ) ) {
+						SM_Logger::log(
+							'warning',
+							'REST_READING_GET_BY_LEAD',
+							'Magic token validation failed for reading lookup',
+							array(
+								'lead_id' => $lead_id,
+								'error'   => $token_check->get_error_message(),
+								'code'    => $token_check->get_error_code(),
+							)
+						);
+						return $this->error_response(
+							$token_check->get_error_code(),
+							$token_check->get_error_message(),
+							403
+						);
+					}
 
-				$token_validated = true;
+					SM_Logger::log(
+						'info',
+						'REST_READING_GET_BY_LEAD',
+						'Magic token validated for reading lookup',
+						array(
+							'lead_id' => $lead_id,
+						)
+					);
+
+					$token_validated = true;
+				}
 			}
 		}
 
@@ -3243,12 +3288,18 @@ class SM_REST_Controller extends WP_REST_Controller {
 			)
 		);
 
+		$reading_token = '';
+		if ( 'aura_teaser' === $reading_type && class_exists( 'SM_Reading_Token' ) ) {
+			$reading_token = SM_Reading_Token::generate( $lead_id, $existing_reading->id, $reading_type );
+		}
+
 		return $this->success_response(
 			array(
-				'exists'       => true,
-				'reading_html' => $reading_html,
-				'reading_id'   => $existing_reading->id,
-				'reading_type' => $reading_type,
+				'exists'        => true,
+				'reading_html'  => $reading_html,
+				'reading_id'    => $existing_reading->id,
+				'reading_type'  => $reading_type,
+				'reading_token' => $reading_token,
 			)
 		);
 	}

@@ -267,9 +267,11 @@ function sm_render_shortcode( $atts ) {
 	$force_start = isset( $_GET['start_new'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['start_new'] ) );
 	$has_magic   = isset( $_GET['sm_magic'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['sm_magic'] ) );
 	$has_report  = isset( $_GET['sm_report'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['sm_report'] ) );
+	$has_flow    = isset( $_GET['sm_flow'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['sm_flow'] ) );
 	$show_reports = isset( $_GET['sm_reports'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['sm_reports'] ) );
 	$force_start = $force_start || $has_magic;
 	$force_start = $force_start || $has_report;
+	$force_start = $force_start || $has_flow;
 
 	sm_enqueue_assets( true );
 	if ( ! wp_style_is( 'sm-font-awesome-6', 'done' ) ) {
@@ -402,6 +404,39 @@ function sm_redirect_paid_report_to_login() {
 	// Skip if not a report URL
 	if ( ! isset( $_GET['sm_report'] ) ) {
 		return;
+	}
+
+	$reading_type = isset( $_GET['reading_type'] ) ? sanitize_text_field( wp_unslash( $_GET['reading_type'] ) ) : '';
+	$token        = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
+	$has_magic    = isset( $_GET['sm_magic'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['sm_magic'] ) );
+
+	// Skip redirect for teaser or magic link access.
+	if ( 'aura_teaser' === $reading_type || $has_magic ) {
+		return;
+	}
+
+	// If a token is present, validate it and allow teaser access without login.
+	if ( '' !== $token ) {
+		if ( class_exists( 'SM_Reading_Token' ) ) {
+			$payload = SM_Reading_Token::validate( $token, '', array( 'aura_teaser', 'aura_full' ) );
+			if ( ! is_wp_error( $payload ) ) {
+				$token_type = isset( $payload['reading_type'] ) ? (string) $payload['reading_type'] : '';
+				if ( 'aura_teaser' === $token_type ) {
+					return;
+				}
+			}
+		}
+
+		if ( class_exists( 'SM_OTP_Handler' ) ) {
+			$lead_id = isset( $_GET['lead_id'] ) ? sanitize_text_field( wp_unslash( $_GET['lead_id'] ) ) : '';
+			if ( '' !== $lead_id ) {
+				$otp_handler = SM_OTP_Handler::get_instance();
+				$verified    = $otp_handler->verify_magic_token( $lead_id, $token );
+				if ( ! is_wp_error( $verified ) ) {
+					return;
+				}
+			}
+		}
 	}
 
 	$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '/';

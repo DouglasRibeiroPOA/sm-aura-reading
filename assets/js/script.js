@@ -344,6 +344,73 @@ const appState = {
     }
 };
 
+var smStorage = window.smStorage || (() => {
+    const scopedKeys = new Set([
+        'sm_reading_loaded',
+        'sm_reading_lead_id',
+        'sm_reading_token',
+        'sm_existing_reading_id',
+        'sm_email',
+        'sm_flow_step_id',
+        'sm_lead_cache',
+        'sm_reading_type',
+        'sm_paywall_redirect',
+        'sm_paywall_return_url',
+        'sm_loop_guard',
+        'sm_logout_in_progress',
+        'sm_dynamic_questions',
+        'sm_dynamic_demographics',
+        'sm_palm_image',
+        'sm_uploaded_image_url'
+    ]);
+
+    const getContext = () => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('sm_magic') === '1') {
+            return 'magic';
+        }
+        if (params.get('start_new') === '1') {
+            return 'auth';
+        }
+        if (typeof smData !== 'undefined' && smData.isLoggedIn) {
+            return 'auth';
+        }
+        return 'guest';
+    };
+
+    const context = getContext();
+    const key = (base) => (scopedKeys.has(base) ? `${context}:${base}` : base);
+
+    const get = (base) => {
+        const scoped = key(base);
+        let value = sessionStorage.getItem(scoped);
+        if (value === null && scopedKeys.has(base)) {
+            const legacy = sessionStorage.getItem(base);
+            if (legacy !== null) {
+                sessionStorage.setItem(scoped, legacy);
+                sessionStorage.removeItem(base);
+                value = legacy;
+            }
+        }
+        return value;
+    };
+
+    const set = (base, value) => {
+        sessionStorage.setItem(key(base), value);
+    };
+
+    const remove = (base) => {
+        sessionStorage.removeItem(key(base));
+        if (scopedKeys.has(base)) {
+            sessionStorage.removeItem(base);
+        }
+    };
+
+    return { context, key, get, set, remove };
+})();
+
+window.smStorage = smStorage;
+
 // ========================================
 // STATE PERSISTENCE (localStorage)
 // ========================================
@@ -352,6 +419,8 @@ const appState = {
  * Save current appState to localStorage for refresh persistence
  * Expires after 24 hours
  */
+const SM_APP_STATE_KEY = `sm_app_state_${smStorage.context}`;
+
 function saveStateToLocalStorage() {
     try {
         const stateToSave = {
@@ -363,7 +432,7 @@ function saveStateToLocalStorage() {
             quizResponses: appState.quizResponses,
             timestamp: Date.now()
         };
-        localStorage.setItem('sm_app_state', JSON.stringify(stateToSave));
+        localStorage.setItem(SM_APP_STATE_KEY, JSON.stringify(stateToSave));
         console.log('[SM] App state saved to localStorage');
     } catch (error) {
         console.error('[SM] Failed to save state to localStorage:', error);
@@ -376,25 +445,59 @@ function saveStateToLocalStorage() {
  * @returns {boolean} True if state was restored
  */
 function restoreStateFromLocalStorage() {
-    // NOTE: Disabled localStorage restoration as it causes issues with navigating
-    // back to a completed report state. The sessionStorage flow handles refreshes
-    // on the report page itself, which is sufficient for now.
-    const saved = localStorage.getItem('sm_app_state');
-    if (saved) {
-        console.log('[SM] Found saved state in localStorage, clearing it to prevent invalid restoration.');
-        localStorage.removeItem('sm_app_state');
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasReportFlag = urlParams.has('sm_report');
+    const readingLoaded = smStorage.get('sm_reading_loaded') === 'true';
+
+    if (hasReportFlag || readingLoaded) {
+        localStorage.removeItem(SM_APP_STATE_KEY);
+        return false;
     }
-    return false;
+
+    const saved = localStorage.getItem(SM_APP_STATE_KEY);
+    if (!saved) {
+        return false;
+    }
+
+    try {
+        const parsed = JSON.parse(saved);
+        if (!parsed || !parsed.timestamp) {
+            localStorage.removeItem(SM_APP_STATE_KEY);
+            return false;
+        }
+
+        const ageMs = Date.now() - parsed.timestamp;
+        if (ageMs > 24 * 60 * 60 * 1000) {
+            localStorage.removeItem(SM_APP_STATE_KEY);
+            return false;
+        }
+
+        appState.currentStep = parsed.currentStep || 0;
+        appState.userData = {
+            ...appState.userData,
+            ...(parsed.userData || {})
+        };
+        appState.quizResponses = parsed.quizResponses || {};
+
+        console.log('[SM] Restored app state from localStorage');
+        return true;
+    } catch (error) {
+        console.error('[SM] Failed to restore state from localStorage:', error);
+        localStorage.removeItem(SM_APP_STATE_KEY);
+        return false;
+    }
 }
 
 /**
  * Clear saved state from localStorage
  */
 function clearSavedState() {
-    localStorage.removeItem('sm_app_state');
-    sessionStorage.removeItem('sm_reading_loaded');
-    sessionStorage.removeItem('sm_reading_lead_id');
-    sessionStorage.removeItem('sm_reading_token');
+    localStorage.removeItem(SM_APP_STATE_KEY);
+    smStorage.remove('sm_reading_loaded');
+    smStorage.remove('sm_reading_lead_id');
+    smStorage.remove('sm_reading_token');
+    smStorage.remove('sm_palm_image');
+    smStorage.remove('sm_uploaded_image_url');
     console.log('[SM] Saved state cleared');
 }
 
@@ -403,6 +506,19 @@ function cleanupCamera() {
     if (appState.cameraStream) {
         stopCamera();
         appState.cameraStream = null;
+    }
+}
+
+function setPalmImage(imageData) {
+    appState.userData.palmImage = imageData || null;
+    if (imageData) {
+        try {
+            smStorage.set('sm_palm_image', imageData);
+        } catch (error) {
+            console.warn('[SM] Failed to persist palm image in sessionStorage:', error);
+        }
+    } else {
+        smStorage.remove('sm_palm_image');
     }
 }
 
@@ -519,19 +635,36 @@ function normalizeOption(option, index, question) {
 function initApp() {
     // Try to restore state from localStorage (handles page refresh)
     const stateRestored = restoreStateFromLocalStorage();
+    const storedQuestions = smStorage.get('sm_dynamic_questions');
+    if (storedQuestions) {
+        try {
+            const parsed = JSON.parse(storedQuestions);
+            if (Array.isArray(parsed) && parsed.length) {
+                appState.dynamicQuestions = parsed;
+            }
+        } catch (error) {
+            console.error('[SM] Failed to restore dynamic questions:', error);
+            smStorage.remove('sm_dynamic_questions');
+        }
+    }
+
+    const storedPalmImage = smStorage.get('sm_palm_image');
+    if (storedPalmImage && !appState.userData.palmImage) {
+        appState.userData.palmImage = storedPalmImage;
+    }
 
     // Set total steps
     totalStepsEl.textContent = palmReadingConfig.steps.length;
 
     // Check if there's a flow step in sessionStorage (takes precedence over localStorage)
-    const sessionStepId = sessionStorage.getItem('sm_flow_step_id');
-    const storedReadingLoaded = sessionStorage.getItem('sm_reading_loaded');
+    const sessionStepId = smStorage.get('sm_flow_step_id');
+    const storedReadingLoaded = smStorage.get('sm_reading_loaded');
     let initialStep = 0;
 
     if (sessionStepId) {
         if ((sessionStepId === 'result' || sessionStepId === 'resultLoading') && storedReadingLoaded !== 'true') {
             console.log('[SM] Ignoring stale result step without loaded reading');
-            sessionStorage.removeItem('sm_flow_step_id');
+            smStorage.remove('sm_flow_step_id');
         } else {
         // Find the step index for the stored step ID
         const stepIndex = palmReadingConfig.steps.findIndex(s => s.id === sessionStepId);
@@ -553,12 +686,21 @@ function initApp() {
         const backBtn = e.target.closest('#back-btn');
         const nextBtn = e.target.closest('#next-btn');
 
+        console.log('[SM Nav Delegation]', {
+            target: e.target.tagName,
+            targetId: e.target.id,
+            backBtn: !!backBtn,
+            nextBtn: !!nextBtn
+        });
+
         if (backBtn && typeof window.goToPreviousStep === 'function') {
+            console.log('[SM Nav] Calling goToPreviousStep');
             window.goToPreviousStep();
         } else if (nextBtn && typeof window.goToNextStep === 'function') {
+            console.log('[SM Nav] Calling goToNextStep');
             window.goToNextStep();
         }
-    }, {once: false}); // Don't use once, we need it for multiple clicks
+    });
 
     // Handle keyboard navigation
     document.addEventListener('keydown', handleKeyboardNavigation);
@@ -730,7 +872,7 @@ function renderWelcomeStep(container, step) {
     emailInput.autocomplete = 'email';
 
     // Restore email from sessionStorage if available
-    const savedEmail = sessionStorage.getItem('sm_email');
+    const savedEmail = smStorage.get('sm_email');
     if (savedEmail) {
         emailInput.value = savedEmail;
     }
@@ -796,7 +938,7 @@ function renderWelcomeStep(container, step) {
         errorMessage.textContent = '';
 
         // Store email in sessionStorage
-        sessionStorage.setItem('sm_email', email);
+        smStorage.set('sm_email', email);
 
         // Disable submit button and show loading state
         setButtonLoading(continueBtn, true);
@@ -893,7 +1035,7 @@ function renderLeadCaptureStep(container, step) {
     form.appendChild(nameGroup);
 
     // Retrieve email from sessionStorage (captured in welcome step)
-    const savedEmail = sessionStorage.getItem('sm_email');
+    const savedEmail = smStorage.get('sm_email');
     if (savedEmail && !appState.userData.email) {
         appState.userData.email = savedEmail;
     }
@@ -1511,7 +1653,7 @@ function capturePhotoFromCamera() {
     const imageData = canvas.toDataURL('image/jpeg', isMobile ? 0.6 : 0.8);
 
     // Store in app state
-    appState.userData.palmImage = imageData;
+    setPalmImage(imageData);
 
     // Update UI
     imagePreview.src = imageData;
@@ -1567,7 +1709,7 @@ function handlePhotoUpload(event) {
 
     reader.onload = function (e) {
         // Store in app state
-        appState.userData.palmImage = e.target.result;
+        setPalmImage(e.target.result);
 
         // Update UI
         imagePreview.src = e.target.result;
@@ -1637,7 +1779,7 @@ function resetPhotoInterface() {
     if (uploadBtn) uploadBtn.style.display = 'flex';
 
     // Clear stored image
-    appState.userData.palmImage = null;
+    setPalmImage(null);
 
     // Disable next button
     nextBtn.disabled = true;
@@ -1819,7 +1961,7 @@ async function capturePhoto() {
 
     // Enable next button
     nextBtn.disabled = false;
-    appState.userData.palmImage = imageData;
+    setPalmImage(imageData);
 
     // Show success message
     showToast('Photo captured! Click "Use This Photo" to continue.');
@@ -1874,7 +2016,7 @@ async function handleFileUpload(event) {
 
         // Enable next button
         nextBtn.disabled = false;
-        appState.userData.palmImage = compressed;
+        setPalmImage(compressed);
 
         showToast('Photo loaded! Click "Use This Photo" to continue.');
     };
@@ -2093,9 +2235,9 @@ function renderResultStep(container, step) {
         const resultContainer = getReadingResultContainer();
         if (!resultContainer) {
             console.log('[SM] Reading HTML injected but result container not found - clearing state and restarting');
-            sessionStorage.removeItem('sm_reading_loaded');
-            sessionStorage.removeItem('sm_reading_lead_id');
-            sessionStorage.removeItem('sm_reading_token');
+            smStorage.remove('sm_reading_loaded');
+            smStorage.remove('sm_reading_lead_id');
+            smStorage.remove('sm_reading_token');
             // Remove sm_report param to prevent infinite redirect loop, but keep lead_id
             const url = new URL(window.location.href);
             url.searchParams.delete('sm_report');
@@ -2105,11 +2247,11 @@ function renderResultStep(container, step) {
 
         // ONLY set reading loaded flag AFTER confirming container exists
         // This prevents infinite loops when reading HTML is invalid
-        sessionStorage.setItem('sm_reading_loaded', 'true');
+        smStorage.set('sm_reading_loaded', 'true');
         console.log('[SM] Reading loaded - sessionStorage flag set for refresh persistence');
 
         const readingType = resultContainer ? resultContainer.dataset.readingType : 'aura_teaser';
-        sessionStorage.setItem('sm_reading_type', readingType);
+        smStorage.set('sm_reading_type', readingType);
         if (readingType) {
             const url = new URL(window.location.href);
             url.searchParams.set('reading_type', readingType);
@@ -2295,7 +2437,7 @@ function goToPreviousStep() {
             };
             resetLeadCaptureValidationState();
             appState.quizResponses = {};
-            sessionStorage.removeItem('sm_lead_cache');
+            smStorage.remove('sm_lead_cache');
         }
 
         // Save state for refresh persistence
@@ -2336,10 +2478,10 @@ function showToast(message, duration = 3000) {
  */
 async function checkForExistingReading() {
     // First, check if we have stored reading state from a previous load (handles page refresh)
-    const storedLeadId = sessionStorage.getItem('sm_reading_lead_id');
-    const storedToken = sessionStorage.getItem('sm_reading_token');
-    const storedReadingLoaded = sessionStorage.getItem('sm_reading_loaded');
-    const storedReadingType = sessionStorage.getItem('sm_reading_type');
+    const storedLeadId = smStorage.get('sm_reading_lead_id');
+    const storedToken = smStorage.get('sm_reading_token');
+    const storedReadingLoaded = smStorage.get('sm_reading_loaded');
+    const storedReadingType = smStorage.get('sm_reading_type');
 
     // Get URL parameters
     const urlParams = new URLSearchParams(window.location.search);
@@ -2430,9 +2572,9 @@ async function checkForExistingReading() {
                 const resultContainer = getReadingResultContainer();
                 if (!resultContainer) {
                     console.log('[SM] Reading HTML injected but result container not found - clearing state and restarting');
-                    sessionStorage.removeItem('sm_reading_loaded');
-                    sessionStorage.removeItem('sm_reading_lead_id');
-                    sessionStorage.removeItem('sm_reading_token');
+                    smStorage.remove('sm_reading_loaded');
+                    smStorage.remove('sm_reading_lead_id');
+                    smStorage.remove('sm_reading_token');
                     // Remove sm_report param to prevent infinite redirect loop, but keep lead_id
                     const url = new URL(window.location.href);
                     url.searchParams.delete('sm_report');
@@ -2441,10 +2583,10 @@ async function checkForExistingReading() {
                 }
 
                 // Container exists - proceed with initialization
-                // Mark session state
-                sessionStorage.setItem('sm_reading_lead_id', leadId);
-                sessionStorage.setItem('sm_reading_token', token);
-                sessionStorage.setItem('sm_reading_loaded', 'true');
+            // Mark session state
+            smStorage.set('sm_reading_lead_id', leadId);
+            smStorage.set('sm_reading_token', result.data.reading_token || token);
+            smStorage.set('sm_reading_loaded', 'true');
 
                 // Hide navigation buttons
                 backBtn.style.display = 'none';
@@ -2457,7 +2599,7 @@ async function checkForExistingReading() {
 
                 // Fire teaser loaded event so teaser-reading.js can initialize
                 const readingType = resultContainer ? resultContainer.dataset.readingType : 'aura_teaser';
-                sessionStorage.setItem('sm_reading_type', readingType);
+                smStorage.set('sm_reading_type', readingType);
                 if (readingType === 'aura_teaser') {
                     const teaserEvent = new CustomEvent('sm:teaser_loaded');
                     document.dispatchEvent(teaserEvent);
@@ -2483,7 +2625,7 @@ async function checkForExistingReading() {
  * @returns {Promise<boolean>}
  */
 async function loadExistingReading(leadId, token) {
-    const storedReadingType = sessionStorage.getItem('sm_reading_type');
+    const storedReadingType = smStorage.get('sm_reading_type');
     const urlParams = new URLSearchParams(window.location.search);
     const readingTypeFromUrl = urlParams.get('reading_type');
     try {
@@ -2513,9 +2655,9 @@ async function loadExistingReading(leadId, token) {
             // This happens on 403/400 errors when token is expired/invalid
             console.error('[SM] Failed to load existing reading, API check failed with status:', response.status);
             console.log('[SM] Token may be expired. Clearing session and redirecting to start.');
-            sessionStorage.removeItem('sm_reading_loaded');
-            sessionStorage.removeItem('sm_reading_lead_id');
-            sessionStorage.removeItem('sm_reading_token');
+            smStorage.remove('sm_reading_loaded');
+            smStorage.remove('sm_reading_lead_id');
+            smStorage.remove('sm_reading_token');
             // Remove sm_report param to prevent infinite redirect loop
             const url = new URL(window.location.href);
             url.searchParams.delete('sm_report');
@@ -2535,9 +2677,9 @@ async function loadExistingReading(leadId, token) {
                 const resultContainer = getReadingResultContainer();
                 if (!resultContainer) {
                     console.log('[SM] Reading HTML injected but result container not found - clearing state and restarting');
-                    sessionStorage.removeItem('sm_reading_loaded');
-                    sessionStorage.removeItem('sm_reading_lead_id');
-                    sessionStorage.removeItem('sm_reading_token');
+                    smStorage.remove('sm_reading_loaded');
+                    smStorage.remove('sm_reading_lead_id');
+                    smStorage.remove('sm_reading_token');
                     // Remove sm_report param to prevent infinite redirect loop, but keep lead_id
                     const url = new URL(window.location.href);
                     url.searchParams.delete('sm_report');
@@ -2547,9 +2689,9 @@ async function loadExistingReading(leadId, token) {
 
                 // Container exists - proceed with initialization
                 // Mark session state
-                sessionStorage.setItem('sm_reading_lead_id', leadId);
-                sessionStorage.setItem('sm_reading_token', token);
-                sessionStorage.setItem('sm_reading_loaded', 'true');
+                smStorage.set('sm_reading_lead_id', leadId);
+                smStorage.set('sm_reading_token', result.data.reading_token || token);
+                smStorage.set('sm_reading_loaded', 'true');
 
                 // Hide navigation buttons
                 backBtn.style.display = 'none';
@@ -2562,7 +2704,7 @@ async function loadExistingReading(leadId, token) {
 
                 // Fire teaser loaded event
                 const readingType = resultContainer ? resultContainer.dataset.readingType : 'aura_teaser';
-                sessionStorage.setItem('sm_reading_type', readingType);
+                smStorage.set('sm_reading_type', readingType);
                 if (readingType === 'aura_teaser') {
                     const teaserEvent = new CustomEvent('sm:teaser_loaded');
                     document.dispatchEvent(teaserEvent);
@@ -2577,9 +2719,9 @@ async function loadExistingReading(leadId, token) {
         // This case means the API call succeeded but the backend says no reading exists.
         // This can happen if the reading was deleted. Clear state and redirect.
         console.log('[SM] Backend reports no existing reading. Clearing session and redirecting.');
-        sessionStorage.removeItem('sm_reading_loaded');
-        sessionStorage.removeItem('sm_reading_lead_id');
-        sessionStorage.removeItem('sm_reading_token');
+        smStorage.remove('sm_reading_loaded');
+        smStorage.remove('sm_reading_lead_id');
+        smStorage.remove('sm_reading_token');
         // Remove sm_report param to prevent infinite redirect loop
         const url = new URL(window.location.href);
         url.searchParams.delete('sm_report');
@@ -2589,9 +2731,9 @@ async function loadExistingReading(leadId, token) {
     } catch (error) {
         console.error('[SM] Error loading existing reading:', error);
         console.log('[SM] Clearing session and redirecting to start due to error.');
-        sessionStorage.removeItem('sm_reading_loaded');
-        sessionStorage.removeItem('sm_reading_lead_id');
-        sessionStorage.removeItem('sm_reading_token');
+        smStorage.remove('sm_reading_loaded');
+        smStorage.remove('sm_reading_lead_id');
+        smStorage.remove('sm_reading_token');
         // Remove sm_report param to prevent infinite redirect loop
         const url = new URL(window.location.href);
         url.searchParams.delete('sm_report');
@@ -2607,6 +2749,7 @@ async function mprInitialize() {
     initDashboardShare();
     const urlParams = new URLSearchParams(window.location.search);
     const hasReportFlag = urlParams.has('sm_report');
+    const hasStartNew = urlParams.has('start_new');
 
     if (hasReportFlag) {
         const reportReady = await waitForReportRender(2500);
@@ -2617,15 +2760,27 @@ async function mprInitialize() {
         console.log('[SM] Report not ready after wait - falling back to normal init');
     }
 
-    // First, check if user has existing reading via magic link
-    const hasExistingReading = await checkForExistingReading();
+    // If start_new=1 is present, clear session and start fresh
+    if (hasStartNew) {
+        console.log('[SM] start_new=1 detected - clearing session and starting fresh flow');
+        smStorage.remove('sm_reading_loaded');
+        smStorage.remove('sm_reading_lead_id');
+        smStorage.remove('sm_reading_token');
+        smStorage.remove('sm_email');
+        smStorage.remove('sm_reading_type');
+        smStorage.remove('sm_existing_reading_id');
+        // Don't check for existing reading, proceed directly to normal flow
+    } else {
+        // Only check for existing reading if NOT starting new
+        const hasExistingReading = await checkForExistingReading();
 
-    // If existing reading was loaded, don't initialize the normal flow
-    if (hasExistingReading) {
-        console.log('[SM] Skipped normal app initialization (existing reading loaded)');
-        return;
+        // If existing reading was loaded, don't initialize the normal flow
+        if (hasExistingReading) {
+            console.log('[SM] Skipped normal app initialization (existing reading loaded)');
+            return;
+        }
     }
-    
+
     const appContent = document.getElementById('app-content');
     if (appContent) {
         // Wait a bit to ensure WordPress admin bar is loaded, then init normal flow
@@ -2638,17 +2793,17 @@ async function mprInitialize() {
 // Immediate state validation on page load
 // If reading is marked as loaded but container doesn't exist, clear and restart
 (function validateReadingState() {
-    const storedReadingLoaded = sessionStorage.getItem('sm_reading_loaded');
+    const storedReadingLoaded = smStorage.get('sm_reading_loaded');
     const urlParams = new URLSearchParams(window.location.search);
     const hasReportFlag = urlParams.has('sm_report');
 
     if (storedReadingLoaded === 'true') {
-        const storedStepId = sessionStorage.getItem('sm_flow_step_id');
+        const storedStepId = smStorage.get('sm_flow_step_id');
         if (storedStepId && storedStepId !== 'result' && storedStepId !== 'resultLoading') {
             console.log('[SM] Reading state present during in-progress flow - clearing stale report flag');
-            sessionStorage.removeItem('sm_reading_loaded');
-            sessionStorage.removeItem('sm_reading_token');
-            sessionStorage.removeItem('sm_existing_reading_id');
+            smStorage.remove('sm_reading_loaded');
+            smStorage.remove('sm_reading_token');
+            smStorage.remove('sm_existing_reading_id');
             return;
         }
 
@@ -2661,10 +2816,10 @@ async function mprInitialize() {
                 return;
             }
             console.log('[SM] Reading marked as loaded but container missing - clearing state and restarting immediately');
-            sessionStorage.removeItem('sm_reading_loaded');
-            sessionStorage.removeItem('sm_reading_lead_id');
-            sessionStorage.removeItem('sm_reading_token');
-            sessionStorage.removeItem('sm_email');
+            smStorage.remove('sm_reading_loaded');
+            smStorage.remove('sm_reading_lead_id');
+            smStorage.remove('sm_reading_token');
+            smStorage.remove('sm_email');
 
             if (!hasReportFlag) {
                 // Immediate redirect to prevent flickering
@@ -2687,8 +2842,8 @@ async function waitForReportRender(timeoutMs = 2000) {
 
 // Handle browser back button - prevent navigation on paid reports, clear state on teasers
 window.addEventListener('popstate', function(event) {
-    const storedReadingLoaded = sessionStorage.getItem('sm_reading_loaded');
-    const storedReadingType = sessionStorage.getItem('sm_reading_type');
+    const storedReadingLoaded = smStorage.get('sm_reading_loaded');
+    const storedReadingType = smStorage.get('sm_reading_type');
 
     // If a paid/full report is loaded, prevent back navigation
     if (storedReadingLoaded === 'true' && storedReadingType === 'aura_full') {
@@ -2701,10 +2856,10 @@ window.addEventListener('popstate', function(event) {
     // For teaser reports: clear session and start fresh
     if (storedReadingLoaded === 'true') {
         console.log('[SM] Back button detected with reading loaded - clearing state and restarting');
-        sessionStorage.removeItem('sm_reading_loaded');
-        sessionStorage.removeItem('sm_reading_lead_id');
-        sessionStorage.removeItem('sm_reading_token');
-        sessionStorage.removeItem('sm_email');
+        smStorage.remove('sm_reading_loaded');
+        smStorage.remove('sm_reading_lead_id');
+        smStorage.remove('sm_reading_token');
+        smStorage.remove('sm_email');
 
         // Reload the page to start fresh from step 1
         window.location.replace(window.location.pathname);

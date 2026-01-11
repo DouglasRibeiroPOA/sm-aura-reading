@@ -83,6 +83,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed report titles to default to Aura Reading and drop time suffix
 - Improved reports table header and hover contrast for readability
 - Fixed Aura flow navigation so Back/Continue respond on the first quiz question
+- Restored teaser report refresh + email access using a teaser access token
+- Isolated guest and paid flow state by scoping session storage keys and flow session cookies
+- Fixed smStorage redeclaration that blocked script loading and app initialization
+- Restored in-progress flow refresh via sm_flow URL flag and scoped localStorage state restore
+- Allowed teaser report refresh and magic token access without paid login redirect
+- Prevented step enforcement from snapping users back after refresh during quiz navigation
+- Persisted dynamic quiz questions and demographics across refresh to keep question text consistent
+- Persisted uploaded aura photo state across refresh to avoid missing-photo errors at report generation
 
 ### Technical
 - Plugin namespace: `mystic-aura-reading`

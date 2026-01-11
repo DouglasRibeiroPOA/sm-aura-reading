@@ -5,25 +5,90 @@
  * It listens for a custom event 'sm:teaser_loaded' which is fired after the
  * teaser HTML is injected into the DOM by the main application script.
  */
+var smStorage = window.smStorage || (() => {
+  const scopedKeys = new Set([
+    'sm_reading_loaded',
+    'sm_reading_lead_id',
+    'sm_reading_token',
+    'sm_existing_reading_id',
+    'sm_email',
+    'sm_flow_step_id',
+    'sm_lead_cache',
+    'sm_reading_type',
+    'sm_paywall_redirect',
+    'sm_paywall_return_url',
+    'sm_loop_guard',
+    'sm_logout_in_progress',
+    'sm_dynamic_questions',
+    'sm_dynamic_demographics'
+  ]);
+
+  const getContext = () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('sm_magic') === '1') {
+      return 'magic';
+    }
+    if (params.get('start_new') === '1') {
+      return 'auth';
+    }
+    if (typeof smData !== 'undefined' && smData.isLoggedIn) {
+      return 'auth';
+    }
+    return 'guest';
+  };
+
+  const context = getContext();
+  const key = (base) => (scopedKeys.has(base) ? `${context}:${base}` : base);
+
+  const get = (base) => {
+    const scoped = key(base);
+    let value = sessionStorage.getItem(scoped);
+    if (value === null && scopedKeys.has(base)) {
+      const legacy = sessionStorage.getItem(base);
+      if (legacy !== null) {
+        sessionStorage.setItem(scoped, legacy);
+        sessionStorage.removeItem(base);
+        value = legacy;
+      }
+    }
+    return value;
+  };
+
+  const set = (base, value) => {
+    sessionStorage.setItem(key(base), value);
+  };
+
+  const remove = (base) => {
+    sessionStorage.removeItem(key(base));
+    if (scopedKeys.has(base)) {
+      sessionStorage.removeItem(base);
+    }
+  };
+
+  return { context, key, get, set, remove };
+})();
+
+window.smStorage = smStorage;
+
 function smClearReadingSession() {
   try {
-    sessionStorage.removeItem('sm_reading_loaded');
-    sessionStorage.removeItem('sm_reading_lead_id');
-    sessionStorage.removeItem('sm_reading_token');
-    sessionStorage.removeItem('sm_existing_reading_id');
-    sessionStorage.removeItem('sm_email');
-    sessionStorage.removeItem('sm_flow_step_id');
-    sessionStorage.removeItem('sm_lead_cache');
+    smStorage.remove('sm_reading_loaded');
+    smStorage.remove('sm_reading_lead_id');
+    smStorage.remove('sm_reading_token');
+    smStorage.remove('sm_existing_reading_id');
+    smStorage.remove('sm_email');
+    smStorage.remove('sm_flow_step_id');
+    smStorage.remove('sm_lead_cache');
   } catch (error) {
     console.warn('[SM Teaser] Failed to clear reading session:', error);
   }
 }
 
 window.addEventListener('pageshow', function () {
-  if (sessionStorage.getItem('sm_paywall_redirect') === '1') {
-    sessionStorage.removeItem('sm_paywall_redirect');
-    const returnUrl = sessionStorage.getItem('sm_paywall_return_url');
-    sessionStorage.removeItem('sm_paywall_return_url');
+  if (smStorage.get('sm_paywall_redirect') === '1') {
+    smStorage.remove('sm_paywall_redirect');
+    const returnUrl = smStorage.get('sm_paywall_return_url');
+    smStorage.remove('sm_paywall_return_url');
     if (returnUrl && !window.location.search.includes('sm_report=1')) {
       window.location.replace(returnUrl);
     }
@@ -424,8 +489,8 @@ function smInitReadingInteractions() {
       console.error('[SM Teaser] Redirect suppressed (missing offerings URL).', reason || '');
       return;
     }
-    sessionStorage.setItem('sm_paywall_redirect', '1');
-    sessionStorage.setItem('sm_paywall_return_url', window.location.href);
+    smStorage.set('sm_paywall_redirect', '1');
+    smStorage.set('sm_paywall_return_url', window.location.href);
     window.location.href = destination;
   }
 
