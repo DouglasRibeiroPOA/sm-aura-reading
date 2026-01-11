@@ -295,7 +295,6 @@
         smStorage.remove(UPLOADED_IMAGE_KEY);
         smStorage.remove(DYNAMIC_QUESTIONS_KEY);
         smStorage.remove(DYNAMIC_DEMOGRAPHICS_KEY);
-        smStorage.remove(START_NEW_PENDING_KEY);
         try {
             Object.keys(localStorage).forEach((key) => {
                 if (key.indexOf('sm_app_state_') === 0) {
@@ -2663,13 +2662,12 @@
                 setButtonLoading(generateNewReadingBtn, true);
 
                 try {
-                    smStorage.set(START_NEW_PENDING_KEY, '1');
                     clearFlowStateForNewReading();
+                    smStorage.set(START_NEW_PENDING_KEY, '1');
                     const response = await makeApiRequest('reading/start-new', 'GET');
                     if (response.success && response.data.proceed) {
-                        // User has credits, proceed to start the flow
-                        const baseUrl = response.data.next_step_url || (smData.homeUrl || '/aura-reading');
-                        const target = new URL(baseUrl, window.location.origin);
+                        // User has credits, proceed to start the flow on the current page.
+                        const target = new URL(window.location.href);
                         target.searchParams.set('start_new', '1');
                         target.searchParams.set('sm_flow', '1');
                         target.searchParams.set('sm_flow_auth', '1');

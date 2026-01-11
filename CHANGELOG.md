@@ -102,6 +102,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Wired OTP resend to the backend and updated verification hint copy
 - Reduced OTP resend cooldown to 30 seconds and improved rate-limit messaging
 - Redirected logged-in users away from unauthorized teaser links to the dashboard
+- Forced paid "Begin Journey" to reuse the current page URL with start_new flags to prevent dashboard bounce
+- Fixed start-new pending flag reset so paid flow redirect guard triggers on first click
 
 ### Technical
 - Plugin namespace: `mystic-aura-reading`

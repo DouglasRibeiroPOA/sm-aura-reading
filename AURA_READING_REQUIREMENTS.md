@@ -21,7 +21,7 @@
 - Phase 4: Templates & Content - 11/11 tasks (100%) ✅ **COMPLETE**
 - Phase 5: AI Prompts & Question Bank - 8/8 tasks (100%) ✅ **COMPLETE**
 - Phase 6: Integration & Configuration - 11/14 tasks (79%) ⚠️ Offerings URL + MailerLite group pending
-- Phase 7: Testing & Quality Assurance - 37/50 tasks (74%)
+- Phase 7: Testing & Quality Assurance - 39/52 tasks (75%)
 - Phase 8: Documentation - 4/4 tasks (100%) ✅ **COMPLETE**
 
 **🎉 Major Milestone:** All critical blockers have been fixed! The plugin now has a solid foundation and backend ready for testing.
@@ -563,9 +563,9 @@ wp_sm_aura_flow_sessions
 
 ### Phase 7: Testing & Quality Assurance
 
-**Progress:** 37/50 tasks complete (74%)
+**Progress:** 39/52 tasks complete (75%)
 ```
-[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░] 74%
+[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░] 75%
 ```
 
 #### E2E Tests (tests/)
@@ -612,6 +612,8 @@ wp_sm_aura_flow_sessions
 - [x] Connect OTP resend to backend and update OTP hint copy
 - [x] Reduce OTP resend cooldown to 30 seconds and improve rate-limit messaging
 - [x] Redirect logged-in users away from unauthorized teaser links to the dashboard
+- [x] Force paid Begin Journey to reuse current URL with start_new flags to avoid bounce
+- [x] Preserve start-new pending flag so redirect guard triggers on first click
 
 #### Manual Testing Checklist
 - [ ] Lead creation and OTP verification
