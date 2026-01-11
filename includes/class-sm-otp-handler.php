@@ -652,8 +652,8 @@ class SM_OTP_Handler {
 
 		$result = SM_Rate_Limiter::check(
 			$key,
-			3,
-			HOUR_IN_SECONDS,
+			4,
+			2 * MINUTE_IN_SECONDS,
 			array(
 				'email' => $this->mask_email( $email ),
 				'ip'    => $this->get_client_ip(),
@@ -719,8 +719,8 @@ class SM_OTP_Handler {
 	 * @return string
 	 */
 	private function resend_available_time() {
-		$minutes = $this->get_resend_cooldown_minutes();
-		$time    = current_time( 'timestamp' ) + ( $minutes * MINUTE_IN_SECONDS );
+		$seconds = $this->get_resend_cooldown_seconds_setting();
+		$time    = current_time( 'timestamp' ) + $seconds;
 		return gmdate( 'Y-m-d H:i:s', $time + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) );
 	}
 
@@ -1022,6 +1022,21 @@ class SM_OTP_Handler {
 		}
 
 		return 10;
+	}
+
+	/**
+	 * Get resend cooldown seconds.
+	 *
+	 * @return int
+	 */
+	private function get_resend_cooldown_seconds_setting() {
+		$seconds = 30;
+		if ( $this->settings instanceof SM_Settings && method_exists( $this->settings, 'get_otp_resend_cooldown_seconds' ) ) {
+			$seconds = (int) $this->settings->get_otp_resend_cooldown_seconds();
+		}
+
+		$seconds = (int) apply_filters( 'sm_aura_otp_resend_cooldown_seconds', $seconds );
+		return max( 30, $seconds );
 	}
 
 	/**

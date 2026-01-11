@@ -95,6 +95,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added sm_flow_auth URL flag to preserve auth context across refresh in paid flow
 - Ensured paid flow persists lead_id for quiz save after refresh
 - Reset paid flow state on "Begin Journey" to avoid stale selections and dashboard bounce
+- Updated teaser modal secondary button text to "Close"
+- Added start-new pending redirect guard to keep paid flow from bouncing to dashboard
+- Reset OTP state when starting a new lead capture to ensure codes send and verification is enforced
+- Fixed duplicate URL params declaration that blocked teaser flow scripts
+- Wired OTP resend to the backend and updated verification hint copy
+- Reduced OTP resend cooldown to 30 seconds and improved rate-limit messaging
+- Redirected logged-in users away from unauthorized teaser links to the dashboard
 
 ### Technical
 - Plugin namespace: `mystic-aura-reading`

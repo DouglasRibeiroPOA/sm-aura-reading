@@ -553,6 +553,12 @@ function getReadingResultContainer() {
     return document.getElementById('aura-reading-result');
 }
 
+function redirectToDashboard() {
+    const url = new URL(window.location.href);
+    url.search = '';
+    window.location.href = url.pathname;
+}
+
 function mapAgeToRange(ageInput) {
     const age = parseInt(ageInput, 10);
     if (isNaN(age) || age < 18) return '';
@@ -1359,7 +1365,7 @@ function renderEmailVerificationStep(container, step) {
     // Verification hint
     const hint = document.createElement('p');
     hint.className = 'code-hint';
-    hint.textContent = 'For demo purposes, enter any 4-digit code';
+    hint.textContent = 'Enter the 4-digit code we emailed you.';
     codeContainer.appendChild(hint);
 
     // Resend link
@@ -1367,8 +1373,26 @@ function renderEmailVerificationStep(container, step) {
     resendLink.type = 'button';
     resendLink.className = 'resend-link';
     resendLink.textContent = 'Resend code';
-    resendLink.addEventListener('click', () => {
-        showToast('New verification code sent!');
+    resendLink.addEventListener('click', async () => {
+        const email = appState.userData.email || smStorage.get('sm_email') || '';
+        if (!email) {
+            showToast('Please enter your email again to resend the code.');
+            return;
+        }
+
+        if (window.smApiState) {
+            window.smApiState.otpSent = false;
+        }
+
+        if (window.smApiMethods && typeof window.smApiMethods.sendOtp === 'function') {
+            const sent = await window.smApiMethods.sendOtp(email);
+            if (sent) {
+                showToast('New verification code sent!');
+                return;
+            }
+        }
+
+        showToast('Failed to resend the code. Please try again.');
     });
 
     codeContainer.appendChild(resendLink);
@@ -2551,6 +2575,10 @@ async function checkForExistingReading() {
         );
 
         if (!response.ok) {
+            if (response.status === 403 && typeof smData !== 'undefined' && smData.isLoggedIn) {
+                redirectToDashboard();
+                return true;
+            }
             console.error('[SM] Failed to check for existing reading:', response.status);
             return false;
         }
@@ -2655,6 +2683,10 @@ async function loadExistingReading(leadId, token) {
         );
 
         if (!response.ok) {
+            if (response.status === 403 && typeof smData !== 'undefined' && smData.isLoggedIn) {
+                redirectToDashboard();
+                return true;
+            }
             // This happens on 403/400 errors when token is expired/invalid
             console.error('[SM] Failed to load existing reading, API check failed with status:', response.status);
             console.log('[SM] Token may be expired. Clearing session and redirecting to start.');

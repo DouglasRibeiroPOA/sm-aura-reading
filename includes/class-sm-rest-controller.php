@@ -1140,20 +1140,27 @@ class SM_REST_Controller extends WP_REST_Controller {
 			return $this->error_response( $validation->get_error_code(), $validation->get_error_message(), 400 );
 		}
 
-		// Per-email rate limit: 10 sends per minute (increased to allow resend clicks).
+		// Per-email rate limit: 1 send per 30 seconds.
 		$rate_limit_key = SM_Rate_Limiter::build_key( 'otp_send', array( strtolower( $email ), $this->get_client_ip() ) );
 		$rate_result    = $this->check_rate_limit(
 			$rate_limit_key,
-			10,
-			MINUTE_IN_SECONDS,
+			1,
+			30,
 			array(
 				'route' => 'otp/send',
 				'email' => $this->mask_email( $email ),
 			)
 		);
 		if ( is_wp_error( $rate_result ) ) {
-			$status = is_array( $rate_result->get_error_data() ) && isset( $rate_result->get_error_data()['status'] ) ? (int) $rate_result->get_error_data()['status'] : 429;
-			return $this->error_response( 'rate_limited', $rate_result->get_error_message(), $status, $rate_result->get_error_data() );
+			$data = $rate_result->get_error_data();
+			$status = is_array( $data ) && isset( $data['status'] ) ? (int) $data['status'] : 429;
+			$retry_after = is_array( $data ) && isset( $data['retry_after'] ) ? (int) $data['retry_after'] : 30;
+			$message = sprintf(
+				/* translators: %d: seconds until resend allowed */
+				__( 'Please wait %d seconds before requesting a new code.', 'mystic-aura-reading' ),
+				max( 1, $retry_after )
+			);
+			return $this->error_response( 'rate_limited', $message, $status, $data );
 		}
 
 		$otp_handler = SM_OTP_Handler::get_instance();

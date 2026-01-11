@@ -21,7 +21,7 @@
 - Phase 4: Templates & Content - 11/11 tasks (100%) ✅ **COMPLETE**
 - Phase 5: AI Prompts & Question Bank - 8/8 tasks (100%) ✅ **COMPLETE**
 - Phase 6: Integration & Configuration - 11/14 tasks (79%) ⚠️ Offerings URL + MailerLite group pending
-- Phase 7: Testing & Quality Assurance - 30/43 tasks (70%)
+- Phase 7: Testing & Quality Assurance - 37/50 tasks (74%)
 - Phase 8: Documentation - 4/4 tasks (100%) ✅ **COMPLETE**
 
 **🎉 Major Milestone:** All critical blockers have been fixed! The plugin now has a solid foundation and backend ready for testing.
@@ -563,9 +563,9 @@ wp_sm_aura_flow_sessions
 
 ### Phase 7: Testing & Quality Assurance
 
-**Progress:** 30/43 tasks complete (70%)
+**Progress:** 37/50 tasks complete (74%)
 ```
-[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░] 70%
+[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░] 74%
 ```
 
 #### E2E Tests (tests/)
@@ -605,6 +605,13 @@ wp_sm_aura_flow_sessions
 - [x] Preserve auth flow context across refresh with sm_flow_auth flag
 - [x] Persist paid-flow lead_id for quiz save after refresh
 - [x] Clear paid flow state on Begin Journey to ensure a clean slate
+- [x] Prevent paid flow bounce to dashboard on first Begin Journey click
+- [x] Update teaser quick-insight modal close button label
+- [x] Reset OTP state at lead capture to ensure OTP send/verify works per session
+- [x] Fix duplicate URL params declaration blocking teaser flow scripts
+- [x] Connect OTP resend to backend and update OTP hint copy
+- [x] Reduce OTP resend cooldown to 30 seconds and improve rate-limit messaging
+- [x] Redirect logged-in users away from unauthorized teaser links to the dashboard
 
 #### Manual Testing Checklist
 - [ ] Lead creation and OTP verification

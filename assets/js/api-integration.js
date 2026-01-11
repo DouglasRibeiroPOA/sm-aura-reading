@@ -54,6 +54,7 @@
     const DYNAMIC_QUESTIONS_KEY = 'sm_dynamic_questions';
     const DYNAMIC_DEMOGRAPHICS_KEY = 'sm_dynamic_demographics';
     const UPLOADED_IMAGE_KEY = 'sm_uploaded_image_url';
+    const START_NEW_PENDING_KEY = 'sm_start_new_pending';
     var smStorage = window.smStorage || (() => {
         const scopedKeys = new Set([
             'sm_reading_loaded',
@@ -71,7 +72,8 @@
             'sm_dynamic_questions',
             'sm_dynamic_demographics',
             'sm_palm_image',
-            'sm_uploaded_image_url'
+            'sm_uploaded_image_url',
+            'sm_start_new_pending'
         ]);
 
         const getContext = () => {
@@ -293,6 +295,7 @@
         smStorage.remove(UPLOADED_IMAGE_KEY);
         smStorage.remove(DYNAMIC_QUESTIONS_KEY);
         smStorage.remove(DYNAMIC_DEMOGRAPHICS_KEY);
+        smStorage.remove(START_NEW_PENDING_KEY);
         try {
             Object.keys(localStorage).forEach((key) => {
                 if (key.indexOf('sm_app_state_') === 0) {
@@ -987,7 +990,13 @@
 
         } catch (error) {
             logError('OTP send failed', error);
-            showToast(error.message || 'Failed to send verification code. Please try again.');
+            let message = error.message || 'Failed to send verification code. Please try again.';
+            if (error && error.data && error.data.error_code === 'rate_limited') {
+                const retryAfter = error.data.data && error.data.data.retry_after ? error.data.data.retry_after : null;
+                if (retryAfter) {
+                    message = `Please wait ${retryAfter} seconds before requesting a new code.`;
+                }
+            }
             return false;
         }
     }
@@ -1826,6 +1835,14 @@
         try {
             // Step 2: Lead Capture → Create lead AND Send OTP immediately
             if (currentStepId === 'leadCapture') {
+                apiState.otpSent = false;
+                apiState.otpVerified = false;
+                apiState.imageUploaded = false;
+                apiState.quizSaved = false;
+                apiState.readingGenerated = false;
+                apiState.readingStartRequested = false;
+                appState.userData.emailVerified = false;
+
                 apiState.processingRequest = true;
                 startLoading();
 
@@ -2083,6 +2100,7 @@
                     smStorage.set(STEP_STORAGE_KEY, 'palmPhoto');
                     markFlowUrl();
                 }
+                smStorage.remove(START_NEW_PENDING_KEY);
                 removeStartNewParam();
                 return true;
             }
@@ -2097,11 +2115,13 @@
                 markFlowUrl();
             }
             showToast('Please confirm your details to continue.', 'info');
+            smStorage.remove(START_NEW_PENDING_KEY);
             removeStartNewParam();
             return true;
         } catch (error) {
             logError('Start-new flow failed', error);
             showToast(error.message || 'Please enter your details to continue.', 'error');
+            smStorage.remove(START_NEW_PENDING_KEY);
             return false;
         }
     }
@@ -2159,6 +2179,7 @@
                     }, 250);
                     smStorage.set(STEP_STORAGE_KEY, 'palmPhoto');
                 }
+                smStorage.remove(START_NEW_PENDING_KEY);
                 return true;
             }
 
@@ -2170,9 +2191,11 @@
                 }, 250);
                 smStorage.set(STEP_STORAGE_KEY, 'leadCapture');
             }
+            smStorage.remove(START_NEW_PENDING_KEY);
             return true;
         } catch (error) {
             logError('Auth flow resume failed', error);
+            smStorage.remove(START_NEW_PENDING_KEY);
             return false;
         }
     }
@@ -2421,6 +2444,20 @@
                 }
                 // --- END FIX ---
 
+                const params = new URLSearchParams(window.location.search);
+                if (smStorage.get(START_NEW_PENDING_KEY) === '1'
+                    && (window.smData && window.smData.isLoggedIn)
+                    && !params.has('sm_flow')
+                ) {
+                    const target = new URL(window.location.href);
+                    target.searchParams.set('start_new', '1');
+                    target.searchParams.set('sm_flow', '1');
+                    target.searchParams.set('sm_flow_auth', '1');
+                    smStorage.set(START_NEW_PENDING_KEY, 'redirecting');
+                    window.location.replace(target.toString());
+                    return;
+                }
+
                 const startNewHandled = await bootstrapStartNewFlow();
                 if (startNewHandled) {
                     return;
@@ -2433,10 +2470,10 @@
 
                 const appContentEl = document.getElementById('app-content');
 
-            const params = new URLSearchParams(window.location.search);
-            const hasMagic = params.get('sm_magic');
-            const token = params.get('token');
-            const lead = params.get('lead');
+            const magicParams = new URLSearchParams(window.location.search);
+            const hasMagic = magicParams.get('sm_magic');
+            const token = magicParams.get('token');
+            const lead = magicParams.get('lead');
             const cached = readLeadCache();
 
             // Preload cached lead/user data to avoid missing demographics after magic link
@@ -2626,6 +2663,7 @@
                 setButtonLoading(generateNewReadingBtn, true);
 
                 try {
+                    smStorage.set(START_NEW_PENDING_KEY, '1');
                     clearFlowStateForNewReading();
                     const response = await makeApiRequest('reading/start-new', 'GET');
                     if (response.success && response.data.proceed) {
@@ -2640,6 +2678,7 @@
                         throw new Error('Could not verify credits.');
                     }
                 } catch (error) {
+                    smStorage.remove(START_NEW_PENDING_KEY);
                     const redirectUrl = extractRedirectUrl(error);
                     if (redirectUrl) {
                         // No credits, redirect to shop
