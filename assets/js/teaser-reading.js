@@ -28,6 +28,9 @@ var smStorage = window.smStorage || (() => {
     if (params.get('sm_magic') === '1') {
       return 'magic';
     }
+    if (params.get('sm_flow_auth') === '1') {
+      return 'auth';
+    }
     if (params.get('start_new') === '1') {
       return 'auth';
     }

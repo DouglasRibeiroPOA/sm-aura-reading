@@ -91,6 +91,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Prevented step enforcement from snapping users back after refresh during quiz navigation
 - Persisted dynamic quiz questions and demographics across refresh to keep question text consistent
 - Persisted uploaded aura photo state across refresh to avoid missing-photo errors at report generation
+- Restored logged-in flow on refresh when sm_flow is present but step state is missing
+- Added sm_flow_auth URL flag to preserve auth context across refresh in paid flow
+- Ensured paid flow persists lead_id for quiz save after refresh
+- Reset paid flow state on "Begin Journey" to avoid stale selections and dashboard bounce
 
 ### Technical
 - Plugin namespace: `mystic-aura-reading`

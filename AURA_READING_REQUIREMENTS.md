@@ -21,7 +21,7 @@
 - Phase 4: Templates & Content - 11/11 tasks (100%) ✅ **COMPLETE**
 - Phase 5: AI Prompts & Question Bank - 8/8 tasks (100%) ✅ **COMPLETE**
 - Phase 6: Integration & Configuration - 11/14 tasks (79%) ⚠️ Offerings URL + MailerLite group pending
-- Phase 7: Testing & Quality Assurance - 26/39 tasks (67%)
+- Phase 7: Testing & Quality Assurance - 30/43 tasks (70%)
 - Phase 8: Documentation - 4/4 tasks (100%) ✅ **COMPLETE**
 
 **🎉 Major Milestone:** All critical blockers have been fixed! The plugin now has a solid foundation and backend ready for testing.
@@ -563,9 +563,9 @@ wp_sm_aura_flow_sessions
 
 ### Phase 7: Testing & Quality Assurance
 
-**Progress:** 26/39 tasks complete (67%)
+**Progress:** 30/43 tasks complete (70%)
 ```
-[▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░] 67%
+[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░] 70%
 ```
 
 #### E2E Tests (tests/)
@@ -601,6 +601,10 @@ wp_sm_aura_flow_sessions
 - [x] Prevent step enforcement from snapping users back after refresh on quiz steps
 - [x] Persist dynamic quiz questions and demographics across refreshes
 - [x] Persist uploaded aura photo state across refreshes to prevent missing-photo errors
+- [x] Restore logged-in flow on refresh when sm_flow is present but step state is missing
+- [x] Preserve auth flow context across refresh with sm_flow_auth flag
+- [x] Persist paid-flow lead_id for quiz save after refresh
+- [x] Clear paid flow state on Begin Journey to ensure a clean slate
 
 #### Manual Testing Checklist
 - [ ] Lead creation and OTP verification

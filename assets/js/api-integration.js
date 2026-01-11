@@ -79,6 +79,9 @@
             if (params.get('sm_magic') === '1') {
                 return 'magic';
             }
+            if (params.get('sm_flow_auth') === '1') {
+                return 'auth';
+            }
             if (params.get('start_new') === '1') {
                 return 'auth';
             }
@@ -266,9 +269,38 @@
             url.searchParams.delete('lead_id');
             url.searchParams.delete('lead');
             url.searchParams.delete('sm_flow');
+            url.searchParams.delete('sm_flow_auth');
             window.history.replaceState({}, document.title, url.pathname + (url.search || '') + (url.hash || ''));
         } catch (error) {
             logError('Failed to clear report URL params', error);
+        }
+    }
+
+    function clearFlowStateForNewReading() {
+        resetApiState();
+        appState.userData.palmImage = null;
+        appState.quizResponses = {};
+        appState.dynamicQuestions = [];
+        smStorage.remove(STORAGE_KEY);
+        smStorage.remove(STEP_STORAGE_KEY);
+        smStorage.remove('sm_reading_lead_id');
+        smStorage.remove('sm_existing_reading_id');
+        smStorage.remove('sm_reading_token');
+        smStorage.remove('sm_reading_loaded');
+        smStorage.remove('sm_reading_type');
+        smStorage.remove('sm_email');
+        smStorage.remove('sm_palm_image');
+        smStorage.remove(UPLOADED_IMAGE_KEY);
+        smStorage.remove(DYNAMIC_QUESTIONS_KEY);
+        smStorage.remove(DYNAMIC_DEMOGRAPHICS_KEY);
+        try {
+            Object.keys(localStorage).forEach((key) => {
+                if (key.indexOf('sm_app_state_') === 0) {
+                    localStorage.removeItem(key);
+                }
+            });
+        } catch (error) {
+            logError('Failed to clear localStorage flow state', error);
         }
     }
 
@@ -727,6 +759,11 @@
             const url = new URL(window.location.href);
             if (!url.searchParams.has('sm_report')) {
                 url.searchParams.set('sm_flow', '1');
+                if (smStorage && smStorage.context === 'auth') {
+                    url.searchParams.set('sm_flow_auth', '1');
+                } else if (window.smData && window.smData.isLoggedIn) {
+                    url.searchParams.set('sm_flow_auth', '1');
+                }
             }
             window.history.replaceState({}, '', url.toString());
         } catch (error) {
@@ -1247,6 +1284,13 @@
      */
     async function saveQuiz(quizResponses) {
         log('Saving quiz responses...', quizResponses);
+
+        if (!apiState.leadId) {
+            const cached = readLeadCache();
+            if (cached && cached.leadId) {
+                apiState.leadId = cached.leadId;
+            }
+        }
 
         const hasDynamicQuestions = Array.isArray(appState.dynamicQuestions) && appState.dynamicQuestions.length > 0;
         let payload = null;
@@ -1990,6 +2034,12 @@
             apiState.leadId = lead.id || null;
             apiState.otpVerified = true;
             apiState.otpSent = true;
+            if (apiState.leadId) {
+                persistLeadCache({ leadId: apiState.leadId });
+            }
+            if (apiState.leadId) {
+                persistLeadCache({ leadId: apiState.leadId });
+            }
 
             appState.userData = {
                 name: lead.name || '',
@@ -2030,6 +2080,8 @@
                     setTimeout(() => {
                         window.renderStep(palmPhotoIndex);
                     }, 250);
+                    smStorage.set(STEP_STORAGE_KEY, 'palmPhoto');
+                    markFlowUrl();
                 }
                 removeStartNewParam();
                 return true;
@@ -2041,6 +2093,8 @@
                 setTimeout(() => {
                     window.renderStep(leadCaptureIndex);
                 }, 250);
+                smStorage.set(STEP_STORAGE_KEY, 'leadCapture');
+                markFlowUrl();
             }
             showToast('Please confirm your details to continue.', 'info');
             removeStartNewParam();
@@ -2048,6 +2102,77 @@
         } catch (error) {
             logError('Start-new flow failed', error);
             showToast(error.message || 'Please enter your details to continue.', 'error');
+            return false;
+        }
+    }
+
+    async function bootstrapResumeAuthFlow() {
+        const params = new URLSearchParams(window.location.search);
+        if (!params.has('sm_flow')) {
+            return false;
+        }
+        const hasAuthFlag = params.get('sm_flow_auth') === '1';
+        if (!hasAuthFlag && (!window.smData || !window.smData.isLoggedIn)) {
+            return false;
+        }
+        const storedStep = smStorage.get(STEP_STORAGE_KEY);
+        if (storedStep && storedStep !== 'welcome') {
+            return false;
+        }
+
+        log('Auth flow resume detected - restoring profile details.');
+
+        try {
+            const response = await makeApiRequest('lead/current', 'GET');
+            if (!response.success || !response.data || !response.data.lead) {
+                throw new Error(response.message || 'Unable to load your profile.');
+            }
+
+            const lead = response.data.lead;
+            apiState.leadId = lead.id || null;
+            apiState.otpVerified = true;
+            apiState.otpSent = true;
+
+            appState.userData = {
+                name: lead.name || '',
+                email: lead.email || '',
+                identity: lead.identity || '',
+                age: lead.age || '',
+                ageRange: lead.age_range || '',
+                gdprConsent: !!lead.gdpr,
+                palmImage: appState.userData.palmImage || null,
+                emailVerified: true
+            };
+
+            if (lead.email) {
+                smStorage.set('sm_email', lead.email);
+            }
+
+            const missingFields = response.data.missing_fields || [];
+            const gdprOnlyMissing = missingFields.length === 1 && missingFields[0] === 'gdpr';
+            if (response.data.profile_complete || gdprOnlyMissing) {
+                const palmPhotoIndex = palmReadingConfig.steps.findIndex(s => s.id === 'palmPhoto');
+                if (palmPhotoIndex >= 0) {
+                    window.renderStep(palmPhotoIndex);
+                    setTimeout(() => {
+                        window.renderStep(palmPhotoIndex);
+                    }, 250);
+                    smStorage.set(STEP_STORAGE_KEY, 'palmPhoto');
+                }
+                return true;
+            }
+
+            const leadCaptureIndex = palmReadingConfig.steps.findIndex(s => s.id === 'leadCapture');
+            if (leadCaptureIndex >= 0) {
+                window.renderStep(leadCaptureIndex);
+                setTimeout(() => {
+                    window.renderStep(leadCaptureIndex);
+                }, 250);
+                smStorage.set(STEP_STORAGE_KEY, 'leadCapture');
+            }
+            return true;
+        } catch (error) {
+            logError('Auth flow resume failed', error);
             return false;
         }
     }
@@ -2301,6 +2426,11 @@
                     return;
                 }
 
+                const resumeHandled = await bootstrapResumeAuthFlow();
+                if (resumeHandled) {
+                    return;
+                }
+
                 const appContentEl = document.getElementById('app-content');
 
             const params = new URLSearchParams(window.location.search);
@@ -2496,10 +2626,16 @@
                 setButtonLoading(generateNewReadingBtn, true);
 
                 try {
+                    clearFlowStateForNewReading();
                     const response = await makeApiRequest('reading/start-new', 'GET');
                     if (response.success && response.data.proceed) {
                         // User has credits, proceed to start the flow
-                        window.location.href = response.data.next_step_url || (smData.homeUrl || '/aura-reading');
+                        const baseUrl = response.data.next_step_url || (smData.homeUrl || '/aura-reading');
+                        const target = new URL(baseUrl, window.location.origin);
+                        target.searchParams.set('start_new', '1');
+                        target.searchParams.set('sm_flow', '1');
+                        target.searchParams.set('sm_flow_auth', '1');
+                        window.location.href = target.toString();
                     } else {
                         throw new Error('Could not verify credits.');
                     }
