@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replaced mystical dark aesthetic with lighter, spiritual aesthetic
 - Refined swipe template styling to use aura gradients and palette
 - Updated onboarding copy and loading messaging for aura-focused flow
+- Removed teaser report timestamp in the header to mirror the paid reading layout
 - Updated API integration copy, redirects, and aura report container handling
 - Refreshed teaser modal labels and unlock copy to match aura categories
 - Replaced palm test assets with aura-themed placeholder imagery
