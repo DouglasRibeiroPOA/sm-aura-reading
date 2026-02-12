@@ -1254,12 +1254,12 @@ class SM_REST_Controller extends WP_REST_Controller {
 			return $this->error_response( $validation->get_error_code(), $validation->get_error_message(), 400 );
 		}
 
-		// Per-email rate limit: 1 send per 30 seconds.
+		// Per-email rate limit: 10 sends per minute (increased to allow resend clicks).
 		$rate_limit_key = SM_Rate_Limiter::build_key( 'otp_send', array( strtolower( $email ), $this->get_client_ip() ) );
 		$rate_result    = $this->check_rate_limit(
 			$rate_limit_key,
-			1,
-			30,
+			10,
+			MINUTE_IN_SECONDS,
 			array(
 				'route' => 'otp/send',
 				'email' => $this->mask_email( $email ),

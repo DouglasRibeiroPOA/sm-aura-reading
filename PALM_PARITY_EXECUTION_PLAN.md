@@ -8,10 +8,10 @@
 
 ## Overall Progress
 
-**Total Progress:** 22/34 tasks complete (65%)
+**Total Progress:** 27/34 tasks complete (79%)
 
 ```text
-[▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░] 65%
+[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░] 79%
 ```
 
 ### Phase Progress Snapshot
@@ -19,7 +19,7 @@
 - Phase 1: Core Backend Reliability Parity - 8/8 (100%)
 - Phase 2: Auth, Access, and Token Parity - 6/6 (100%)
 - Phase 3: Frontend Flow and Storage Parity - 8/8 (100%)
-- Phase 4: OTP and Credit Behavior Parity - 0/5 (0%)
+- Phase 4: OTP and Credit Behavior Parity - 5/5 (100%)
 - Phase 5: Remove Aura-Only Behavioral Divergence - 0/4 (0%)
 - Phase 6: Test Parity and Release Readiness - 0/3 (0%)
 
@@ -87,16 +87,16 @@
 
 ## Phase 4: OTP and Credit Behavior Parity
 
-**Progress:** 0/5 tasks (0%)  
+**Progress:** 5/5 tasks (100%)
 ```text
-[░░░░░░░░░░░░░░░░░░░░]
+[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓]
 ```
 
-- [ ] P4-T1 Port DevMode credit bypass in start-new + paid flow (#2)
-- [ ] P4-T2 Port DevMode profile defaults in lead prep paths (#7)
-- [ ] P4-T3 Align REST OTP rate limits to Palm and keep Palm behavior end-to-end (#8)
-- [ ] P4-T4 Port OTP handler lead lookup retry and Palm internal rate limiting/cooldown behavior (#33/#34/#35)
-- [ ] P4-T5 Port credit stale-cache fallback and DevMode mock injection points (#31/#32)
+- [x] P4-T1 Port DevMode credit bypass in start-new + paid flow (#2)
+- [x] P4-T2 Port DevMode profile defaults in lead prep paths (#7)
+- [x] P4-T3 Align REST OTP rate limits to Palm and keep Palm behavior end-to-end (#8)
+- [x] P4-T4 Port OTP handler lead lookup retry and Palm internal rate limiting/cooldown behavior (#33/#34/#35)
+- [x] P4-T5 Port credit stale-cache fallback and DevMode mock injection points (#31/#32)
 
 ## Phase 5: Remove Aura-Only Behavioral Divergence
 

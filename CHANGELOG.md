@@ -123,6 +123,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed `bootstrapResumeAuthFlow()` function and its bootstrap call; server-side `normalize_return_url` (P2-T4) and server-driven `next_step_url` (P3-T1) eliminate the need for client-side auth resume (P3-T7)
 - Verified frontend error mapping and redirect handling already at parity: extractRedirectUrl, handleApiRedirect, reading_exists, credits_exhausted, redirect delays all match Palm; Aura's additional rate_limited error display is an intentional improvement (P3-T8)
 - Completed Phase 3: Frontend Flow and Storage Parity (8/8 tasks)
+- Verified DevMode credit bypass already at parity: `should_mock_credits()` does not exist in Palm; DevMode only mocks OpenAI and MailerLite, not credits (P4-T1)
+- Verified DevMode profile defaults already at parity: `apply_devmode_profile_defaults()` does not exist in Palm (P4-T2)
+- Aligned REST OTP send rate limit from 1/30s to Palm's 10/minute while keeping improved countdown error message (P4-T3)
+- Aligned OTP handler internal rate limit from 4/2min to Palm's 3/hour; switched resend cooldown from seconds-based to Palm's minutes-based approach; removed dead `get_resend_cooldown_seconds_setting()` method; lead lookup retry does not exist in Palm either (P4-T4)
+- Verified credit stale-cache fallback and DevMode mock injection already at parity: `get_cached_credit_snapshot_for_current_user()` does not exist in Palm; credit handler DevMode mocks do not exist in Palm (P4-T5)
+- Completed Phase 4: OTP and Credit Behavior Parity (5/5 tasks)
 
 ### Technical
 - Plugin namespace: `mystic-aura-reading`
