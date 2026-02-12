@@ -1,7 +1,7 @@
 # Claude Development Guide - Aura Reading Plugin
 
 **Version:** 1.0.0
-**Last Updated:** 2026-01-02
+**Last Updated:** 2026-02-12
 **Plugin:** SoulMirror Aura Reading WordPress Plugin
 
 ---
@@ -21,30 +21,36 @@ This is the **Aura Reading WordPress plugin**, a complete rebrand of the Palm Re
 
 **CRITICAL:** Before you begin working on ANY task, you MUST:
 
-1. **Read the requirements file:**
+1. **Read the parity tracker first (source of truth for status):**
+   ```
+   /Users/douglasribeiro/Local Sites/sm-aura-reading/app/public/wp-content/plugins/sm-aura-reading/PALM_PARITY_EXECUTION_PLAN.md
+   ```
+
+2. **Read the requirements file for architecture and product context:**
    ```
    /Users/douglasribeiro/Local Sites/sm-aura-reading/app/public/wp-content/plugins/sm-aura-reading/AURA_READING_REQUIREMENTS.md
    ```
 
-2. **Check the current progress:**
+3. **Check the current progress:**
    - Review which phase you're working in
    - Identify what's already complete
    - Understand what's pending
 
-3. **Identify your specific task:**
+4. **Identify your specific task:**
    - Find the exact task in the checklist
    - Read all sub-items under that task
    - Understand dependencies
 
-4. **Ask questions BEFORE implementing:**
+5. **Ask questions BEFORE implementing:**
    - If anything is unclear, ask the user
    - If multiple approaches exist, present options
    - If you find inconsistencies, report them
 
-5. **Update progress IMMEDIATELY after completion:**
-   - Mark tasks as complete `[x]` in AURA_READING_REQUIREMENTS.md
-   - Update the phase progress bar and percentage
-   - Update the overall progress tracker
+6. **Update progress IMMEDIATELY after completion:**
+   - Mark tasks as complete `[x]` in PALM_PARITY_EXECUTION_PLAN.md
+   - Update the phase progress bar and percentage in PALM_PARITY_EXECUTION_PLAN.md
+   - Update the overall progress tracker in PALM_PARITY_EXECUTION_PLAN.md
+   - Update `CHANGELOG.md` for meaningful changes
    - Commit changes with clear messages
 
 ---
@@ -53,7 +59,7 @@ This is the **Aura Reading WordPress plugin**, a complete rebrand of the Palm Re
 
 ### CRITICAL RULE: Update After EVERY Task
 
-**You MUST update AURA_READING_REQUIREMENTS.md after completing EACH task**, not at the end of a phase.
+**You MUST update PALM_PARITY_EXECUTION_PLAN.md after completing EACH task**, not at the end of a phase.
 
 #### How to Update Progress:
 
@@ -86,7 +92,7 @@ This is the **Aura Reading WordPress plugin**, a complete rebrand of the Palm Re
 
 5. **Save and commit:**
    ```bash
-   git add AURA_READING_REQUIREMENTS.md
+   git add PALM_PARITY_EXECUTION_PLAN.md CHANGELOG.md
    git commit -m "Update progress: completed [task description]"
    ```
 

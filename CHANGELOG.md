@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Development mode support for API testing
 - Aura test images and placeholder icon assets for frontend previews
 - Aura-specific prompt templates and question bank for the six category flow
+- Palm parity execution tracker at `PALM_PARITY_EXECUTION_PLAN.md` with phase checklists, dependency-ordered tasks, and progress bars
 
 ### Changed
 - Rebranded all UI elements from Palm Reading to Aura Reading
@@ -105,6 +106,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Redirected logged-in users away from unauthorized teaser links to the dashboard
 - Forced paid "Begin Journey" to reuse the current page URL with start_new flags to prevent dashboard bounce
 - Fixed start-new pending flag reset so paid flow redirect guard triggers on first click
+- Updated `CLAUDE.md` and `CODEX.md` to require using `PALM_PARITY_EXECUTION_PLAN.md` as the primary parity status tracker and to update it after each completed task
 
 ### Technical
 - Plugin namespace: `mystic-aura-reading`
