@@ -2013,77 +2013,6 @@
         }
     }
 
-    async function bootstrapResumeAuthFlow() {
-        const params = new URLSearchParams(window.location.search);
-        if (!params.has('sm_flow')) {
-            return false;
-        }
-        const hasAuthFlag = params.get('sm_flow_auth') === '1';
-        if (!hasAuthFlag && (!window.smData || !window.smData.isLoggedIn)) {
-            return false;
-        }
-        const storedStep = sessionStorage.getItem(STEP_STORAGE_KEY);
-        if (storedStep && storedStep !== 'welcome') {
-            return false;
-        }
-
-        log('Auth flow resume detected - restoring profile details.');
-
-        try {
-            const response = await makeApiRequest('lead/current', 'GET');
-            if (!response.success || !response.data || !response.data.lead) {
-                throw new Error(response.message || 'Unable to load your profile.');
-            }
-
-            const lead = response.data.lead;
-            apiState.leadId = lead.id || null;
-            apiState.otpVerified = true;
-            apiState.otpSent = true;
-
-            appState.userData = {
-                name: lead.name || '',
-                email: lead.email || '',
-                identity: lead.identity || '',
-                age: lead.age || '',
-                ageRange: lead.age_range || '',
-                gdprConsent: !!lead.gdpr,
-                palmImage: appState.userData.palmImage || null,
-                emailVerified: true
-            };
-
-            if (lead.email) {
-                sessionStorage.setItem('sm_email', lead.email);
-            }
-
-            const missingFields = response.data.missing_fields || [];
-            const gdprOnlyMissing = missingFields.length === 1 && missingFields[0] === 'gdpr';
-            if (response.data.profile_complete || gdprOnlyMissing) {
-                const palmPhotoIndex = palmReadingConfig.steps.findIndex(s => s.id === 'palmPhoto');
-                if (palmPhotoIndex >= 0) {
-                    window.renderStep(palmPhotoIndex);
-                    setTimeout(() => {
-                        window.renderStep(palmPhotoIndex);
-                    }, 250);
-                    sessionStorage.setItem(STEP_STORAGE_KEY, 'palmPhoto');
-                }
-                return true;
-            }
-
-            const leadCaptureIndex = palmReadingConfig.steps.findIndex(s => s.id === 'leadCapture');
-            if (leadCaptureIndex >= 0) {
-                window.renderStep(leadCaptureIndex);
-                setTimeout(() => {
-                    window.renderStep(leadCaptureIndex);
-                }, 250);
-                sessionStorage.setItem(STEP_STORAGE_KEY, 'leadCapture');
-            }
-            return true;
-        } catch (error) {
-            logError('Auth flow resume failed', error);
-            return false;
-        }
-    }
-
     // ========================================
     // MAGIC LINK & PAGE LOAD HANDLERS
     // ========================================
@@ -2328,11 +2257,6 @@
 
                 const startNewHandled = await bootstrapStartNewFlow();
                 if (startNewHandled) {
-                    return;
-                }
-
-                const resumeHandled = await bootstrapResumeAuthFlow();
-                if (resumeHandled) {
                     return;
                 }
 

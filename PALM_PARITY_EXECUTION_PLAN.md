@@ -8,17 +8,17 @@
 
 ## Overall Progress
 
-**Total Progress:** 20/34 tasks complete (59%)
+**Total Progress:** 21/34 tasks complete (62%)
 
 ```text
-[▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░] 59%
+[▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░] 62%
 ```
 
 ### Phase Progress Snapshot
 
 - Phase 1: Core Backend Reliability Parity - 8/8 (100%)
 - Phase 2: Auth, Access, and Token Parity - 6/6 (100%)
-- Phase 3: Frontend Flow and Storage Parity - 6/8 (75%)
+- Phase 3: Frontend Flow and Storage Parity - 7/8 (88%)
 - Phase 4: OTP and Credit Behavior Parity - 0/5 (0%)
 - Phase 5: Remove Aura-Only Behavioral Divergence - 0/4 (0%)
 - Phase 6: Test Parity and Release Readiness - 0/3 (0%)
@@ -71,9 +71,9 @@
 
 ## Phase 3: Frontend Flow and Storage Parity
 
-**Progress:** 6/8 tasks (75%)
+**Progress:** 7/8 tasks (88%)
 ```text
-[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░]
+[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░]
 ```
 
 - [x] P3-T1 Port Palm start-new client behavior to use server `next_step_url` (#14)
@@ -82,7 +82,7 @@
 - [x] P3-T4 Replace `smStorage` architecture with Palm storage wrappers in `api-integration.js` (#12)
 - [x] P3-T5 Replace `smStorage` architecture with Palm storage wrappers in `teaser-reading.js` (#12/#19)
 - [x] P3-T6 Validate `aura-reading-result` container behavior; add Palm safety wrapper if needed (#6/#17)
-- [ ] P3-T7 Remove `bootstrapResumeAuthFlow` if no longer required after Palm URL/session parity (#15)
+- [x] P3-T7 Remove `bootstrapResumeAuthFlow` if no longer required after Palm URL/session parity (#15)
 - [ ] P3-T8 Align frontend error mapping and redirect handling to Palm contracts (#1/#4/#14)
 
 ## Phase 4: OTP and Credit Behavior Parity

@@ -120,6 +120,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replaced scoped `smStorage` wrapper with raw `sessionStorage` calls in `api-integration.js` to match Palm: removed IIFE definition, context scoping, legacy key migration; replaced all get/set/remove calls; removed magic context URL appending from `makeApiRequest` (P3-T4)
 - Replaced scoped `smStorage` wrapper with raw `sessionStorage` calls in `teaser-reading.js`: removed duplicate IIFE definition and window export; replaced all get/set/remove calls (P3-T5)
 - Validated all templates use `aura-reading-result` container ID; removed `palm-reading-result` backwards-compat fallback from `getReadingResultContainer()` in both `api-integration.js` and `teaser-reading.js`; `ensure_report_container()` does not exist in Palm either (P3-T6)
+- Removed `bootstrapResumeAuthFlow()` function and its bootstrap call; server-side `normalize_return_url` (P2-T4) and server-driven `next_step_url` (P3-T1) eliminate the need for client-side auth resume (P3-T7)
 
 ### Technical
 - Plugin namespace: `mystic-aura-reading`
