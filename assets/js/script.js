@@ -2616,7 +2616,7 @@ async function checkForExistingReading() {
                 // Container exists - proceed with initialization
             // Mark session state
             smStorage.set('sm_reading_lead_id', leadId);
-            smStorage.set('sm_reading_token', result.data.reading_token || token);
+            smStorage.set('sm_reading_token', token);
             smStorage.set('sm_reading_loaded', 'true');
 
                 // Hide navigation buttons
@@ -2725,7 +2725,7 @@ async function loadExistingReading(leadId, token) {
                 // Container exists - proceed with initialization
                 // Mark session state
                 smStorage.set('sm_reading_lead_id', leadId);
-                smStorage.set('sm_reading_token', result.data.reading_token || token);
+                smStorage.set('sm_reading_token', token);
                 smStorage.set('sm_reading_loaded', 'true');
 
                 // Hide navigation buttons

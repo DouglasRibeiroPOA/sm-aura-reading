@@ -912,8 +912,7 @@
                         response.data.reading_html,
                         response.data.reading_id,
                         response.data.lead_id || null,
-                        response.data.reading_type || 'aura_teaser',
-                        response.data.reading_token || ''
+                        response.data.reading_type || 'aura_teaser'
                     );
                     return { existingReading: true };
                 }
@@ -1508,10 +1507,6 @@
                 if (readingData.reading_id) {
                     smStorage.set('sm_existing_reading_id', readingData.reading_id);
                 }
-                if (readingData.reading_token) {
-                    smStorage.set('sm_reading_token', readingData.reading_token);
-                }
-
                 // Update flow state - reading generated successfully
                 await updateFlowState({
                     step_id: 'result',
@@ -2249,8 +2244,7 @@
                     response.data.reading_html,
                     response.data.reading_id,
                     leadId,
-                    response.data.reading_type || readingType || 'aura_teaser',
-                    response.data.reading_token || ''
+                    response.data.reading_type || readingType || 'aura_teaser'
                 );
                 hideMagicOverlay();
                 return true; // Report handled
@@ -2351,8 +2345,7 @@
                         response.data.reading_html,
                         response.data.reading_id,
                         flow.lead_id,
-                        response.data.reading_type || readingType || 'aura_teaser',
-                        response.data.reading_token || ''
+                        response.data.reading_type || readingType || 'aura_teaser'
                     );
                     hideMagicOverlay();
                     return true;
