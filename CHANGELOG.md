@@ -116,6 +116,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Completed token hard cut: no `SM_Reading_Token` class, API response field, or compatibility validation code remains in any source file (P2-T6)
 - Ported Palm start-new client behavior: click handler now uses server-provided `next_step_url` instead of building redirect URL client-side; removed bootstrap pending-key redirect block (P3-T1)
 - Removed `START_NEW_PENDING_KEY` constant, scoped key entry, `clearFlowStateForNewReading()` function, and all pending-key cleanup calls from bootstrapStartNewFlow/bootstrapResumeAuthFlow (P3-T2)
+- Verified image retry system already at parity: both plugins use identical error-code-based retry (`palm_image_invalid`, `image_not_found`); fingerprint functions from compare doc do not exist in either codebase; Aura has additional `UPLOADED_IMAGE_KEY` caching (P3-T3)
 
 ### Technical
 - Plugin namespace: `mystic-aura-reading`
