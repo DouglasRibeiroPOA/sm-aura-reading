@@ -118,6 +118,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed `START_NEW_PENDING_KEY` constant, scoped key entry, `clearFlowStateForNewReading()` function, and all pending-key cleanup calls from bootstrapStartNewFlow/bootstrapResumeAuthFlow (P3-T2)
 - Verified image retry system already at parity: both plugins use identical error-code-based retry (`palm_image_invalid`, `image_not_found`); fingerprint functions from compare doc do not exist in either codebase; Aura has additional `UPLOADED_IMAGE_KEY` caching (P3-T3)
 - Replaced scoped `smStorage` wrapper with raw `sessionStorage` calls in `api-integration.js` to match Palm: removed IIFE definition, context scoping, legacy key migration; replaced all get/set/remove calls; removed magic context URL appending from `makeApiRequest` (P3-T4)
+- Replaced scoped `smStorage` wrapper with raw `sessionStorage` calls in `teaser-reading.js`: removed duplicate IIFE definition and window export; replaced all get/set/remove calls (P3-T5)
 
 ### Technical
 - Plugin namespace: `mystic-aura-reading`
