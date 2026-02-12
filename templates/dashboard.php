@@ -141,7 +141,7 @@ $total_credits  = (int) $credit_balance['service'] + (int) $credit_balance['univ
                 </div>
                 <h3>Share</h3>
                 <p>Invite friends to discover their aura story.</p>
-                <button id="share-app-btn" class="action-btn" type="button">
+                <button class="action-btn" type="button">
                     Share App
                 </button>
             </div>

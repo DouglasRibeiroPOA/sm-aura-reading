@@ -46,45 +46,6 @@ function setButtonLoading(button, isLoading) {
     }
 }
 
-/**
- * Wire up the dashboard share button for app sharing.
- */
-function initDashboardShare() {
-    const shareBtn = document.getElementById('share-app-btn');
-    if (!shareBtn) return;
-
-    shareBtn.addEventListener('click', async () => {
-        const shareUrl = window.location.origin + window.location.pathname;
-        const shareTitle = 'SoulMirror Aura Reading';
-
-        if (navigator.share) {
-            try {
-                await navigator.share({ title: shareTitle, url: shareUrl });
-                return;
-            } catch (err) {
-                if (err && err.name === 'AbortError') {
-                    return;
-                }
-            }
-        }
-
-        if (navigator.clipboard && window.isSecureContext) {
-            try {
-                await navigator.clipboard.writeText(shareUrl);
-                if (typeof showToast === 'function') {
-                    showToast('Share link copied to clipboard.');
-                }
-                return;
-            } catch (err) {
-                // Fall through to toast with URL.
-            }
-        }
-
-        if (typeof showToast === 'function') {
-            showToast('Share link: ' + shareUrl);
-        }
-    });
-}
 
 /**
  * Compress a base64 image to mobile-friendly dimensions/quality.
@@ -2781,7 +2742,6 @@ async function loadExistingReading(leadId, token) {
 // Initialize the app when DOM is loaded
 // Initialize the app - WordPress compatible
 async function mprInitialize() {
-    initDashboardShare();
     const urlParams = new URLSearchParams(window.location.search);
     const hasReportFlag = urlParams.has('sm_report');
     const hasStartNew = urlParams.has('start_new');
