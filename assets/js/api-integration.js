@@ -54,7 +54,6 @@
     const DYNAMIC_QUESTIONS_KEY = 'sm_dynamic_questions';
     const DYNAMIC_DEMOGRAPHICS_KEY = 'sm_dynamic_demographics';
     const UPLOADED_IMAGE_KEY = 'sm_uploaded_image_url';
-    const START_NEW_PENDING_KEY = 'sm_start_new_pending';
     var smStorage = window.smStorage || (() => {
         const scopedKeys = new Set([
             'sm_reading_loaded',
@@ -72,8 +71,7 @@
             'sm_dynamic_questions',
             'sm_dynamic_demographics',
             'sm_palm_image',
-            'sm_uploaded_image_url',
-            'sm_start_new_pending'
+            'sm_uploaded_image_url'
         ]);
 
         const getContext = () => {
@@ -275,34 +273,6 @@
             window.history.replaceState({}, document.title, url.pathname + (url.search || '') + (url.hash || ''));
         } catch (error) {
             logError('Failed to clear report URL params', error);
-        }
-    }
-
-    function clearFlowStateForNewReading() {
-        resetApiState();
-        appState.userData.palmImage = null;
-        appState.quizResponses = {};
-        appState.dynamicQuestions = [];
-        smStorage.remove(STORAGE_KEY);
-        smStorage.remove(STEP_STORAGE_KEY);
-        smStorage.remove('sm_reading_lead_id');
-        smStorage.remove('sm_existing_reading_id');
-        smStorage.remove('sm_reading_token');
-        smStorage.remove('sm_reading_loaded');
-        smStorage.remove('sm_reading_type');
-        smStorage.remove('sm_email');
-        smStorage.remove('sm_palm_image');
-        smStorage.remove(UPLOADED_IMAGE_KEY);
-        smStorage.remove(DYNAMIC_QUESTIONS_KEY);
-        smStorage.remove(DYNAMIC_DEMOGRAPHICS_KEY);
-        try {
-            Object.keys(localStorage).forEach((key) => {
-                if (key.indexOf('sm_app_state_') === 0) {
-                    localStorage.removeItem(key);
-                }
-            });
-        } catch (error) {
-            logError('Failed to clear localStorage flow state', error);
         }
     }
 
@@ -2094,7 +2064,6 @@
                     smStorage.set(STEP_STORAGE_KEY, 'palmPhoto');
                     markFlowUrl();
                 }
-                smStorage.remove(START_NEW_PENDING_KEY);
                 removeStartNewParam();
                 return true;
             }
@@ -2109,13 +2078,11 @@
                 markFlowUrl();
             }
             showToast('Please confirm your details to continue.', 'info');
-            smStorage.remove(START_NEW_PENDING_KEY);
             removeStartNewParam();
             return true;
         } catch (error) {
             logError('Start-new flow failed', error);
             showToast(error.message || 'Please enter your details to continue.', 'error');
-            smStorage.remove(START_NEW_PENDING_KEY);
             return false;
         }
     }
@@ -2173,7 +2140,6 @@
                     }, 250);
                     smStorage.set(STEP_STORAGE_KEY, 'palmPhoto');
                 }
-                smStorage.remove(START_NEW_PENDING_KEY);
                 return true;
             }
 
@@ -2185,11 +2151,9 @@
                 }, 250);
                 smStorage.set(STEP_STORAGE_KEY, 'leadCapture');
             }
-            smStorage.remove(START_NEW_PENDING_KEY);
             return true;
         } catch (error) {
             logError('Auth flow resume failed', error);
-            smStorage.remove(START_NEW_PENDING_KEY);
             return false;
         }
     }
