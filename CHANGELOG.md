@@ -114,6 +114,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed `SM_Reading_Token` class entirely: deleted class file, removed token generation from job handler email URLs to match Palm report URL pattern (P2-T2)
 - Removed frontend `reading_token` API response dependencies: cleaned up `renderExistingReading` calls, removed dead `readingData.reading_token` writes, and aligned `sm_reading_token` storage to use OTP magic token only (P2-T5)
 - Completed token hard cut: no `SM_Reading_Token` class, API response field, or compatibility validation code remains in any source file (P2-T6)
+- Ported Palm start-new client behavior: click handler now uses server-provided `next_step_url` instead of building redirect URL client-side; removed bootstrap pending-key redirect block (P3-T1)
 
 ### Technical
 - Plugin namespace: `mystic-aura-reading`

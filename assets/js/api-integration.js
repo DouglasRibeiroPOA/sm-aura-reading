@@ -2436,20 +2436,6 @@
                 }
                 // --- END FIX ---
 
-                const params = new URLSearchParams(window.location.search);
-                if (smStorage.get(START_NEW_PENDING_KEY) === '1'
-                    && (window.smData && window.smData.isLoggedIn)
-                    && !params.has('sm_flow')
-                ) {
-                    const target = new URL(window.location.href);
-                    target.searchParams.set('start_new', '1');
-                    target.searchParams.set('sm_flow', '1');
-                    target.searchParams.set('sm_flow_auth', '1');
-                    smStorage.set(START_NEW_PENDING_KEY, 'redirecting');
-                    window.location.replace(target.toString());
-                    return;
-                }
-
                 const startNewHandled = await bootstrapStartNewFlow();
                 if (startNewHandled) {
                     return;
@@ -2655,21 +2641,14 @@
                 setButtonLoading(generateNewReadingBtn, true);
 
                 try {
-                    clearFlowStateForNewReading();
-                    smStorage.set(START_NEW_PENDING_KEY, '1');
                     const response = await makeApiRequest('reading/start-new', 'GET');
                     if (response.success && response.data.proceed) {
-                        // User has credits, proceed to start the flow on the current page.
-                        const target = new URL(window.location.href);
-                        target.searchParams.set('start_new', '1');
-                        target.searchParams.set('sm_flow', '1');
-                        target.searchParams.set('sm_flow_auth', '1');
-                        window.location.href = target.toString();
+                        // User has credits, proceed to start the flow
+                        window.location.href = response.data.next_step_url || (smData.homeUrl || '/aura-reading');
                     } else {
                         throw new Error('Could not verify credits.');
                     }
                 } catch (error) {
-                    smStorage.remove(START_NEW_PENDING_KEY);
                     const redirectUrl = extractRedirectUrl(error);
                     if (redirectUrl) {
                         // No credits, redirect to shop
