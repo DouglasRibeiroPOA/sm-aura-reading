@@ -31,7 +31,7 @@ window.addEventListener('pageshow', function () {
 });
 
 function getReadingResultContainer() {
-  return document.getElementById('aura-reading-result') || document.getElementById('palm-reading-result');
+  return document.getElementById('aura-reading-result');
 }
 
 function smInitReadingInteractions() {

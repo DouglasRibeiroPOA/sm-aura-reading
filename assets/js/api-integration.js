@@ -28,7 +28,7 @@
     }
 
     function getReadingResultContainer() {
-        return document.getElementById('aura-reading-result') || document.getElementById('palm-reading-result');
+        return document.getElementById('aura-reading-result');
     }
 
     // API Integration State
