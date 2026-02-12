@@ -8,17 +8,17 @@
 
 ## Overall Progress
 
-**Total Progress:** 17/34 tasks complete (50%)
+**Total Progress:** 18/34 tasks complete (53%)
 
 ```text
-[▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░] 50%
+[▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░] 53%
 ```
 
 ### Phase Progress Snapshot
 
 - Phase 1: Core Backend Reliability Parity - 8/8 (100%)
 - Phase 2: Auth, Access, and Token Parity - 6/6 (100%)
-- Phase 3: Frontend Flow and Storage Parity - 3/8 (38%)
+- Phase 3: Frontend Flow and Storage Parity - 4/8 (50%)
 - Phase 4: OTP and Credit Behavior Parity - 0/5 (0%)
 - Phase 5: Remove Aura-Only Behavioral Divergence - 0/4 (0%)
 - Phase 6: Test Parity and Release Readiness - 0/3 (0%)
@@ -71,15 +71,15 @@
 
 ## Phase 3: Frontend Flow and Storage Parity
 
-**Progress:** 3/8 tasks (38%)
+**Progress:** 4/8 tasks (50%)
 ```text
-[▓▓▓▓▓▓▓░░░░░░░░░░░░░]
+[▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░]
 ```
 
 - [x] P3-T1 Port Palm start-new client behavior to use server `next_step_url` (#14)
 - [x] P3-T2 Remove Aura `START_NEW_PENDING_KEY` path and related flow workaround logic (#14/#15)
 - [x] P3-T3 Port Palm image fingerprint + upload cache + retry system (#13)
-- [ ] P3-T4 Replace `smStorage` architecture with Palm storage wrappers in `api-integration.js` (#12)
+- [x] P3-T4 Replace `smStorage` architecture with Palm storage wrappers in `api-integration.js` (#12)
 - [ ] P3-T5 Replace `smStorage` architecture with Palm storage wrappers in `teaser-reading.js` (#12/#19)
 - [ ] P3-T6 Validate `aura-reading-result` container behavior; add Palm safety wrapper if needed (#6/#17)
 - [ ] P3-T7 Remove `bootstrapResumeAuthFlow` if no longer required after Palm URL/session parity (#15)
