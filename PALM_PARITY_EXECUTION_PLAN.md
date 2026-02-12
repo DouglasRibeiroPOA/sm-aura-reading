@@ -8,16 +8,16 @@
 
 ## Overall Progress
 
-**Total Progress:** 0/34 tasks complete (0%)
+**Total Progress:** 11/34 tasks complete (32%)
 
 ```text
-[░░░░░░░░░░░░░░░░░░░░] 0%
+[▓▓▓▓▓▓░░░░░░░░░░░░░░] 32%
 ```
 
 ### Phase Progress Snapshot
 
-- Phase 1: Core Backend Reliability Parity - 0/8 (0%)
-- Phase 2: Auth, Access, and Token Parity - 0/6 (0%)
+- Phase 1: Core Backend Reliability Parity - 8/8 (100%)
+- Phase 2: Auth, Access, and Token Parity - 3/6 (50%)
 - Phase 3: Frontend Flow and Storage Parity - 0/8 (0%)
 - Phase 4: OTP and Credit Behavior Parity - 0/5 (0%)
 - Phase 5: Remove Aura-Only Behavioral Divergence - 0/4 (0%)
@@ -41,31 +41,31 @@
 
 ## Phase 1: Core Backend Reliability Parity
 
-**Progress:** 0/8 tasks (0%)  
+**Progress:** 8/8 tasks (100%)  
 ```text
-[░░░░░░░░░░░░░░░░░░░░]
+[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓]
 ```
 
-- [ ] P1-T1 Port `build_start_new_target()` and sanitize stale query params (#1)
-- [ ] P1-T2 Add flow session reset in `handle_start_new_reading` (#11)
-- [ ] P1-T3 Port `resolve_lead_id()` and use in OTP + generation endpoints (#3)
-- [ ] P1-T4 Fix existing-reading handling to Palm semantics (`reading_exists`, login redirect, 2000ms) (#4)
-- [ ] P1-T5 Port OTP lead resolution fallback by email (#9)
-- [ ] P1-T6 Port job dispatch failure inspection + WP-Cron fallback (#28)
-- [ ] P1-T7 Port duplicate run guard in job execution path (#29)
-- [ ] P1-T8 Port Palm race-condition handling in `check_reading_status` (#10)
+- [x] P1-T1 Port `build_start_new_target()` and sanitize stale query params (#1)
+- [x] P1-T2 Add flow session reset in `handle_start_new_reading` (#11)
+- [x] P1-T3 Port `resolve_lead_id()` and use in OTP + generation endpoints (#3)
+- [x] P1-T4 Fix existing-reading handling to Palm semantics (`reading_exists`, login redirect, 2000ms) (#4)
+- [x] P1-T5 Port OTP lead resolution fallback by email (#9)
+- [x] P1-T6 Port job dispatch failure inspection + WP-Cron fallback (#28)
+- [x] P1-T7 Port duplicate run guard in job execution path (#29)
+- [x] P1-T8 Port Palm race-condition handling in `check_reading_status` (#10)
 
 ## Phase 2: Auth, Access, and Token Parity
 
-**Progress:** 0/6 tasks (0%)  
+**Progress:** 3/6 tasks (50%)
 ```text
-[░░░░░░░░░░░░░░░░░░░░]
+[▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░]
 ```
 
-- [ ] P2-T1 Replace Aura reading-token responses with Palm report-token behavior (#5)
+- [x] P2-T1 Replace Aura reading-token responses with Palm report-token behavior (#5)
 - [ ] P2-T2 Remove `SM_Reading_Token` class usage across REST, jobs, and bootstrap (#25)
-- [ ] P2-T3 Port Palm report access gate logic into `mystic-aura-reading.php` (#24)
-- [ ] P2-T4 Port `normalize_return_url()` in auth handler (#21)
+- [x] P2-T3 Port Palm report access gate logic into `mystic-aura-reading.php` (#24)
+- [x] P2-T4 Port `normalize_return_url()` in auth handler (#21)
 - [ ] P2-T5 Remove client flow dependence on old token fields and align API payload keys (#5/#25)
 - [ ] P2-T6 Remove no-longer-needed token compatibility code paths (hard cut) (#5/#24/#25)
 
@@ -145,4 +145,5 @@ Formula:
 
 - This plan supersedes parity-tracking decisions previously scattered in other docs.
 - `AURA_READING_REQUIREMENTS.md` remains the product implementation history/reference.
+- `compare_palm_reading_versus_aura_reading.md` is the detailed behavior-delta baseline/reference.
 - For parity work status, this file is the source of truth.

@@ -107,6 +107,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Forced paid "Begin Journey" to reuse the current page URL with start_new flags to prevent dashboard bounce
 - Fixed start-new pending flag reset so paid flow redirect guard triggers on first click
 - Updated `CLAUDE.md` and `CODEX.md` to require using `PALM_PARITY_EXECUTION_PLAN.md` as the primary parity status tracker and to update it after each completed task
+- Completed Phase 1 backend parity baseline: start-new redirect sanitization and flow reset, lead resolution fallback, existing-reading error semantics, OTP lead lookup fallback, job dispatch cron fallback, duplicate job-run guard, and polling race-condition handling in `check_reading_status`
+- Ported Palm-equivalent auth/report access guard behavior by adding return URL normalization in auth login URLs and switching report gate access checks to lead magic token + ownership logic in `mystic-aura-reading.php`
+- Synchronized `compare_palm_reading_versus_aura_reading.md` with locked parity decisions and documented precedence: tracker source of truth remains `PALM_PARITY_EXECUTION_PLAN.md`, compare doc is detailed baseline/reference
+- Replaced Aura `SM_Reading_Token` responses with Palm OTP magic token behavior: removed `reading_token` from all REST response payloads and switched reading lookup token validation to use `verify_magic_token()` only (P2-T1)
 
 ### Technical
 - Plugin namespace: `mystic-aura-reading`

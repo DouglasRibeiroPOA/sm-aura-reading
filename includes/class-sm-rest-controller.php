@@ -422,6 +422,10 @@ class SM_REST_Controller extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function handle_start_new_reading( WP_REST_Request $request ) {
+		$referer  = wp_get_referer();
+		$fallback = home_url( '/aura-reading/' );
+		$target   = $this->build_start_new_target( $referer, $fallback );
+
 		$auth_handler = SM_Auth_Handler::get_instance();
 		if ( ! $auth_handler->is_user_logged_in() ) {
 			return $this->error_response( 'authentication_required', 'You must be logged in to start a new reading.', 401 );
@@ -429,7 +433,10 @@ class SM_REST_Controller extends WP_REST_Controller {
 
 		$settings = SM_Settings::init()->get_settings();
 		if ( empty( $settings['enable_account_integration'] ) ) {
-			return $this->success_response( array( 'proceed' => true ) ); // If integration is off, always allow.
+			return $this->success_response( array(
+				'proceed'       => true,
+				'next_step_url' => $target,
+			) ); // If integration is off, always allow.
 		}
 
 		$credit_handler = SM_Credit_Handler::get_instance();
@@ -459,15 +466,74 @@ class SM_REST_Controller extends WP_REST_Controller {
 			);
 		}
 
-		$referer  = wp_get_referer();
-		$fallback = home_url( '/aura-reading/' );
-		$target   = wp_validate_redirect( $referer, $fallback );
-		$target   = add_query_arg( 'start_new', '1', $target );
+		if ( class_exists( 'SM_Flow_Session' ) ) {
+			SM_Flow_Session::get_instance()->reset_flow();
+		}
 
 		return $this->success_response( array(
 			'proceed'       => true,
 			'next_step_url' => $target, // Frontend will handle starting the flow
 		) );
+	}
+
+	/**
+	 * Build a clean start-new URL by stripping report/session params.
+	 *
+	 * @param string $referer Referer URL.
+	 * @param string $fallback Fallback URL.
+	 * @return string
+	 */
+	private function build_start_new_target( $referer, $fallback ) {
+		$target = wp_validate_redirect( $referer, $fallback );
+		if ( empty( $target ) ) {
+			$target = $fallback;
+		}
+
+		$parts = wp_parse_url( $target );
+		$query = array();
+		if ( ! empty( $parts['query'] ) ) {
+			parse_str( $parts['query'], $query );
+		}
+
+		$strip_keys = array(
+			'sm_report',
+			'lead_id',
+			'lead',
+			'reading_id',
+			'token',
+			'reading_type',
+			'sm_flow',
+			'sm_flow_auth',
+			'start_new',
+		);
+
+		foreach ( $strip_keys as $key ) {
+			if ( array_key_exists( $key, $query ) ) {
+				unset( $query[ $key ] );
+			}
+		}
+
+		$query['start_new'] = '1';
+
+		$scheme   = isset( $parts['scheme'] ) ? $parts['scheme'] . '://' : '';
+		$host     = isset( $parts['host'] ) ? $parts['host'] : '';
+		$port     = isset( $parts['port'] ) ? ':' . $parts['port'] : '';
+		$path     = isset( $parts['path'] ) ? $parts['path'] : '';
+		$fragment = isset( $parts['fragment'] ) ? '#' . $parts['fragment'] : '';
+		$query    = http_build_query( $query );
+
+		$base = $scheme . $host . $port . $path;
+		if ( '' === $base ) {
+			$base = $path;
+		}
+
+		$url = $base;
+		if ( '' !== $query ) {
+			$url .= '?' . $query;
+		}
+		$url .= $fragment;
+
+		return esc_url_raw( $url );
 	}
 
 	/**
@@ -779,16 +845,21 @@ class SM_REST_Controller extends WP_REST_Controller {
 			}
 
 			// Fallback: keep previous behavior if we cannot retrieve the reading
-			return $this->error_response(
-				'credits_exhausted',
-				__( 'You’ve already received your free reading for this email. Please check your inbox or use a different address.', 'mystic-palm-reading' ),
-				400,
-				array(
-					'redirect_to' => $redirect,
-					'redirect_delay_ms' => 3500,
-				)
-			);
-		}
+				$login_url = class_exists( 'SM_Auth_Handler' )
+					? SM_Auth_Handler::get_instance()->get_login_url()
+					: null;
+				$redirect_target = $login_url ? $login_url : $redirect;
+
+				return $this->error_response(
+					'reading_exists',
+					__( 'You already have a reading for this email. Please log in to access it.', 'mystic-palm-reading' ),
+					400,
+					array(
+						'redirect_to'       => $redirect_target,
+						'redirect_delay_ms' => 2000,
+					)
+				);
+			}
 
 		// Relaxed rate limit: 20 requests per minute (increased for mobile retry scenarios)
 		$rate_limit = $this->check_rate_limit(
@@ -1119,6 +1190,29 @@ class SM_REST_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Resolve lead ID from request or flow session.
+	 *
+	 * @param string $lead_id Lead ID from request.
+	 * @return string
+	 */
+	private function resolve_lead_id( $lead_id ) {
+		$lead_id = $this->sanitize_string( $lead_id );
+		if ( '' !== $lead_id ) {
+			return $lead_id;
+		}
+
+		if ( ! class_exists( 'SM_Flow_Session' ) ) {
+			return '';
+		}
+
+		$flow_session = SM_Flow_Session::get_instance();
+		$flow         = $flow_session->get_or_create_flow();
+		$flow_lead_id = isset( $flow['lead_id'] ) ? sanitize_text_field( (string) $flow['lead_id'] ) : '';
+
+		return $flow_lead_id;
+	}
+
+	/**
 	 * Handle OTP send endpoint.
 	 *
 	 * @param WP_REST_Request $request Request object.
@@ -1130,10 +1224,30 @@ class SM_REST_Controller extends WP_REST_Controller {
 			return $nonce;
 		}
 
-		$lead_id = $this->sanitize_string( $request->get_param( 'lead_id' ) );
+		$lead_id = $this->resolve_lead_id( $request->get_param( 'lead_id' ) );
 		$async   = $this->get_async_flag( $request );
 		$async   = $this->get_async_flag( $request );
 		$email   = $this->sanitize_email_value( $request->get_param( 'email' ) );
+
+		if ( '' !== $email && class_exists( 'SM_Lead_Handler' ) ) {
+			$lead_handler = SM_Lead_Handler::get_instance();
+			$lead_record  = '' !== $lead_id ? $lead_handler->get_lead_by_id( $lead_id ) : null;
+
+			if ( empty( $lead_record ) ) {
+				$fallback_lead = $lead_handler->get_lead_by_email( $email );
+				if ( ! empty( $fallback_lead ) && ! empty( $fallback_lead->id ) ) {
+					$lead_id = sanitize_text_field( (string) $fallback_lead->id );
+					SM_Logger::info(
+						'OTP_LEAD_RESOLVED',
+						'Lead resolved by email for OTP send',
+						array(
+							'lead_id' => $lead_id,
+							'email'   => $this->mask_email( $email ),
+						)
+					);
+				}
+			}
+		}
 
 		$validation = $this->validate_otp_send_request( $lead_id, $email );
 		if ( is_wp_error( $validation ) ) {
@@ -1806,7 +1920,7 @@ class SM_REST_Controller extends WP_REST_Controller {
 			return $nonce;
 		}
 
-		$lead_id = $this->sanitize_string( $request->get_param( 'lead_id' ) );
+		$lead_id = $this->resolve_lead_id( $request->get_param( 'lead_id' ) );
 		$async   = $this->get_async_flag( $request );
 
 		if ( '' === $lead_id ) {
@@ -1857,18 +1971,12 @@ class SM_REST_Controller extends WP_REST_Controller {
 				)
 			);
 
-			$reading_token = '';
-			if ( class_exists( 'SM_Reading_Token' ) ) {
-				$reading_token = SM_Reading_Token::generate( $lead_id, $existing_reading->id, 'aura_teaser' );
-			}
-
 			return $this->success_response(
 				array(
-					'reading_html'  => $reading_html,
-					'reading_id'    => $existing_reading->id,
-					'reading_token' => $reading_token,
-					'is_existing'   => true, // Flag to inform frontend this is a cached reading
-					'status'        => 'ready',
+					'reading_html' => $reading_html,
+					'reading_id'   => $existing_reading->id,
+					'is_existing'  => true,
+					'status'       => 'ready',
 				)
 			);
 		}
@@ -2017,18 +2125,12 @@ class SM_REST_Controller extends WP_REST_Controller {
 			)
 		);
 
-		$reading_token = '';
-		if ( class_exists( 'SM_Reading_Token' ) ) {
-			$reading_token = SM_Reading_Token::generate( $lead_id, $reading_id, 'aura_teaser' );
-		}
-
 		return $this->success_response(
 			array(
-				'reading_html'  => $reading_html, // Already escaped by renderer
-				'reading_id'    => $reading_id,
-				'reading_token' => $reading_token,
-				'is_existing'   => false,
-				'status'        => 'ready',
+				'reading_html' => $reading_html,
+				'reading_id'   => $reading_id,
+				'is_existing'  => false,
+				'status'       => 'ready',
 			)
 		);
 	}
@@ -2063,6 +2165,52 @@ class SM_REST_Controller extends WP_REST_Controller {
 		}
 
 		$reading_service = SM_Reading_Service::get_instance();
+		$job_handler = SM_Reading_Job_Handler::get_instance();
+		$job         = $job_handler->get_job( $lead_id, $reading_type );
+		$max_attempts = ( 'aura_full' === $reading_type ) ? 3 : 2;
+		$charge_credit = ( 'aura_full' === $reading_type );
+
+		if ( $job ) {
+			$job_status = isset( $job['status'] ) ? (string) $job['status'] : '';
+			$job_reading_id = isset( $job['reading_id'] ) ? (string) $job['reading_id'] : '';
+			if ( 'completed' === $job_status && '' !== $job_reading_id ) {
+				$reading_by_id = $reading_service->get_reading_by_id( $job_reading_id );
+				if ( ! is_wp_error( $reading_by_id ) && ! empty( $reading_by_id ) ) {
+					$renderer = ( 'aura_full' === $reading_type )
+						? SM_Full_Template_Renderer::get_instance()
+						: SM_Template_Renderer::get_instance();
+					$reading_html = $renderer->render_reading( $reading_by_id->id );
+					if ( is_wp_error( $reading_html ) ) {
+						$reading_html = $this->get_error_fallback_html();
+					}
+
+					$this->update_flow_state(
+						array(
+							'lead_id'    => $lead_id,
+							'reading_id' => $reading_by_id->id,
+							'status'     => 'reading_ready',
+							'step_id'    => 'result',
+						)
+					);
+
+					$job_handler->delete_job( $lead_id, $reading_type );
+
+					return $this->success_response(
+						array(
+							'status'       => 'ready',
+							'reading_html' => $reading_html,
+							'reading_id'   => $reading_by_id->id,
+							'reading_type' => $reading_type,
+						)
+					);
+				}
+
+				$job_handler->delete_job( $lead_id, $reading_type );
+			} else {
+				return $this->build_job_status_response( $lead_id, $reading_type, $job, $max_attempts, $charge_credit );
+			}
+		}
+
 		$existing_reading = $reading_service->get_latest_reading( $lead_id, $reading_type );
 
 		if ( ! is_wp_error( $existing_reading ) && ! empty( $existing_reading ) ) {
@@ -2084,29 +2232,14 @@ class SM_REST_Controller extends WP_REST_Controller {
 				)
 			);
 
-			$reading_token = '';
-			if ( 'aura_teaser' === $reading_type && class_exists( 'SM_Reading_Token' ) ) {
-				$reading_token = SM_Reading_Token::generate( $lead_id, $existing_reading->id, $reading_type );
-			}
-
 			return $this->success_response(
 				array(
-					'status'        => 'ready',
-					'reading_html'  => $reading_html,
-					'reading_id'    => $existing_reading->id,
-					'reading_type'  => $reading_type,
-					'reading_token' => $reading_token,
+					'status'       => 'ready',
+					'reading_html' => $reading_html,
+					'reading_id'   => $existing_reading->id,
+					'reading_type' => $reading_type,
 				)
 			);
-		}
-
-		$job_handler = SM_Reading_Job_Handler::get_instance();
-		$job         = $job_handler->get_job( $lead_id, $reading_type );
-
-		if ( $job ) {
-			$max_attempts = ( 'aura_full' === $reading_type ) ? 3 : 2;
-			$charge_credit = ( 'aura_full' === $reading_type );
-			return $this->build_job_status_response( $lead_id, $reading_type, $job, $max_attempts, $charge_credit );
 		}
 
 		return $this->success_response(
@@ -2927,67 +3060,40 @@ class SM_REST_Controller extends WP_REST_Controller {
 		$token        = $this->sanitize_string( $request->get_param( 'token' ) );
 		$reading_type = $this->sanitize_string( $request->get_param( 'reading_type' ) );
 		$token_validated = false;
-		$reading_token_payload = null;
 
-		// If a token is provided, validate it and allow the call without nonce.
+		// If a magic link token is provided, validate it and allow the call without nonce.
 		if ( '' !== $token ) {
-			$reading_token_error = null;
-			if ( class_exists( 'SM_Reading_Token' ) ) {
-				$reading_token_payload = SM_Reading_Token::validate( $token, $lead_id );
-				if ( ! is_wp_error( $reading_token_payload ) ) {
-					$token_validated = true;
-					if ( '' === $lead_id && ! empty( $reading_token_payload['lead_id'] ) ) {
-						$lead_id = $this->sanitize_string( $reading_token_payload['lead_id'] );
-					}
-					if ( '' === $reading_type && ! empty( $reading_token_payload['reading_type'] ) ) {
-						$reading_type = $this->sanitize_string( $reading_token_payload['reading_type'] );
-					}
-				} else {
-					$reading_token_error = $reading_token_payload;
-				}
-			}
-
-			if ( ! $token_validated ) {
-				if ( $reading_token_error && 'token_not_reading' !== $reading_token_error->get_error_code() ) {
+			$otp_handler = class_exists( 'SM_OTP_Handler' ) ? SM_OTP_Handler::init() : null;
+			if ( null !== $otp_handler ) {
+				$token_check = $otp_handler->verify_magic_token( $lead_id, $token );
+				if ( is_wp_error( $token_check ) ) {
+					SM_Logger::log(
+						'warning',
+						'REST_READING_GET_BY_LEAD',
+						'Magic token validation failed for reading lookup',
+						array(
+							'lead_id' => $lead_id,
+							'error'   => $token_check->get_error_message(),
+							'code'    => $token_check->get_error_code(),
+						)
+					);
 					return $this->error_response(
-						$reading_token_error->get_error_code(),
-						$reading_token_error->get_error_message(),
+						$token_check->get_error_code(),
+						$token_check->get_error_message(),
 						403
 					);
 				}
 
-				$otp_handler = class_exists( 'SM_OTP_Handler' ) ? SM_OTP_Handler::init() : null;
-				if ( null !== $otp_handler ) {
-					$token_check = $otp_handler->verify_magic_token( $lead_id, $token );
-					if ( is_wp_error( $token_check ) ) {
-						SM_Logger::log(
-							'warning',
-							'REST_READING_GET_BY_LEAD',
-							'Magic token validation failed for reading lookup',
-							array(
-								'lead_id' => $lead_id,
-								'error'   => $token_check->get_error_message(),
-								'code'    => $token_check->get_error_code(),
-							)
-						);
-						return $this->error_response(
-							$token_check->get_error_code(),
-							$token_check->get_error_message(),
-							403
-						);
-					}
+				SM_Logger::log(
+					'info',
+					'REST_READING_GET_BY_LEAD',
+					'Magic token validated for reading lookup',
+					array(
+						'lead_id' => $lead_id,
+					)
+				);
 
-					SM_Logger::log(
-						'info',
-						'REST_READING_GET_BY_LEAD',
-						'Magic token validated for reading lookup',
-						array(
-							'lead_id' => $lead_id,
-						)
-					);
-
-					$token_validated = true;
-				}
+				$token_validated = true;
 			}
 		}
 
@@ -3295,18 +3401,12 @@ class SM_REST_Controller extends WP_REST_Controller {
 			)
 		);
 
-		$reading_token = '';
-		if ( 'aura_teaser' === $reading_type && class_exists( 'SM_Reading_Token' ) ) {
-			$reading_token = SM_Reading_Token::generate( $lead_id, $existing_reading->id, $reading_type );
-		}
-
 		return $this->success_response(
 			array(
-				'exists'        => true,
-				'reading_html'  => $reading_html,
-				'reading_id'    => $existing_reading->id,
-				'reading_type'  => $reading_type,
-				'reading_token' => $reading_token,
+				'exists'       => true,
+				'reading_html' => $reading_html,
+				'reading_id'   => $existing_reading->id,
+				'reading_type' => $reading_type,
 			)
 		);
 	}
