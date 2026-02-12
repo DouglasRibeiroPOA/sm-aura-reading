@@ -8,16 +8,16 @@
 
 ## Overall Progress
 
-**Total Progress:** 11/34 tasks complete (32%)
+**Total Progress:** 12/34 tasks complete (35%)
 
 ```text
-[▓▓▓▓▓▓░░░░░░░░░░░░░░] 32%
+[▓▓▓▓▓▓▓░░░░░░░░░░░░░] 35%
 ```
 
 ### Phase Progress Snapshot
 
 - Phase 1: Core Backend Reliability Parity - 8/8 (100%)
-- Phase 2: Auth, Access, and Token Parity - 3/6 (50%)
+- Phase 2: Auth, Access, and Token Parity - 4/6 (67%)
 - Phase 3: Frontend Flow and Storage Parity - 0/8 (0%)
 - Phase 4: OTP and Credit Behavior Parity - 0/5 (0%)
 - Phase 5: Remove Aura-Only Behavioral Divergence - 0/4 (0%)
@@ -57,13 +57,13 @@
 
 ## Phase 2: Auth, Access, and Token Parity
 
-**Progress:** 3/6 tasks (50%)
+**Progress:** 4/6 tasks (67%)
 ```text
-[▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░]
+[▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░]
 ```
 
 - [x] P2-T1 Replace Aura reading-token responses with Palm report-token behavior (#5)
-- [ ] P2-T2 Remove `SM_Reading_Token` class usage across REST, jobs, and bootstrap (#25)
+- [x] P2-T2 Remove `SM_Reading_Token` class usage across REST, jobs, and bootstrap (#25)
 - [x] P2-T3 Port Palm report access gate logic into `mystic-aura-reading.php` (#24)
 - [x] P2-T4 Port `normalize_return_url()` in auth handler (#21)
 - [ ] P2-T5 Remove client flow dependence on old token fields and align API payload keys (#5/#25)

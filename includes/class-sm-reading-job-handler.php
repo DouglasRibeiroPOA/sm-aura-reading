@@ -218,18 +218,29 @@ class SM_Reading_Job_Handler {
 		);
 
 		$response = wp_remote_post( $url, $args );
+		$response_code = is_wp_error( $response ) ? 0 : (int) wp_remote_retrieve_response_code( $response );
+		// Non-blocking loopback requests can return 0 even when accepted.
+		// Only treat explicit errors or HTTP error codes as failed dispatch.
+		$dispatch_failed = is_wp_error( $response ) || $response_code >= 400;
+
+		if ( $dispatch_failed ) {
+			// Fallback to WP-Cron if loopback dispatch fails (prevents stuck queued jobs).
+			$this->schedule_job( $lead_id, $reading_type, $account_id );
+		}
 
 		SM_Logger::log(
 			'info',
 			'READING_JOB',
 			'Reading job dispatch requested',
 			array(
-				'lead_id'      => $lead_id,
-				'reading_type' => $reading_type,
-				'job_id'       => $job_id,
-				'response'     => is_wp_error( $response ) ? $response->get_error_message() : 'sent',
-			)
-		);
+					'lead_id'        => $lead_id,
+					'reading_type'   => $reading_type,
+					'job_id'         => $job_id,
+					'response_code'  => $response_code,
+					'response'       => is_wp_error( $response ) ? $response->get_error_message() : 'sent',
+					'fallback_cron'  => $dispatch_failed ? 'scheduled' : 'not_needed',
+				)
+			);
 	}
 
 	/**
@@ -265,6 +276,24 @@ class SM_Reading_Job_Handler {
 		$job = $this->get_job( $lead_id, $reading_type );
 		if ( ! $job || in_array( $job['status'], array( 'completed', 'failed' ), true ) ) {
 			return;
+		}
+
+		// Guard: avoid duplicate execution if a job is already running recently.
+		if ( 'running' === $job['status'] && ! empty( $job['updated_at'] ) ) {
+			$updated_time = strtotime( $job['updated_at'] );
+			if ( $updated_time && ( current_time( 'timestamp' ) - $updated_time ) <= 300 ) {
+				SM_Logger::log(
+					'info',
+					'READING_JOB',
+					'Skipping duplicate job run (already running)',
+					array(
+						'lead_id'      => $lead_id,
+						'reading_type' => $reading_type,
+						'updated_at'   => $job['updated_at'],
+					)
+				);
+				return;
+			}
 		}
 
 		// Phase 4: Check for job timeout (5 minutes max)
@@ -499,21 +528,12 @@ class SM_Reading_Job_Handler {
 			? __( 'Your Full Aura Reading Is Ready', 'mystic-aura-reading' )
 			: __( 'Your Aura Reading Is Ready', 'mystic-aura-reading' );
 
-		$report_args = array(
-			'sm_report'    => 1,
-			'lead_id'      => $lead_id,
-			'reading_type' => $reading_type,
-		);
-
-		if ( 'aura_teaser' === $reading_type && class_exists( 'SM_Reading_Token' ) ) {
-			$reading_token = SM_Reading_Token::generate( $lead_id, $reading_id, $reading_type );
-			if ( '' !== $reading_token ) {
-				$report_args['token'] = $reading_token;
-			}
-		}
-
 		$report_url = add_query_arg(
-			$report_args,
+			array(
+				'sm_report'    => 1,
+				'lead_id'      => $lead_id,
+				'reading_type' => $reading_type,
+			),
 			home_url( '/' )
 		);
 

@@ -111,6 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ported Palm-equivalent auth/report access guard behavior by adding return URL normalization in auth login URLs and switching report gate access checks to lead magic token + ownership logic in `mystic-aura-reading.php`
 - Synchronized `compare_palm_reading_versus_aura_reading.md` with locked parity decisions and documented precedence: tracker source of truth remains `PALM_PARITY_EXECUTION_PLAN.md`, compare doc is detailed baseline/reference
 - Replaced Aura `SM_Reading_Token` responses with Palm OTP magic token behavior: removed `reading_token` from all REST response payloads and switched reading lookup token validation to use `verify_magic_token()` only (P2-T1)
+- Removed `SM_Reading_Token` class entirely: deleted class file, removed token generation from job handler email URLs to match Palm report URL pattern (P2-T2)
 
 ### Technical
 - Plugin namespace: `mystic-aura-reading`
