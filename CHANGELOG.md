@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2026-03-22] — Palm UX Hardening Delta Port
+
+### Added
+- `resetTeaserEntryState()` in api-integration.js: full identity reset when welcome email changes
+- `ensureDynamicQuestionsReady()` in api-integration.js: single-flight promise pattern prevents duplicate question fetches
+- `refreshActiveQuizStep()` in api-integration.js: re-renders active quiz step after personalized questions load
+- `remapQuizResponsesForDynamicQuestions()` in api-integration.js: carries over saved answers after dynamic question hydration
+- `clearLocalFlowState()` in api-integration.js: clears localStorage on identity reset
+- `resetFlowForWelcomeEmailChange()` in script.js: resets all teaser state when email changes at welcome step
+- Email-change detection in welcome step submit handler (compares normalized previous vs new email)
+- REST prefix guard in `get_login_url()`: prevents `/wp-json/...` URLs being used as login return targets
+- `email_has_linked_account()` in REST controller: checks for account linkage across ALL leads for an email
+- AUTH-012 Playwright test: email switch after login redirect uses new lead for MailerLite sync
+- `AURA_STABILIZATION_PLAN.md`: active smart regression pack definition
+
+### Changed
+- `handleBackgroundPalmPhotoTasks()` now uses `ensureDynamicQuestionsReady()` instead of direct `fetchDynamicQuestions()` call
+- `handle_reading_check_by_email()` now checks all leads for account linkage and uses `reading_exists_for_email()` for broader reading detection
+- Error messages in `handle_reading_check_by_email` now use correct `mystic-aura-reading` text domain
+- `PALM_PARITY_EXECUTION_PLAN.md` updated to clarify February 2026 parity baseline scope
+
+---
+
 ### Added
 - Initial plugin foundation cloned from Palm Reading v1.4.5
 - Aura Reading brand identity with ethereal color palette
@@ -129,6 +152,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Aligned OTP handler internal rate limit from 4/2min to Palm's 3/hour; switched resend cooldown from seconds-based to Palm's minutes-based approach; removed dead `get_resend_cooldown_seconds_setting()` method; lead lookup retry does not exist in Palm either (P4-T4)
 - Verified credit stale-cache fallback and DevMode mock injection already at parity: `get_cached_credit_snapshot_for_current_user()` does not exist in Palm; credit handler DevMode mocks do not exist in Palm (P4-T5)
 - Completed Phase 4: OTP and Credit Behavior Parity (5/5 tasks)
+- Completed Phase 5: Remove Aura-Only Behavioral Divergence (4/4 tasks), confirming single `sm_flow_id` cookie parity, no dashboard share JS enhancement, no schema auto-repair hook, and removal of dual settings-group registration fallback (`sm_settings_group`) in favor of the single aura settings group
+- Ported Palm structured parity suites into Aura at `tests/specs/suites/` and shared helpers into `tests/helpers/`, then adapted defaults/selectors for Aura (`sm-aura-reading.local`, `aura_teaser`/`aura_full`, `#aura-reading-result`)
+- Added parity execution scripts to `package.json`: `test:parity` and `test:parity:critical`
+- Completed Phase 6: Test Parity and Release Readiness (3/3 tasks), including local Aura parity runs using Palm baseline suite IDs plus final handoff report in `PARITY_HANDOFF_REPORT.md`
+- Added stable serial parity execution guidance after validation: critical suite IDs `HP-001`, `HP-004`, `REFRESH-013`, and `AUTH-005` now pass on Aura local using `--workers=1`; documented remaining MailPit/paid-environment dependencies in handoff
+- Fixed stale-email carryover in guest flow: welcome email now synchronizes to in-memory app state and lead-capture always prefers the latest stored welcome email, preventing old report reuse when a different email is entered in a new run
+- Added regression test `HP-008` to verify stale restored state cannot override a newly entered welcome email during `lead/create`
 
 ### Technical
 - Plugin namespace: `mystic-aura-reading`

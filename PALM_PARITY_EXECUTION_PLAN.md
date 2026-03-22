@@ -1,17 +1,31 @@
 # Aura vs Palm Parity Execution Plan
 
-**Version:** 1.0.0  
-**Last Updated:** 2026-02-12  
+**Version:** 1.1.0
+**Last Updated:** 2026-03-22
 **Scope:** Make Aura Reading behavior match Palm Reading (strict parity, no compatibility window)
+
+---
+
+## ⚠️ Important: Parity Baseline Note
+
+The February 2026 parity work tracked in this document achieved full parity against the **Palm baseline as of 2026-02-12**.
+
+Palm received additional UX hardening on **2026-03-22** that was not covered by this plan.
+
+The 2026-03-22 delta has now been ported. See:
+- `AURA_UX_FIX_PLAN_2026-03-22.md` — gap analysis and rationale
+- `AURA_STABILIZATION_PLAN.md` — active regression pack going forward
+
+**Current parity status:** Aura is current with Palm as of 2026-03-22.
 
 ---
 
 ## Overall Progress
 
-**Total Progress:** 27/34 tasks complete (79%)
+**Total Progress:** 34/34 tasks complete (100%)
 
 ```text
-[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░] 79%
+[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
 ```
 
 ### Phase Progress Snapshot
@@ -20,8 +34,8 @@
 - Phase 2: Auth, Access, and Token Parity - 6/6 (100%)
 - Phase 3: Frontend Flow and Storage Parity - 8/8 (100%)
 - Phase 4: OTP and Credit Behavior Parity - 5/5 (100%)
-- Phase 5: Remove Aura-Only Behavioral Divergence - 0/4 (0%)
-- Phase 6: Test Parity and Release Readiness - 0/3 (0%)
+- Phase 5: Remove Aura-Only Behavioral Divergence - 4/4 (100%)
+- Phase 6: Test Parity and Release Readiness - 3/3 (100%)
 
 ---
 
@@ -100,26 +114,26 @@
 
 ## Phase 5: Remove Aura-Only Behavioral Divergence
 
-**Progress:** 0/4 tasks (0%)  
+**Progress:** 4/4 tasks (100%)  
 ```text
-[░░░░░░░░░░░░░░░░░░░░]
+[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓]
 ```
 
-- [ ] P5-T1 Remove 3-cookie flow session architecture and match Palm single cookie behavior (#30)
-- [ ] P5-T2 Remove Aura dashboard share behavior for strict Palm parity (#18)
-- [ ] P5-T3 Remove Aura schema integrity auto-repair hook for strict parity behavior (#22)
-- [ ] P5-T4 Remove dual settings registration fallback and align with Palm registration model (#26)
+- [x] P5-T1 Remove 3-cookie flow session architecture and match Palm single cookie behavior (#30)
+- [x] P5-T2 Remove Aura dashboard share behavior for strict Palm parity (#18)
+- [x] P5-T3 Remove Aura schema integrity auto-repair hook for strict parity behavior (#22)
+- [x] P5-T4 Remove dual settings registration fallback and align with Palm registration model (#26)
 
 ## Phase 6: Test Parity and Release Readiness
 
-**Progress:** 0/3 tasks (0%)  
+**Progress:** 3/3 tasks (100%)  
 ```text
-[░░░░░░░░░░░░░░░░░░░░]
+[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓]
 ```
 
-- [ ] P6-T1 Create/port parity-focused Playwright suites for all CRITICAL/HIGH flows
-- [ ] P6-T2 Run end-to-end validation against local Aura and compare behavior with Palm baseline
-- [ ] P6-T3 Final regression checklist + changelog + handoff report
+- [x] P6-T1 Create/port parity-focused Playwright suites for all CRITICAL/HIGH flows
+- [x] P6-T2 Run end-to-end validation against local Aura and compare behavior with Palm baseline
+- [x] P6-T3 Final regression checklist + changelog + handoff report
 
 ---
 
