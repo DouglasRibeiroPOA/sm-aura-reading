@@ -799,6 +799,65 @@ async function checkExistingReadingByEmail(email) {
 
 }
 
+/**
+ * Reset teaser flow state when identity changes at welcome email entry.
+ * Prefers centralized API reset hook if available; falls back to local cleanup.
+ */
+function resetFlowForWelcomeEmailChange() {
+    try {
+        if (
+            window.smApiMethods &&
+            typeof window.smApiMethods.resetTeaserEntryState === 'function'
+        ) {
+            window.smApiMethods.resetTeaserEntryState('welcome_email_changed');
+            return;
+        }
+    } catch (error) {
+        console.error('[SM] resetTeaserEntryState hook failed:', error);
+    }
+
+    try {
+        appState.userData = {
+            name: '',
+            email: '',
+            identity: '',
+            age: '',
+            ageRange: '',
+            palmImage: null,
+            gdprConsent: false,
+            emailVerified: false
+        };
+        appState.quizResponses = {};
+        appState.dynamicQuestions = [];
+        if (typeof resetLeadCaptureValidationState === 'function') {
+            resetLeadCaptureValidationState();
+        }
+    } catch (error) {
+        console.error('[SM] Failed to reset in-memory app state:', error);
+    }
+
+    if (window.smApiState) {
+        window.smApiState.leadId = null;
+        window.smApiState.otpSent = false;
+        window.smApiState.otpVerified = false;
+        window.smApiState.imageUploaded = false;
+        window.smApiState.quizSaved = false;
+        window.smApiState.readingGenerated = false;
+    }
+
+    smStorage.remove('sm_lead_cache');
+    smStorage.remove('sm_flow_step_id');
+    smStorage.remove('sm_reading_loaded');
+    smStorage.remove('sm_reading_lead_id');
+    smStorage.remove('sm_existing_reading_id');
+    smStorage.remove('sm_reading_token');
+    smStorage.remove('sm_reading_type');
+    smStorage.remove('sm_palm_image');
+    smStorage.remove('sm_dynamic_questions');
+    smStorage.remove('sm_demographics');
+    try { localStorage.removeItem('sm_app_state'); } catch (e) { /* ignore */ }
+}
+
 // Render welcome step
 function renderWelcomeStep(container, step) {
     const title = document.createElement('h1');
@@ -907,8 +966,18 @@ function renderWelcomeStep(container, step) {
         // Clear error
         errorMessage.textContent = '';
 
-        // Store email in sessionStorage
+        const normalizedEmail = email.toLowerCase();
+        const previousEmail = (smStorage.get('sm_email') || '').trim().toLowerCase();
+
+        // If welcome email changes, treat it as a brand-new teaser flow identity.
+        if (previousEmail && previousEmail !== normalizedEmail) {
+            resetFlowForWelcomeEmailChange();
+        }
+
+        // Store email in sessionStorage and in app state.
+        // Keep appState in sync so stale localStorage state cannot override a newly entered email.
         smStorage.set('sm_email', email);
+        appState.userData.email = email;
 
         // Disable submit button and show loading state
         setButtonLoading(continueBtn, true);
@@ -1004,9 +1073,10 @@ function renderLeadCaptureStep(container, step) {
     nameGroup.appendChild(nameInput);
     form.appendChild(nameGroup);
 
-    // Retrieve email from sessionStorage (captured in welcome step)
+    // Retrieve email from sessionStorage (captured in welcome step).
+    // Always prefer this value so a stale restored appState email cannot leak into lead creation.
     const savedEmail = smStorage.get('sm_email');
-    if (savedEmail && !appState.userData.email) {
+    if (savedEmail) {
         appState.userData.email = savedEmail;
     }
 

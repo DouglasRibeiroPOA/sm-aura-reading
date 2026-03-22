@@ -1190,6 +1190,25 @@ class SM_REST_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Check whether any lead for this email has a linked account.
+	 * Handles duplicate-lead scenarios where only an older lead has the account_id.
+	 *
+	 * @param string $email Email address.
+	 * @return bool
+	 */
+	protected function email_has_linked_account( $email ) {
+		global $wpdb;
+		$table = SM_Database::get_instance()->get_table_name( 'leads' );
+
+		return (bool) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$table} WHERE email = %s AND account_id IS NOT NULL AND account_id != ''",
+				$email
+			)
+		);
+	}
+
+	/**
 	 * Resolve lead ID from request or flow session.
 	 *
 	 * @param string $lead_id Lead ID from request.
@@ -3481,35 +3500,41 @@ class SM_REST_Controller extends WP_REST_Controller {
 			));
 		}
 
-		$has_account = !empty($existing_lead->account_id);
+		$has_account = ! empty( $existing_lead->account_id );
+
+		// Also check if ANY lead for this email has an account_id (handles lead duplication).
+		if ( ! $has_account ) {
+			$has_account = $this->email_has_linked_account( $email );
+		}
 
 		// Case 2: Email found and has a linked account.
-		if ($has_account) {
-			SM_Logger::info('REST_READING_CHECK_BY_EMAIL', 'Lead found with an account. Redirecting to login.', array('email' => $this->mask_email($email), 'account_id' => $existing_lead->account_id));
-			return $this->success_response(array(
-				'action' => 'redirect_login',
-				'message' => __('Welcome back! Please log in to access your account.', 'mystic-palm-reading'),
-			));
+		if ( $has_account ) {
+			SM_Logger::info( 'REST_READING_CHECK_BY_EMAIL', 'Lead found with an account. Redirecting to login.', array( 'email' => $this->mask_email( $email ), 'account_id' => $existing_lead->account_id ?: '(on other lead)' ) );
+			return $this->success_response( array(
+				'action'  => 'redirect_login',
+				'message' => __( 'Welcome back! Please log in to access your account.', 'mystic-aura-reading' ),
+			) );
 		}
 
 		// Case 3: Email found, but no account linked (previous free reading).
-		$reading_service = SM_Reading_Service::get_instance();
-		$existing_reading = $reading_service->get_latest_reading($existing_lead->id, 'aura_teaser');
+		// Check for readings across ALL leads for this email (not just the latest lead).
+		$ai_handler      = SM_AI_Handler::get_instance();
+		$has_any_reading = $ai_handler->reading_exists_for_email( $email );
 
-		if (!is_wp_error($existing_reading) && !empty($existing_reading)) {
-			SM_Logger::info('REST_READING_CHECK_BY_EMAIL', 'Lead found with a past free reading. Encouraging login.', array('email' => $this->mask_email($email)));
-			return $this->success_response(array(
-				'action' => 'redirect_login',
-				'message' => __('You have a past reading with us. Log in or create an account to see it.', 'mystic-palm-reading'),
-			));
+		if ( $has_any_reading ) {
+			SM_Logger::info( 'REST_READING_CHECK_BY_EMAIL', 'Lead found with a past free reading. Encouraging login.', array( 'email' => $this->mask_email( $email ) ) );
+			return $this->success_response( array(
+				'action'  => 'redirect_login',
+				'message' => __( 'You have a past reading with us. Log in or create an account to see it.', 'mystic-aura-reading' ),
+			) );
 		}
 
 		// Case 4: Edge case - lead exists but no reading found. Treat as new user.
-		SM_Logger::info('REST_READING_CHECK_BY_EMAIL', 'Lead found but no reading. Proceeding as new user.', array('email' => $this->mask_email($email)));
-		return $this->success_response(array(
-			'action' => 'continue_free',
-			'message' => __('Proceeding with free reading.', 'mystic-palm-reading'),
-		));
+		SM_Logger::info( 'REST_READING_CHECK_BY_EMAIL', 'Lead found but no reading. Proceeding as new user.', array( 'email' => $this->mask_email( $email ) ) );
+		return $this->success_response( array(
+			'action'  => 'continue_free',
+			'message' => __( 'Proceeding with free reading.', 'mystic-aura-reading' ),
+		) );
 
 	}
 

@@ -886,6 +886,14 @@ class SM_Auth_Handler {
 				? home_url( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) )
 				: home_url( '/' );
 		}
+		$return_url = $this->normalize_return_url( $return_url );
+
+		// Prevent REST API endpoints from being used as return URLs.
+		// This happens when get_login_url() is called from a REST handler context.
+		$rest_prefix = rest_get_url_prefix();
+		if ( false !== strpos( $return_url, '/wp-json/' ) || false !== strpos( $return_url, '/' . $rest_prefix . '/' ) ) {
+			$return_url = home_url( '/' );
+		}
 
 		$callback_url = home_url( '/aura-reading/auth/callback' );
 		if ( ! empty( $return_url ) ) {
@@ -907,6 +915,58 @@ class SM_Auth_Handler {
 		);
 
 		return $login_url;
+	}
+
+	/**
+	 * Normalize return URLs by stripping flow-only flags that force the landing flow.
+	 *
+	 * @param string $return_url Return URL.
+	 * @return string
+	 */
+	private function normalize_return_url( $return_url ) {
+		if ( empty( $return_url ) ) {
+			return $return_url;
+		}
+
+		$parts = wp_parse_url( $return_url );
+		if ( empty( $parts['query'] ) ) {
+			return $return_url;
+		}
+
+		parse_str( $parts['query'], $query );
+		$strip_keys = array( 'sm_flow', 'sm_flow_auth', 'start_new' );
+		$changed = false;
+
+		foreach ( $strip_keys as $key ) {
+			if ( isset( $query[ $key ] ) ) {
+				unset( $query[ $key ] );
+				$changed = true;
+			}
+		}
+
+		if ( ! $changed ) {
+			return $return_url;
+		}
+
+		$scheme   = isset( $parts['scheme'] ) ? $parts['scheme'] . '://' : '';
+		$host     = isset( $parts['host'] ) ? $parts['host'] : '';
+		$port     = isset( $parts['port'] ) ? ':' . $parts['port'] : '';
+		$path     = isset( $parts['path'] ) ? $parts['path'] : '';
+		$fragment = isset( $parts['fragment'] ) ? '#' . $parts['fragment'] : '';
+		$query    = http_build_query( $query );
+
+		$base = $scheme . $host . $port . $path;
+		if ( empty( $base ) ) {
+			$base = $path;
+		}
+
+		$url = $base;
+		if ( '' !== $query ) {
+			$url .= '?' . $query;
+		}
+		$url .= $fragment;
+
+		return $url;
 	}
 
 	/**

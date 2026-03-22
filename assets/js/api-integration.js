@@ -41,6 +41,7 @@
         readingGenerated: false,
         readingStartRequested: false,
         processingRequest: false,
+        dynamicQuestionsPromise: null,
         dynamicQuestions: [],
         demographics: {
             ageRange: '',
@@ -165,6 +166,7 @@
         apiState.quizSaved = false;
         apiState.readingGenerated = false;
         apiState.processingRequest = false;
+        apiState.dynamicQuestionsPromise = null;
         apiState.dynamicQuestions = [];
         apiState.demographics = { ageRange: '', gender: '' };
         teaserEventDispatched = false; // Reset the flag when API state is reset
@@ -231,6 +233,116 @@
         } else if (jumpToWelcome) {
             log('Skipped renderStep reset; #app-content not available.');
         }
+    }
+
+    /**
+     * Remap any existing quiz responses from static keys to dynamic question IDs.
+     * Called after dynamic questions are fetched so the saved answers carry over.
+     */
+    function remapQuizResponsesForDynamicQuestions(questions) {
+        if (!Array.isArray(questions) || !questions.length) {
+            return;
+        }
+        const responses = appState.quizResponses || {};
+        if (!responses || typeof responses !== 'object') {
+            return;
+        }
+
+        const remapped = { ...responses };
+        questions.slice(0, 5).forEach((question, idx) => {
+            const questionId = question.id || question.question_id || `quiz_${idx + 1}`;
+            if (typeof remapped[questionId] !== 'undefined') {
+                return;
+            }
+            const staticKey = `quiz${idx + 1}`;
+            if (typeof remapped[staticKey] !== 'undefined') {
+                remapped[questionId] = remapped[staticKey];
+            }
+        });
+
+        appState.quizResponses = remapped;
+    }
+
+    /**
+     * Re-render the active quiz step after dynamic questions have been loaded.
+     * Ensures the UI reflects personalized questions without requiring user navigation.
+     */
+    function refreshActiveQuizStep() {
+        if (!window.appContent || typeof window.renderStep !== 'function' || typeof palmReadingConfig === 'undefined') {
+            return;
+        }
+
+        const currentStep = palmReadingConfig.steps[appState.currentStep];
+        if (!currentStep || currentStep.type !== 'quizQuestion') {
+            return;
+        }
+
+        window.renderStep(appState.currentStep);
+    }
+
+    /**
+     * Single-flight wrapper for fetchDynamicQuestions.
+     * Returns cached questions immediately if available, or waits for the in-flight
+     * request instead of spawning a duplicate.
+     */
+    async function ensureDynamicQuestionsReady(ageRange, gender) {
+        if (Array.isArray(apiState.dynamicQuestions) && apiState.dynamicQuestions.length) {
+            return apiState.dynamicQuestions;
+        }
+
+        if (apiState.dynamicQuestionsPromise) {
+            return apiState.dynamicQuestionsPromise;
+        }
+
+        apiState.dynamicQuestionsPromise = fetchDynamicQuestions(ageRange, gender)
+            .finally(() => {
+                apiState.dynamicQuestionsPromise = null;
+            });
+
+        return apiState.dynamicQuestionsPromise;
+    }
+
+    /**
+     * Clear localStorage flow state (sm_app_state).
+     */
+    function clearLocalFlowState() {
+        try {
+            // Remove both the plain key (used in older code paths) and context-scoped key
+            localStorage.removeItem('sm_app_state');
+            if (typeof smStorage !== 'undefined' && smStorage.context) {
+                localStorage.removeItem(`sm_app_state_${smStorage.context}`);
+            }
+        } catch (error) {
+            logError('Clear local flow state failed', error);
+        }
+    }
+
+    /**
+     * Full teaser entry state reset for identity-change scenarios (e.g. welcome email changed).
+     * Clears API state, in-memory app state, session, and local flow state.
+     */
+    function resetTeaserEntryState(reason = 'welcome_email_changed') {
+        resetApiState();
+        magicLinkHandled = false;
+        teaserEventDispatched = false;
+        appState.userData = {
+            name: '',
+            email: '',
+            identity: '',
+            age: '',
+            ageRange: '',
+            gdprConsent: false,
+            palmImage: null,
+            emailVerified: false
+        };
+        appState.dynamicQuestions = [];
+        appState.quizResponses = {};
+        clearClientSession();
+        clearLocalFlowState();
+        if (typeof resetLeadCaptureValidationState === 'function') {
+            resetLeadCaptureValidationState();
+        }
+        log('Teaser entry state reset', { reason });
     }
 
     let magicOverlay = null;
@@ -1880,9 +1992,9 @@
                 log('Background: Uploading aura photo...');
                 const imageUrl = await uploadPalmImage(appState.userData.palmImage);
                 if (imageUrl) {
-                    log('Background: Palm image uploaded successfully');
+                    log('Background: Aura photo uploaded successfully');
                 } else {
-                    logError('Background: Palm image upload failed (non-blocking)');
+                    logError('Background: Aura photo upload failed (non-blocking)');
                 }
             }
 
@@ -1901,13 +2013,10 @@
                     appState.userData.identity = 'prefer-not';
                 }
 
-                const questions = await fetchDynamicQuestions(demographics.ageRange, demographics.gender);
+                const questions = await ensureDynamicQuestionsReady(demographics.ageRange, demographics.gender);
                 if (questions && questions.length > 0) {
                     log('Background: Dynamic questions fetched successfully');
-                    if (!appState.quizResponses || !Object.keys(appState.quizResponses).length) {
-                        appState.quizResponses = {};
-                    }
-                    // Note: UI will continue using static questions if user already started answering
+                    remapQuizResponsesForDynamicQuestions(questions);
                 } else {
                     logError('Background: Dynamic questions fetch failed (non-blocking)');
                 }
@@ -2411,7 +2520,8 @@
         uploadPalmImage,
         fetchDynamicQuestions,
         saveQuiz,
-        generateReading
+        generateReading,
+        resetTeaserEntryState
     };
 
     log('API methods exposed on window.smApiMethods for debugging');
