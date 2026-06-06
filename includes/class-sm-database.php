@@ -156,9 +156,6 @@ class SM_Database {
 			$this->run_migrations( $current_version );
 			update_option( self::OPTION_KEY, self::DB_VERSION );
 		}
-
-		// Ensure critical columns exist even if version matches (stale installs).
-		$this->ensure_schema_integrity();
 	}
 
 	/**
@@ -183,60 +180,6 @@ class SM_Database {
 				call_user_func( $callback );
 			}
 		}
-	}
-
-	/**
-	 * Ensure critical columns/tables exist even if the stored version is current.
-	 */
-	private function ensure_schema_integrity() {
-		global $wpdb;
-
-		$readings_table = $this->tables['readings'];
-		$leads_table    = $this->tables['leads'];
-		$flow_table     = $this->tables['flow_sessions'];
-
-		$reading_type_exists = $wpdb->get_results(
-			$wpdb->prepare(
-				"SHOW COLUMNS FROM `{$readings_table}` LIKE %s",
-				'reading_type'
-			)
-		);
-
-		if ( empty( $reading_type_exists ) ) {
-			$this->migrate_to_1_3_0();
-		}
-
-		$account_id_exists = $wpdb->get_results(
-			$wpdb->prepare(
-				"SHOW COLUMNS FROM `{$leads_table}` LIKE %s",
-				'account_id'
-			)
-		);
-
-		if ( empty( $account_id_exists ) ) {
-			$this->migrate_to_1_4_0();
-		}
-
-		$flow_table_exists = $wpdb->get_var(
-			$wpdb->prepare( 'SHOW TABLES LIKE %s', $flow_table )
-		);
-
-		if ( $flow_table_exists !== $flow_table ) {
-			$this->migrate_to_1_4_5();
-		}
-
-		$invalid_image_attempts_exists = $wpdb->get_results(
-			$wpdb->prepare(
-				"SHOW COLUMNS FROM `{$leads_table}` LIKE %s",
-				'invalid_image_attempts'
-			)
-		);
-
-		if ( empty( $invalid_image_attempts_exists ) ) {
-			$this->migrate_to_1_4_6();
-		}
-
-		update_option( self::OPTION_KEY, self::DB_VERSION );
 	}
 
 	/**

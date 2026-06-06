@@ -1,0 +1,287 @@
+{
+  "generated_at": "2026-01-15T20:17:00.933491",
+  "users": [
+    {
+      "id": 1,
+      "email": "test-christopher59-20260115201700-0@example.com",
+      "name": "Mary Bridges",
+      "first_name": "Glen",
+      "last_name": "Crawford",
+      "gender": "female",
+      "phone": "001-893-771-5599x7413",
+      "birth_date": "1951-03-08",
+      "created_at": "2026-01-15T20:17:00.930224",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #1"
+    },
+    {
+      "id": 2,
+      "email": "test-jasmine40-20260115201700-1@example.com",
+      "name": "Kristopher Brown",
+      "first_name": "Katie",
+      "last_name": "Franklin",
+      "gender": "female",
+      "phone": "001-539-212-2260x6275",
+      "birth_date": "2001-11-27",
+      "created_at": "2026-01-15T20:17:00.930422",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #2"
+    },
+    {
+      "id": 3,
+      "email": "test-qdowns-20260115201700-2@example.com",
+      "name": "Steven Fitzpatrick",
+      "first_name": "Rachael",
+      "last_name": "Clark",
+      "gender": "female",
+      "phone": "359.599.2454",
+      "birth_date": "1959-01-17",
+      "created_at": "2026-01-15T20:17:00.930608",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #3"
+    },
+    {
+      "id": 4,
+      "email": "test-jamiepacheco-20260115201700-3@example.com",
+      "name": "Luis Levy",
+      "first_name": "Kristie",
+      "last_name": "Berry",
+      "gender": "female",
+      "phone": "891.704.5288",
+      "birth_date": "1945-11-13",
+      "created_at": "2026-01-15T20:17:00.930821",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #4"
+    },
+    {
+      "id": 5,
+      "email": "test-jjackson-20260115201700-4@example.com",
+      "name": "Jeffrey Lowery",
+      "first_name": "Christine",
+      "last_name": "Morrow",
+      "gender": "male",
+      "phone": "8707526443",
+      "birth_date": "1962-12-29",
+      "created_at": "2026-01-15T20:17:00.930999",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #5"
+    },
+    {
+      "id": 6,
+      "email": "test-gwells-20260115201700-5@example.com",
+      "name": "Daniel Moore",
+      "first_name": "Anthony",
+      "last_name": "Newman",
+      "gender": "female",
+      "phone": "372-248-1035x16354",
+      "birth_date": "1957-07-16",
+      "created_at": "2026-01-15T20:17:00.931179",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #6"
+    },
+    {
+      "id": 7,
+      "email": "test-huntkristina-20260115201700-6@example.com",
+      "name": "Carrie Garcia",
+      "first_name": "Courtney",
+      "last_name": "Dougherty",
+      "gender": "male",
+      "phone": "(848)625-5175x438",
+      "birth_date": "1991-11-23",
+      "created_at": "2026-01-15T20:17:00.931382",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #7"
+    },
+    {
+      "id": 8,
+      "email": "test-ithomas-20260115201700-7@example.com",
+      "name": "David Murillo",
+      "first_name": "Gina",
+      "last_name": "Horton",
+      "gender": "female",
+      "phone": "001-869-277-9906x71447",
+      "birth_date": "1971-02-18",
+      "created_at": "2026-01-15T20:17:00.931568",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #8"
+    },
+    {
+      "id": 9,
+      "email": "test-holly69-20260115201700-8@example.com",
+      "name": "Vanessa Parks",
+      "first_name": "Suzanne",
+      "last_name": "Ware",
+      "gender": "male",
+      "phone": "+1-645-753-7406",
+      "birth_date": "1949-03-12",
+      "created_at": "2026-01-15T20:17:00.931794",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #9"
+    },
+    {
+      "id": 10,
+      "email": "test-warrenjerry-20260115201700-9@example.com",
+      "name": "Tammy Phillips",
+      "first_name": "Thomas",
+      "last_name": "Lewis",
+      "gender": "male",
+      "phone": "360-607-6788",
+      "birth_date": "1981-05-30",
+      "created_at": "2026-01-15T20:17:00.932070",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #10"
+    },
+    {
+      "id": 11,
+      "email": "test-manderson-20260115201700-10@example.com",
+      "name": "Christopher Huber",
+      "first_name": "Patricia",
+      "last_name": "Mclean",
+      "gender": "female",
+      "phone": "455-642-3628",
+      "birth_date": "1973-02-10",
+      "created_at": "2026-01-15T20:17:00.932256",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #11"
+    },
+    {
+      "id": 12,
+      "email": "test-coreykelley-20260115201700-11@example.com",
+      "name": "William Butler",
+      "first_name": "Tiffany",
+      "last_name": "Martin",
+      "gender": "female",
+      "phone": "(968)868-5882x8083",
+      "birth_date": "1961-02-18",
+      "created_at": "2026-01-15T20:17:00.932458",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #12"
+    },
+    {
+      "id": 13,
+      "email": "test-efields-20260115201700-12@example.com",
+      "name": "Robert Hill",
+      "first_name": "George",
+      "last_name": "Baker",
+      "gender": "female",
+      "phone": "(450)280-4609",
+      "birth_date": "1965-12-27",
+      "created_at": "2026-01-15T20:17:00.932629",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #13"
+    },
+    {
+      "id": 14,
+      "email": "test-barrettisaac-20260115201700-13@example.com",
+      "name": "Scott Williams",
+      "first_name": "Lisa",
+      "last_name": "Martinez",
+      "gender": "male",
+      "phone": "274.399.1085",
+      "birth_date": "1975-05-14",
+      "created_at": "2026-01-15T20:17:00.932825",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #14"
+    },
+    {
+      "id": 15,
+      "email": "test-mpeterson-20260115201700-14@example.com",
+      "name": "Richard Harris",
+      "first_name": "Shirley",
+      "last_name": "Wilson",
+      "gender": "female",
+      "phone": "282-901-4326x45827",
+      "birth_date": "1947-07-17",
+      "created_at": "2026-01-15T20:17:00.932996",
+      "test_purpose": "e2e-testing",
+      "notes": "Generated test user #15"
+    }
+  ],
+  "scenarios": {
+    "new_free_user": {
+      "email": "test-new-free-20260115201700@example.com",
+      "name": "Test Free User",
+      "first_name": "Test",
+      "last_name": "Free",
+      "gender": "female",
+      "account_id": null,
+      "credits": 0,
+      "scenario": "HP-001: Complete teaser flow (new user)"
+    },
+    "returning_free_user": {
+      "email": "test-returning-free-20260115201700@example.com",
+      "name": "Test Returning User",
+      "first_name": "Test",
+      "last_name": "Returning",
+      "gender": "male",
+      "account_id": null,
+      "credits": 0,
+      "scenario": "HP-003: Returning free user (same email)"
+    },
+    "paid_user_with_credits": {
+      "email": "test-paid-credits-20260115201700@example.com",
+      "name": "Test Paid User",
+      "first_name": "Test",
+      "last_name": "Paid",
+      "gender": "female",
+      "account_id": "PLACEHOLDER_ACCOUNT_ID",
+      "credits": 10,
+      "password": "PLACEHOLDER_PASSWORD",
+      "scenario": "HP-002: Complete paid flow (first paid report)"
+    },
+    "paid_user_no_credits": {
+      "email": "test-paid-nocredits-20260115201700@example.com",
+      "name": "Test No Credits User",
+      "first_name": "Test",
+      "last_name": "NoCredits",
+      "gender": "male",
+      "account_id": "PLACEHOLDER_ACCOUNT_ID",
+      "credits": 0,
+      "password": "PLACEHOLDER_PASSWORD",
+      "scenario": "PAID-010: Insufficient credits - shop redirect"
+    },
+    "otp_test_user": {
+      "email": "test-otp-20260115201700@example.com",
+      "name": "Test OTP User",
+      "first_name": "Test",
+      "last_name": "OTP",
+      "gender": "female",
+      "scenario": "AUTH-001 through AUTH-008: OTP flow testing"
+    },
+    "magic_link_test_user": {
+      "email": "test-magic-20260115201700@example.com",
+      "name": "Test Magic Link User",
+      "first_name": "Test",
+      "last_name": "Magic",
+      "gender": "male",
+      "scenario": "MAGIC-001 through MAGIC-006: Magic link testing"
+    },
+    "account_linking_user": {
+      "email": "test-linking-20260115201700@example.com",
+      "name": "Test Linking User",
+      "first_name": "Test",
+      "last_name": "Linking",
+      "gender": "female",
+      "scenario": "LINK-001 through LINK-005: Account linking"
+    },
+    "image_validation_user": {
+      "email": "test-image-20260115201700@example.com",
+      "name": "Test Image User",
+      "first_name": "Test",
+      "last_name": "Image",
+      "gender": "male",
+      "scenario": "IMG-001 through IMG-006: Image validation"
+    }
+  },
+  "metadata": {
+    "total_random_users": 15,
+    "total_scenario_users": 8,
+    "faker_version": "22.0.0+",
+    "notes": [
+      "Random users: Use for general testing and load tests",
+      "Scenario users: Use for specific test cases (HP-001, AUTH-001, etc.)",
+      "PLACEHOLDER values: Replace with real Account Service credentials",
+      "Emails include timestamps to ensure uniqueness"
+    ]
+  }
+}

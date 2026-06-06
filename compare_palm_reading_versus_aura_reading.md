@@ -12,6 +12,31 @@
 
 ---
 
+## Synchronization Rules (Locked 2026-02-12)
+
+This document is the **detailed behavioral baseline/reference**.
+
+- **Tracking source of truth:** `PALM_PARITY_EXECUTION_PLAN.md`
+- **Execution policy:** strict Palm parity for mechanics/behavior (no compatibility window)
+- **Conflict rule:** if any recommendation here conflicts with locked decisions or the parity plan, follow `PALM_PARITY_EXECUTION_PLAN.md`
+
+### Locked Decisions Applied
+
+1. Adopt Palm token model (`report_magic_token`), remove Aura `SM_Reading_Token` behavior.
+2. Match Palm report access gate exactly.
+3. Port Palm polling behavior (`check_reading_status`) exactly.
+4. Match Palm storage/session wrapper architecture exactly.
+5. Match Palm OTP policy exactly.
+6. Remove Aura-only behavioral divergences (strict parity).
+7. No compatibility window.
+
+### Current Status Snapshot (mirrors parity plan)
+
+- Completed: `#1`, `#3`, `#4`, `#9`, `#10`, `#11`, `#21`, `#28`, `#29`
+- In progress/pending: all remaining items
+
+---
+
 ## Table of Contents
 
 1. [REST Controller (Start New Reading Flow)](#1-rest-controller--start-new-reading-flow)
@@ -1186,6 +1211,8 @@ Adopt Aura's 30-second cooldown as the default but keep Palm's settings/filter a
 
 ## 36. Summary Matrix
 
+**Note:** The `Better`/`Priority` columns are historical analysis. For implementation decisions, use the locked rules above and `PALM_PARITY_EXECUTION_PLAN.md`.
+
 | # | Area | Palm | Aura | Better | Priority |
 |---|------|------|------|--------|----------|
 | 1 | Start New URL Building | `build_start_new_target()` strips stale params | Naive `add_query_arg` | Palm | HIGH |
@@ -1226,44 +1253,10 @@ Adopt Aura's 30-second cooldown as the default but keep Palm's settings/filter a
 
 ---
 
-## CRITICAL Priority (Port Immediately)
+## Implementation Ordering
 
-1. **#28** — Port WP-Cron fallback for job dispatch failures (jobs get permanently stuck without this)
+Use `PALM_PARITY_EXECUTION_PLAN.md` for ordered execution and progress tracking.
 
-## HIGH Priority Items (Port from Palm to Aura)
-
-2. **#1** — Port `build_start_new_target()` method
-3. **#3** — Port `resolve_lead_id()` method with flow session fallback
-4. **#4** — Fix error code to `reading_exists`, add login URL redirect, reduce delay to 2s
-5. **#9** — Port OTP lead resolution by email fallback
-6. **#11** — Add flow session reset in `handle_start_new_reading`
-7. **#13** — Port image fingerprint, upload cache, and retry system
-8. **#14** — Switch to server-driven `next_step_url` redirect
-9. **#21** — Port `normalize_return_url()` to auth handler
-10. **#29** — Port duplicate run guard to prevent concurrent reading generation
-
-## MEDIUM Priority Items
-
-11. **#2** — Port DevMode credit bypass
-12. **#5 / #25** — Decide on token architecture (report_token vs reading_token)
-13. **#7** — Port `apply_devmode_profile_defaults()`
-14. **#8** — Adopt Palm's 10/min rate limit with Aura's countdown message
-15. **#10** — Review job status polling differences
-16. **#12** — Consider aligning storage wrapper approach
-17. **#24** — Add Palm's ownership-based report access as fallback
-18. **#31** — Port credit stale cache fallback
-19. **#32** — Port DevMode mock injection points to credit handler
-20. **#33** — Port 200ms OTP lead lookup retry
-
-## LOW Priority / Aura Improvements to Preserve
-
-21. **#16** — Keep Aura's OTP countdown message (port to Palm)
-22. **#18** — Keep Aura's dashboard share feature
-23. **#19** — Keep Aura's scoped storage (consider porting to Palm)
-24. **#22** — Keep Aura's schema integrity check (consider porting to Palm)
-25. **#23** — Keep Aura's centralized table name accessor
-26. **#30** — Keep Aura's three-cookie flow session (consider porting to Palm)
-27. **#35** — Keep Aura's 30-second resend cooldown (Palm's 10-min is excessive)
-28. **#6** — Verify renderer always provides container wrapper
-29. **#17** — Clean up dual-ID fallback once templates are consistent
-30. **#26** — Remove dual settings group once migration is complete
+- Phase 1 completed: `#1`, `#3`, `#4`, `#9`, `#10`, `#11`, `#28`, `#29`
+- Phase 2 in progress: token/report access/auth normalization set (`#21` done; `#5/#24/#25` pending completion)
+- Remaining items continue in parity-plan phase order

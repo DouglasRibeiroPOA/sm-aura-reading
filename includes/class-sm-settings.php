@@ -82,13 +82,6 @@ class SM_Settings {
 				'sanitize_callback' => array( $this, 'sanitize_settings' ),
 			)
 		);
-		register_setting(
-			'sm_settings_group',
-			self::OPTION_KEY,
-			array(
-				'sanitize_callback' => array( $this, 'sanitize_settings' ),
-			)
-		);
 
 		register_setting(
 			'sm_aura_settings_group',

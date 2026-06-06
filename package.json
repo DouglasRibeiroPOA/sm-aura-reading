@@ -4,6 +4,8 @@
   "description": "Automated E2E tests for Aura Reading plugin",
   "scripts": {
     "test": "playwright test",
+    "test:parity": "playwright test tests/specs/suites --workers=1",
+    "test:parity:critical": "playwright test tests/specs/suites/01-critical-happy-paths.spec.js tests/specs/suites/02-refresh-stability.spec.js tests/specs/suites/03-otp-flow.spec.js tests/specs/suites/05-magic-links.spec.js --workers=1",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug",

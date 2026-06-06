@@ -2,7 +2,7 @@
 const { defineConfig, devices } = require('@playwright/test');
 
 /**
- * Playwright configuration for Palm Reading E2E tests
+ * Playwright configuration for Aura Reading E2E tests
  * @see https://playwright.dev/docs/test-configuration
  */
 module.exports = defineConfig({
@@ -30,7 +30,7 @@ module.exports = defineConfig({
 
   use: {
     // Base URL for your local WordPress site
-    baseURL: 'https://sm-palm-reading.local',
+    baseURL: 'https://sm-aura-reading.local',
 
     // Collect trace when retrying the failed test
     trace: 'on-first-retry',
@@ -70,7 +70,7 @@ module.exports = defineConfig({
   // Run your local dev server before starting the tests
   // webServer: {
   //   command: 'npm run start',
-  //   url: 'https://sm-palm-reading.local',
+  //   url: 'https://sm-aura-reading.local',
   //   reuseExistingServer: !process.env.CI,
   // },
 });

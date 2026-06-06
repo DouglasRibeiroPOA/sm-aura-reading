@@ -1,5 +1,18 @@
 # Claude Development Guide - Aura Reading Plugin
 
+---
+
+## 🚫 GIT IS MANAGED BY THE USER — DO NOT TOUCH IT
+
+**CRITICAL RULE: Never run any git commands.**
+
+- Do NOT run `git add`, `git commit`, `git push`, `git reset`, or any other git command.
+- Do NOT suggest committing as part of a task completion step.
+- The user manages all git operations themselves.
+- Just make the code changes and stop. The user will commit when ready.
+
+---
+
 **Version:** 1.0.0
 **Last Updated:** 2026-02-12
 **Plugin:** SoulMirror Aura Reading WordPress Plugin
@@ -31,22 +44,29 @@ This is the **Aura Reading WordPress plugin**, a complete rebrand of the Palm Re
    /Users/douglasribeiro/Local Sites/sm-aura-reading/app/public/wp-content/plugins/sm-aura-reading/AURA_READING_REQUIREMENTS.md
    ```
 
-3. **Check the current progress:**
+3. **Use the detailed parity baseline for behavior context:**
+   ```
+   /Users/douglasribeiro/Local Sites/sm-aura-reading/app/public/wp-content/plugins/sm-aura-reading/compare_palm_reading_versus_aura_reading.md
+   ```
+   - This file is reference-only for details
+   - If any conflict exists, follow `PALM_PARITY_EXECUTION_PLAN.md`
+
+4. **Check the current progress:**
    - Review which phase you're working in
    - Identify what's already complete
    - Understand what's pending
 
-4. **Identify your specific task:**
+5. **Identify your specific task:**
    - Find the exact task in the checklist
    - Read all sub-items under that task
    - Understand dependencies
 
-5. **Ask questions BEFORE implementing:**
+6. **Ask questions BEFORE implementing:**
    - If anything is unclear, ask the user
    - If multiple approaches exist, present options
    - If you find inconsistencies, report them
 
-6. **Update progress IMMEDIATELY after completion:**
+7. **Update progress IMMEDIATELY after completion:**
    - Mark tasks as complete `[x]` in PALM_PARITY_EXECUTION_PLAN.md
    - Update the phase progress bar and percentage in PALM_PARITY_EXECUTION_PLAN.md
    - Update the overall progress tracker in PALM_PARITY_EXECUTION_PLAN.md

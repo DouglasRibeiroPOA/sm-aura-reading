@@ -98,10 +98,10 @@
     function persistLeadCache(data) {
         try {
             if (!data || !data.leadId) {
-                sessionStorage.removeItem(STORAGE_KEY);
+                smStorage.remove(STORAGE_KEY);
                 return;
             }
-            sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ leadId: data.leadId }));
+            smStorage.set(STORAGE_KEY, JSON.stringify({ leadId: data.leadId }));
         } catch (e) {
             logError('Persist lead cache failed', e);
         }
@@ -109,7 +109,7 @@
 
     function readLeadCache() {
         try {
-            const raw = sessionStorage.getItem(STORAGE_KEY);
+            const raw = smStorage.get(STORAGE_KEY);
             if (!raw) return null;
             return JSON.parse(raw);
         } catch (e) {
@@ -119,7 +119,7 @@
     }
 
     function restoreDynamicQuestionsFromStorage() {
-        const rawQuestions = sessionStorage.getItem(DYNAMIC_QUESTIONS_KEY);
+        const rawQuestions = smStorage.get(DYNAMIC_QUESTIONS_KEY);
         if (rawQuestions) {
             try {
                 const parsed = JSON.parse(rawQuestions);
@@ -127,32 +127,32 @@
                     apiState.dynamicQuestions = parsed;
                     appState.dynamicQuestions = parsed;
                 } else {
-                    sessionStorage.removeItem(DYNAMIC_QUESTIONS_KEY);
+                    smStorage.remove(DYNAMIC_QUESTIONS_KEY);
                 }
             } catch (error) {
                 logError('Failed to restore dynamic questions', error);
-                sessionStorage.removeItem(DYNAMIC_QUESTIONS_KEY);
+                smStorage.remove(DYNAMIC_QUESTIONS_KEY);
             }
         }
 
-        const rawDemographics = sessionStorage.getItem(DYNAMIC_DEMOGRAPHICS_KEY);
+        const rawDemographics = smStorage.get(DYNAMIC_DEMOGRAPHICS_KEY);
         if (rawDemographics) {
             try {
                 const parsed = JSON.parse(rawDemographics);
                 if (parsed && parsed.ageRange && parsed.gender) {
                     apiState.demographics = { ageRange: parsed.ageRange, gender: parsed.gender };
                 } else {
-                    sessionStorage.removeItem(DYNAMIC_DEMOGRAPHICS_KEY);
+                    smStorage.remove(DYNAMIC_DEMOGRAPHICS_KEY);
                 }
             } catch (error) {
                 logError('Failed to restore demographics', error);
-                sessionStorage.removeItem(DYNAMIC_DEMOGRAPHICS_KEY);
+                smStorage.remove(DYNAMIC_DEMOGRAPHICS_KEY);
             }
         }
     }
 
     function restoreImageUploadState() {
-        const uploadedUrl = sessionStorage.getItem(UPLOADED_IMAGE_KEY);
+        const uploadedUrl = smStorage.get(UPLOADED_IMAGE_KEY);
         if (uploadedUrl) {
             apiState.imageUploaded = true;
         }
@@ -174,21 +174,30 @@
 
     function clearClientSession() {
         try {
-            sessionStorage.removeItem(STORAGE_KEY);
-            sessionStorage.removeItem(STEP_STORAGE_KEY);
-            sessionStorage.removeItem('sm_reading_lead_id');
-            sessionStorage.removeItem('sm_existing_reading_id');
-            sessionStorage.removeItem('sm_reading_token');
-            sessionStorage.removeItem('sm_reading_loaded');
-            sessionStorage.removeItem('sm_reading_type');
-            sessionStorage.removeItem('sm_email');
-            sessionStorage.removeItem('sm_loop_guard');
-            sessionStorage.removeItem('sm_paywall_redirect');
-            sessionStorage.removeItem('sm_paywall_return_url');
-            sessionStorage.removeItem(DYNAMIC_QUESTIONS_KEY);
-            sessionStorage.removeItem(DYNAMIC_DEMOGRAPHICS_KEY);
-            sessionStorage.removeItem('sm_palm_image');
-            sessionStorage.removeItem(UPLOADED_IMAGE_KEY);
+            smStorage.remove(STORAGE_KEY);
+            smStorage.remove(STEP_STORAGE_KEY);
+            smStorage.remove('sm_reading_lead_id');
+            smStorage.remove('sm_existing_reading_id');
+            smStorage.remove('sm_reading_token');
+            smStorage.remove('sm_reading_loaded');
+            smStorage.remove('sm_reading_type');
+            smStorage.remove('sm_email');
+            smStorage.remove('sm_loop_guard');
+            smStorage.remove('sm_paywall_redirect');
+            smStorage.remove('sm_paywall_return_url');
+            smStorage.remove(DYNAMIC_QUESTIONS_KEY);
+            smStorage.remove(DYNAMIC_DEMOGRAPHICS_KEY);
+            smStorage.remove('sm_palm_image');
+            smStorage.remove(UPLOADED_IMAGE_KEY);
+            // Also clear cross-context keys that may exist from prior context switches
+            ['guest', 'auth', 'magic'].forEach(ctx => {
+                [STORAGE_KEY, STEP_STORAGE_KEY, 'sm_reading_lead_id', 'sm_existing_reading_id',
+                 'sm_reading_token', 'sm_reading_loaded', 'sm_reading_type', 'sm_email',
+                 'sm_loop_guard', DYNAMIC_QUESTIONS_KEY, DYNAMIC_DEMOGRAPHICS_KEY,
+                 'sm_palm_image', UPLOADED_IMAGE_KEY].forEach(key => {
+                    sessionStorage.removeItem(`${ctx}:${key}`);
+                });
+            });
             teaserEventDispatched = false; // Also reset here for comprehensive reset
         } catch (e) {
             logError('Clear client session failed', e);
@@ -402,7 +411,7 @@
             return;
         }
 
-        const storedStepId = sessionStorage.getItem(STEP_STORAGE_KEY);
+        const storedStepId = smStorage.get(STEP_STORAGE_KEY);
         if (storedStepId && storedStepId !== stepId) {
             return;
         }
@@ -445,7 +454,7 @@
             const result = original(stepIndex);
             try {
                 if (typeof palmReadingConfig !== 'undefined' && palmReadingConfig.steps[stepIndex]) {
-                    sessionStorage.setItem(STEP_STORAGE_KEY, palmReadingConfig.steps[stepIndex].id);
+                    smStorage.set(STEP_STORAGE_KEY, palmReadingConfig.steps[stepIndex].id);
 
                     // --- FIX for Enter key submission ---
                     // Add new listener if we are on the emailVerification step
@@ -507,15 +516,15 @@
             return;
         }
 
-        const storedReadingLoaded = sessionStorage.getItem('sm_reading_loaded');
-        const stepId = sessionStorage.getItem(STEP_STORAGE_KEY);
+        const storedReadingLoaded = smStorage.get('sm_reading_loaded');
+        const stepId = smStorage.get(STEP_STORAGE_KEY);
         if ((stepId === 'result' || stepId === 'resultLoading') && storedReadingLoaded !== 'true') {
-            sessionStorage.removeItem(STEP_STORAGE_KEY);
+            smStorage.remove(STEP_STORAGE_KEY);
             return;
         }
         if (storedReadingLoaded === 'true') {
             if (stepId && stepId !== 'result' && stepId !== 'resultLoading') {
-                sessionStorage.removeItem('sm_reading_loaded');
+                smStorage.remove('sm_reading_loaded');
             } else {
                 return;
             }
@@ -747,8 +756,8 @@
                 url.searchParams.set('lead_id', apiState.leadId);
             }
 
-            const storedReadingType = sessionStorage.getItem('sm_reading_type');
-            const storedReadingToken = sessionStorage.getItem('sm_reading_token');
+            const storedReadingType = smStorage.get('sm_reading_type');
+            const storedReadingToken = smStorage.get('sm_reading_token');
             const reportContainer = getReadingResultContainer();
             const domReadingType = reportContainer ? reportContainer.dataset.readingType : '';
             const readingType = domReadingType || storedReadingType || getPreferredReadingType();
@@ -803,7 +812,7 @@
         if (leadId) {
             apiState.leadId = leadId;
             appState.leadId = leadId;
-            sessionStorage.setItem('sm_reading_lead_id', leadId);
+            smStorage.set('sm_reading_lead_id', leadId);
         }
 
         const lastStepIndex = palmReadingConfig.steps.length - 1;
@@ -853,19 +862,19 @@
         }
 
         // ONLY mark reading as loaded AFTER confirming container exists (CRITICAL for page refresh)
-        sessionStorage.setItem('sm_reading_loaded', 'true');
-        sessionStorage.setItem('sm_flow_step_id', 'result');
-        sessionStorage.setItem('sm_reading_type', resolvedReadingType);
+        smStorage.set('sm_reading_loaded', 'true');
+        smStorage.set('sm_flow_step_id', 'result');
+        smStorage.set('sm_reading_type', resolvedReadingType);
         if (readingToken) {
-            sessionStorage.setItem('sm_reading_token', readingToken);
+            smStorage.set('sm_reading_token', readingToken);
         }
 
         // Cache reading id and lead id if provided
         if (readingId) {
-            sessionStorage.setItem('sm_existing_reading_id', readingId);
+            smStorage.set('sm_existing_reading_id', readingId);
         }
         if (leadId) {
-            sessionStorage.setItem('sm_reading_lead_id', leadId);
+            smStorage.set('sm_reading_lead_id', leadId);
         }
 
         log('🔥 EXISTING READING RENDERED - About to mark URL with lead_id:', leadId);
@@ -1024,7 +1033,7 @@
                 apiState.otpVerified = true;
                 appState.userData.emailVerified = true;
                 if (appState.userData.email) {
-                    sessionStorage.setItem('sm_email', appState.userData.email);
+                    smStorage.set('sm_email', appState.userData.email);
                 }
                 log('✓ OTP verified successfully');
 
@@ -1112,7 +1121,7 @@
                     });
                 }
                 if (appState.userData.email) {
-                    sessionStorage.setItem('sm_email', appState.userData.email);
+                    smStorage.set('sm_email', appState.userData.email);
                 }
 
                 log('✓ Magic link verified successfully');
@@ -1136,9 +1145,9 @@
                         return false;
                     }
 
-                    sessionStorage.setItem('sm_reading_lead_id', apiState.leadId);
-                    sessionStorage.setItem('sm_reading_token', token);
-                    sessionStorage.setItem('sm_reading_loaded', 'true');
+                    smStorage.set('sm_reading_lead_id', apiState.leadId);
+                    smStorage.set('sm_reading_token', token);
+                    smStorage.set('sm_reading_loaded', 'true');
                     markReportUrl();
 
                     // Hide navigation and update progress to last step
@@ -1236,8 +1245,8 @@
 
             if (response.success && response.data && response.data.image_url) {
                 apiState.imageUploaded = true;
-                sessionStorage.setItem(UPLOADED_IMAGE_KEY, response.data.image_url);
-                sessionStorage.removeItem('sm_palm_image');
+                smStorage.set(UPLOADED_IMAGE_KEY, response.data.image_url);
+                smStorage.remove('sm_palm_image');
                 log('✓ Palm image uploaded', { url: response.data.image_url });
 
                 // Update flow state - image uploaded, ready for quiz
@@ -1279,8 +1288,8 @@
                 apiState.dynamicQuestions = questions;
                 apiState.demographics = { ageRange, gender };
                 appState.dynamicQuestions = questions;
-                sessionStorage.setItem(DYNAMIC_QUESTIONS_KEY, JSON.stringify(questions));
-                sessionStorage.setItem(DYNAMIC_DEMOGRAPHICS_KEY, JSON.stringify({ ageRange, gender }));
+                smStorage.set(DYNAMIC_QUESTIONS_KEY, JSON.stringify(questions));
+                smStorage.set(DYNAMIC_DEMOGRAPHICS_KEY, JSON.stringify({ ageRange, gender }));
                 log('✓ Dynamic questions fetched', { count: questions.length, ageRange, gender });
                 return questions;
             }
@@ -1482,7 +1491,7 @@
         const endpoint = usePaidFlow ? 'reading/generate-paid' : 'reading/generate';
         const readingType = usePaidFlow ? 'aura_full' : 'aura_teaser';
         try {
-            if (!apiState.imageUploaded && sessionStorage.getItem(UPLOADED_IMAGE_KEY)) {
+            if (!apiState.imageUploaded && smStorage.get(UPLOADED_IMAGE_KEY)) {
                 apiState.imageUploaded = true;
             }
 
@@ -1513,7 +1522,7 @@
                 }
                 log('✓ AI reading generated');
                 if (readingData.reading_id) {
-                    sessionStorage.setItem('sm_existing_reading_id', readingData.reading_id);
+                    smStorage.set('sm_existing_reading_id', readingData.reading_id);
                 }
                 // Update flow state - reading generated successfully
                 await updateFlowState({
@@ -1524,8 +1533,8 @@
 
                 // Cache reading metadata (but DON'T set sm_reading_loaded yet)
                 // The rendering function will set it AFTER validating the container exists
-                sessionStorage.setItem('sm_reading_lead_id', apiState.leadId);
-                sessionStorage.setItem('sm_existing_reading_id', readingData.reading_id);
+                smStorage.set('sm_reading_lead_id', apiState.leadId);
+                smStorage.set('sm_existing_reading_id', readingData.reading_id);
 
                 log('🔥 READING GENERATED - About to mark URL with lead_id:', apiState.leadId);
                 markReportUrl();
@@ -2069,7 +2078,7 @@
             };
 
             if (lead.email) {
-                sessionStorage.setItem('sm_email', lead.email);
+                smStorage.set('sm_email', lead.email);
             }
 
             const removeStartNewParam = () => {
@@ -2096,7 +2105,7 @@
                     setTimeout(() => {
                         window.renderStep(palmPhotoIndex);
                     }, 250);
-                    sessionStorage.setItem(STEP_STORAGE_KEY, 'palmPhoto');
+                    smStorage.set(STEP_STORAGE_KEY, 'palmPhoto');
                     markFlowUrl();
                 }
                 removeStartNewParam();
@@ -2109,7 +2118,7 @@
                 setTimeout(() => {
                     window.renderStep(leadCaptureIndex);
                 }, 250);
-                sessionStorage.setItem(STEP_STORAGE_KEY, 'leadCapture');
+                smStorage.set(STEP_STORAGE_KEY, 'leadCapture');
                 markFlowUrl();
             }
             showToast('Please confirm your details to continue.', 'info');
@@ -2128,7 +2137,7 @@
 
     async function handleReportRefresh() {
         const params = new URLSearchParams(window.location.search);
-        if (sessionStorage.getItem('sm_logout_in_progress') === '1') {
+        if (smStorage.get('sm_logout_in_progress') === '1') {
             return false;
         }
         if (!params.has('sm_report')) {
@@ -2147,7 +2156,7 @@
         // Try to get lead_id from multiple sources (in order of preference)
         const urlLeadId = params.get('lead_id') || params.get('lead');
         const cachedLead = readLeadCache();
-        const sessionLeadId = sessionStorage.getItem('sm_reading_lead_id');
+        const sessionLeadId = smStorage.get('sm_reading_lead_id');
         const leadId = urlLeadId || (cachedLead && cachedLead.leadId) || sessionLeadId;
 
         log('Lead ID sources:', { urlLeadId, cachedLeadId: cachedLead?.leadId, sessionLeadId, finalLeadId: leadId });
@@ -2161,7 +2170,7 @@
         try {
             showMagicOverlay();
             log(`Fetching report for lead ID: ${leadId}`);
-            const storedReadingType = sessionStorage.getItem('sm_reading_type');
+            const storedReadingType = smStorage.get('sm_reading_type');
             const urlReadingType = params.get('reading_type');
             const readingType = urlReadingType || storedReadingType || getPreferredReadingType();
             const response = await makeApiRequest(`reading/get-by-lead?lead_id=${leadId}&reading_type=${readingType}`, 'GET');
@@ -2190,10 +2199,10 @@
             // CRITICAL: Clear reading state when report refresh fails
             // This prevents the page from trying to render a non-existent reading
             log('Clearing reading state flags since report refresh failed');
-            sessionStorage.removeItem('sm_reading_loaded');
-            sessionStorage.removeItem('sm_reading_lead_id');
-            sessionStorage.removeItem('sm_reading_token');
-            sessionStorage.removeItem('sm_existing_reading_id');
+            smStorage.remove('sm_reading_loaded');
+            smStorage.remove('sm_reading_lead_id');
+            smStorage.remove('sm_reading_token');
+            smStorage.remove('sm_existing_reading_id');
 
             // Return false to let normal flow continue (will start from welcome step)
             return false;
@@ -2235,7 +2244,7 @@
     }
 
     async function handleFlowStateBootstrap() {
-        if (sessionStorage.getItem('sm_logout_in_progress') === '1') {
+        if (smStorage.get('sm_logout_in_progress') === '1') {
             return false;
         }
         if (!window.smData || !window.smData.isLoggedIn) {
@@ -2253,7 +2262,7 @@
         if (flow.status === 'reading_ready' && flow.lead_id) {
             const params = new URLSearchParams(window.location.search);
             const hasReportFlag = params.has('sm_report');
-            const storedReadingLoaded = sessionStorage.getItem('sm_reading_loaded') === 'true';
+            const storedReadingLoaded = smStorage.get('sm_reading_loaded') === 'true';
             if (!hasReportFlag && !storedReadingLoaded) {
                 return false;
             }
@@ -2294,10 +2303,9 @@
         }
 
         if (flow.step_id && flow.step_id !== 'welcome') {
-            if (jumpToStepWhenReady(flow.step_id)) {
-                enforceStepAfterInit(flow.step_id);
-                return true;
-            }
+            enforceStepAfterInit(flow.step_id);
+            jumpToStepWhenReady(flow.step_id);
+            return true;
         }
 
         return false;
@@ -2322,7 +2330,7 @@
 
                 // --- EMERGENCY FIX: Check for infinite loop guard ---
                 // Uses counter-based detection: requires 5+ rapid refreshes within 500ms to trigger
-                const loopGuard = sessionStorage.getItem('sm_loop_guard');
+                const loopGuard = smStorage.get('sm_loop_guard');
                 const currentTime = Date.now();
                 if (loopGuard) {
                     try {
@@ -2337,29 +2345,29 @@
                             // Only block if 5+ rapid refreshes
                             if (guardData.count >= 5) {
                                 logError(`⚠️ INFINITE LOOP DETECTED - Stopping refresh cycle (${guardData.count} rapid refreshes within 500ms)`);
-                                sessionStorage.removeItem('sm_loop_guard');
+                                smStorage.remove('sm_loop_guard');
                                 return; // Stop all processing to break the loop
                             }
 
-                            sessionStorage.setItem('sm_loop_guard', JSON.stringify(guardData));
+                            smStorage.set('sm_loop_guard', JSON.stringify(guardData));
                         } else {
                             // More than 500ms since last load, reset counter
-                            sessionStorage.setItem('sm_loop_guard', JSON.stringify({ timestamp: currentTime, count: 1 }));
+                            smStorage.set('sm_loop_guard', JSON.stringify({ timestamp: currentTime, count: 1 }));
                         }
                     } catch (e) {
                         // Invalid JSON, reset guard
-                        sessionStorage.setItem('sm_loop_guard', JSON.stringify({ timestamp: currentTime, count: 1 }));
+                        smStorage.set('sm_loop_guard', JSON.stringify({ timestamp: currentTime, count: 1 }));
                     }
                 } else {
                     // First load, initialize counter
-                    sessionStorage.setItem('sm_loop_guard', JSON.stringify({ timestamp: currentTime, count: 1 }));
+                    smStorage.set('sm_loop_guard', JSON.stringify({ timestamp: currentTime, count: 1 }));
                 }
                 // --- END LOOP GUARD ---
 
                 // --- FIX for report refresh loop ---
                 const reportRefreshed = await handleReportRefresh();
                 if (reportRefreshed) {
-                    sessionStorage.removeItem('sm_loop_guard'); // Clear guard on success
+                    smStorage.remove('sm_loop_guard'); // Clear guard on success
                     return; // Stop further processing if report was handled
                 }
                 // --- END FIX ---
@@ -2385,8 +2393,8 @@
             // --- FIX for Email Persistence on OTP page refresh ---
             // If appState.userData.email is empty but sm_email exists in sessionStorage, restore it.
             // This handles cases where the page refreshes directly on the OTP step.
-            if (!appState.userData.email && sessionStorage.getItem('sm_email')) {
-                appState.userData.email = sessionStorage.getItem('sm_email');
+            if (!appState.userData.email && smStorage.get('sm_email')) {
+                appState.userData.email = smStorage.get('sm_email');
                 log('Restored appState.userData.email from sessionStorage.', { email: appState.userData.email });
             }
             // --- END FIX ---
@@ -2532,7 +2540,7 @@
         if (logoutBtn) {
             logoutBtn.addEventListener('click', async () => {
                 log('Logout button clicked');
-                sessionStorage.setItem('sm_logout_in_progress', '1');
+                smStorage.set('sm_logout_in_progress', '1');
                 logoutBtn.disabled = true;
                 clearClientSession();
                 clearReportUrlParams();
@@ -2540,11 +2548,11 @@
                     const response = await makeApiRequest('auth/logout', 'POST');
                     resetFlowState(false);
                     if (response.success && response.data.redirect_url) {
-                        sessionStorage.removeItem('sm_logout_in_progress');
+                        smStorage.remove('sm_logout_in_progress');
                         window.location.replace(response.data.redirect_url);
                     } else {
                         // Fallback redirect
-                        sessionStorage.removeItem('sm_logout_in_progress');
+                        smStorage.remove('sm_logout_in_progress');
                         window.location.replace(smData.homeUrl || '/');
                     }
                 } catch (error) {
@@ -2552,7 +2560,7 @@
                     showToast('Logout failed. Please try again.', 'error');
                     resetFlowState(false);
                     // Force redirect even on failure
-                    sessionStorage.removeItem('sm_logout_in_progress');
+                    smStorage.remove('sm_logout_in_progress');
                     window.location.replace(smData.homeUrl || '/');
                 }
             });

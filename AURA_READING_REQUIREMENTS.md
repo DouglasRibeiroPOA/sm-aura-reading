@@ -21,7 +21,7 @@
 - Phase 4: Templates & Content - 11/11 tasks (100%) ✅ **COMPLETE**
 - Phase 5: AI Prompts & Question Bank - 8/8 tasks (100%) ✅ **COMPLETE**
 - Phase 6: Integration & Configuration - 11/14 tasks (79%) ⚠️ Offerings URL + MailerLite group pending
-- Phase 7: Testing & Quality Assurance - 39/52 tasks (75%)
+- Phase 7: Testing & Quality Assurance - 46/52 tasks (88%)
 - Phase 8: Documentation - 4/4 tasks (100%) ✅ **COMPLETE**
 
 **🎉 Major Milestone:** All critical blockers have been fixed! The plugin now has a solid foundation and backend ready for testing.
@@ -564,14 +564,14 @@ wp_sm_aura_flow_sessions
 
 ### Phase 7: Testing & Quality Assurance
 
-**Progress:** 39/52 tasks complete (75%)
+**Progress:** 46/52 tasks complete (88%)
 ```
-[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░] 75%
+[▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░] 88%
 ```
 
 #### E2E Tests (tests/)
 - [x] Update Playwright test files:
-  - [ ] Rename test suite
+  - [x] Rename test suite ✓
   - [x] Update selectors if UI changed significantly ✓
   - [x] Update test data (aura-specific questions/responses) ✓
   - [x] Update assertions for aura content ✓
@@ -615,17 +615,18 @@ wp_sm_aura_flow_sessions
 - [x] Redirect logged-in users away from unauthorized teaser links to the dashboard
 - [x] Force paid Begin Journey to reuse current URL with start_new flags to avoid bounce
 - [x] Preserve start-new pending flag so redirect guard triggers on first click
+- [x] Ensure newly entered welcome email overrides stale restored app state before lead creation; added regression coverage for stale-email/session carryover in `01-critical-happy-paths.spec.js`
 
 #### Manual Testing Checklist
-- [ ] Lead creation and OTP verification
+- [x] Lead creation and OTP verification
 - [ ] Quiz submission (all 6 categories)
-- [ ] Image upload (upper body photo)
-- [ ] Teaser reading generation
+- [x] Image upload (upper body photo)
+- [x] Teaser reading generation
 - [ ] Section unlock flow (2 free unlocks)
 - [ ] Paywall redirect
 - [ ] Full reading purchase (with credits)
 - [ ] Reading download (HTML report)
-- [ ] Dashboard display
+- [x] Dashboard display
 - [ ] Reports listing
 - [ ] MailerLite sync
 - [ ] Account Service integration
@@ -633,7 +634,7 @@ wp_sm_aura_flow_sessions
 - [ ] Cross-browser compatibility
 
 #### Development Mode Testing
-- [ ] Test with `dev_all` mode (mock APIs)
+- [x] Test with `dev_all` mode (mock APIs)
 - [ ] Test with `dev_openai_only` (real MailerLite)
 - [ ] Test with `dev_mailerlite_only` (real OpenAI)
 - [ ] Test production mode (all real APIs)

@@ -406,35 +406,28 @@ function sm_redirect_paid_report_to_login() {
 		return;
 	}
 
-	$reading_type = isset( $_GET['reading_type'] ) ? sanitize_text_field( wp_unslash( $_GET['reading_type'] ) ) : '';
+	$lead_id      = isset( $_GET['lead_id'] ) ? sanitize_text_field( wp_unslash( $_GET['lead_id'] ) ) : '';
 	$token        = isset( $_GET['token'] ) ? sanitize_text_field( wp_unslash( $_GET['token'] ) ) : '';
-	$has_magic    = isset( $_GET['sm_magic'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['sm_magic'] ) );
+	$reading_type = isset( $_GET['reading_type'] ) ? sanitize_text_field( wp_unslash( $_GET['reading_type'] ) ) : '';
 
-	// Skip redirect for teaser or magic link access.
-	if ( 'aura_teaser' === $reading_type || $has_magic ) {
-		return;
+	if ( '' !== $lead_id && '' !== $token && 'aura_full' !== $reading_type ) {
+		$lead_handler = class_exists( 'SM_Lead_Handler' ) ? SM_Lead_Handler::get_instance() : null;
+		if ( $lead_handler && true === $lead_handler->validate_report_magic_token( $lead_id, $token ) ) {
+			return;
+		}
 	}
 
-	// If a token is present, validate it and allow teaser access without login.
-	if ( '' !== $token ) {
-		if ( class_exists( 'SM_Reading_Token' ) ) {
-			$payload = SM_Reading_Token::validate( $token, '', array( 'aura_teaser', 'aura_full' ) );
-			if ( ! is_wp_error( $payload ) ) {
-				$token_type = isset( $payload['reading_type'] ) ? (string) $payload['reading_type'] : '';
-				if ( 'aura_teaser' === $token_type ) {
-					return;
-				}
-			}
-		}
+	// Allow teaser report access without login when no paid reading exists and no account is linked.
+	if ( '' !== $lead_id && 'aura_full' !== $reading_type ) {
+		$lead_handler    = class_exists( 'SM_Lead_Handler' ) ? SM_Lead_Handler::get_instance() : null;
+		$reading_service = class_exists( 'SM_Reading_Service' ) ? SM_Reading_Service::get_instance() : null;
+		$lead            = $lead_handler ? $lead_handler->get_lead_by_id( $lead_id ) : null;
+		$lead_account_id = $lead ? sanitize_text_field( (string) $lead->account_id ) : '';
 
-		if ( class_exists( 'SM_OTP_Handler' ) ) {
-			$lead_id = isset( $_GET['lead_id'] ) ? sanitize_text_field( wp_unslash( $_GET['lead_id'] ) ) : '';
-			if ( '' !== $lead_id ) {
-				$otp_handler = SM_OTP_Handler::get_instance();
-				$verified    = $otp_handler->verify_magic_token( $lead_id, $token );
-				if ( ! is_wp_error( $verified ) ) {
-					return;
-				}
+		if ( $lead && '' === $lead_account_id && $reading_service ) {
+			$paid_reading = $reading_service->get_latest_reading( $lead_id, 'aura_full' );
+			if ( is_wp_error( $paid_reading ) || empty( $paid_reading ) ) {
+				return;
 			}
 		}
 	}

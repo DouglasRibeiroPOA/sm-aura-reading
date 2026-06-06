@@ -261,10 +261,13 @@ class SM_Test_Helpers {
 			return new WP_Error( 'missing_email', 'Email parameter is required', array( 'status' => 400 ) );
 		}
 
+		$db          = class_exists( 'SM_Database' ) ? SM_Database::get_instance() : null;
+		$leads_table = $db ? $db->get_table_name( 'leads' ) : $wpdb->prefix . 'sm_aura_leads';
+
 		// Get lead data
 		$lead = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}sm_leads
+				"SELECT * FROM {$leads_table}
 				 WHERE email = %s
 				 ORDER BY created_at DESC
 				 LIMIT 1",
@@ -296,15 +299,19 @@ class SM_Test_Helpers {
 	public function cleanup_test_data_endpoint( $request ) {
 		global $wpdb;
 
+		$db           = class_exists( 'SM_Database' ) ? SM_Database::get_instance() : null;
+		$leads_table  = $db ? $db->get_table_name( 'leads' ) : $wpdb->prefix . 'sm_aura_leads';
+		$read_table   = $db ? $db->get_table_name( 'readings' ) : $wpdb->prefix . 'sm_aura_readings';
+
 		// Delete test leads (cascades to readings via foreign key)
 		$deleted_leads = $wpdb->query(
-			"DELETE FROM {$wpdb->prefix}sm_leads
+			"DELETE FROM {$leads_table}
 			 WHERE email LIKE 'test-%@%'"
 		);
 
 		// Delete orphaned test readings
 		$deleted_readings = $wpdb->query(
-			"DELETE FROM {$wpdb->prefix}sm_readings
+			"DELETE FROM {$read_table}
 			 WHERE lead_id LIKE 'test-%'"
 		);
 

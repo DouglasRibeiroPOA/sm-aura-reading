@@ -31,29 +31,36 @@ This is the **Aura Reading WordPress plugin**, a complete rebrand of the Palm Re
    /Users/douglasribeiro/Local Sites/sm-aura-reading/app/public/wp-content/plugins/sm-aura-reading/AURA_READING_REQUIREMENTS.md
    ```
 
-3. **Check the current progress:**
+3. **Use the detailed parity baseline for behavior context:**
+   ```
+   /Users/douglasribeiro/Local Sites/sm-aura-reading/app/public/wp-content/plugins/sm-aura-reading/compare_palm_reading_versus_aura_reading.md
+   ```
+   - This file is reference-only for details
+   - If any conflict exists, follow `PALM_PARITY_EXECUTION_PLAN.md`
+
+4. **Check the current progress:**
    - Review which phase you're working in
    - Identify what's already complete
    - Understand what's pending
 
-4. **Identify your specific task:**
+5. **Identify your specific task:**
    - Find the exact task in the checklist
    - Read all sub-items under that task
    - Understand dependencies
 
-5. **Ask questions BEFORE implementing:**
+6. **Ask questions BEFORE implementing:**
    - If anything is unclear, ask the user
    - If multiple approaches exist, present options
    - If you find inconsistencies, report them
 
-6. **Update progress IMMEDIATELY after completion:**
+7. **Update progress IMMEDIATELY after completion:**
    - Mark tasks as complete `[x]` in PALM_PARITY_EXECUTION_PLAN.md
    - Update the phase progress bar and percentage in PALM_PARITY_EXECUTION_PLAN.md
    - Update the overall progress tracker in PALM_PARITY_EXECUTION_PLAN.md
    - Update progress often (every task)
    - Update `CHANGELOG.md` for meaningful changes
 
-6. **Access logs directly when needed:**
+8. **Access logs directly when needed:**
    - Do not ask the user to fetch logs
    - Use the plugin debug log and WordPress logs to troubleshoot
 
